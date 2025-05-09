@@ -1,20 +1,44 @@
 import { UniqueID } from 'src/core/object-values/unique-id';
 import { Person } from 'src/core/entities/person.entity';
 import { MedicalEntityType } from '../@types/medical';
+import { CRM } from 'src/core/object-values/crm';
+import { Authenticable } from 'src/core/entities/authenticable.entity';
+import { Hasher } from 'src/core/cryptography/hasher';
 
 export type MedicalEntityResponse = {
   medical: Medical;
 };
 
 export class Medical extends Person<MedicalEntityType> {
+  private _auth: Authenticable;
+
+  get crm(): CRM {
+    if (!this.props.crm) {
+      throw new Error('CRM não encontrado para este médico.');
+    }
+    return this.props.crm;
+  }
+
+  async compare(raw: string, hasher: Hasher): Promise<boolean> {
+    return this._auth.compareHash(raw, hasher);
+  }
+
+  constructor(props: MedicalEntityType, auth: Authenticable, id?: UniqueID) {
+    super(props, id);
+    this._auth = auth;
+  }
+
   static create(
-    props: MedicalEntityType,
+    props: MedicalEntityType & { password: string },
     id?: UniqueID,
   ): MedicalEntityResponse {
+    const auth = new Authenticable({ password: props.password });
+
     const medical = new Medical(
       {
         ...props,
       },
+      auth,
       id,
     );
 
