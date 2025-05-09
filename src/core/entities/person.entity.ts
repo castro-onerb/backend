@@ -2,7 +2,7 @@ import { Entity } from './entity';
 
 export interface PersonPropsBase {
   name: string;
-  cpf: number;
+  cpf: string;
 }
 
 export abstract class Person<
