@@ -2,19 +2,11 @@ import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { MedicalModule } from './infra/modules/medical.module';
-import { ConfigModule } from '@nestjs/config';
-import { envSchema } from './infra/env/env';
 import { AuthModule } from './core/auth/auth.module';
+import { EnvModule } from './infra/env/env.module';
 
 @Module({
-  imports: [
-    MedicalModule,
-    ConfigModule.forRoot({
-      validate: (env) => envSchema.parse(env),
-      isGlobal: true,
-    }),
-    AuthModule,
-  ],
+  imports: [MedicalModule, EnvModule, AuthModule],
   controllers: [AppController],
   providers: [AppService],
 })
