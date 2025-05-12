@@ -7,7 +7,7 @@ export class InMemoryMedicalRepository implements IMedicalRepository {
   medicals: MedicalRawResult[] = [];
 
   async findByCrm(crm: CRM) {
-    const medical = this.medicals.find((doctor) => doctor.crm === crm.value);
+    const medical = this.medicals.filter((doctor) => doctor.crm === crm.value);
     return Promise.resolve(medical ?? null);
   }
 

@@ -29,15 +29,25 @@ export class MedicalAuthenticateUseCase {
     crm,
     password,
   }: MedicalAuthenticateUseCaseRequest): Promise<MedicalAuthenticateUseCaseResponse> {
-    const queryMedical = await this.medicalRepository.findByCrm(crm);
+    const listMedical = await this.medicalRepository.findByCrm(crm);
 
-    if (!queryMedical) {
+    if (!listMedical || listMedical.length === 0) {
       return left(
         new ResourceNotFoundError(
           'Não localizamos um médico com o CRM informado. Que tal conferir os dados?',
         ),
       );
     }
+
+    if (listMedical.length > 1) {
+      return left(
+        new ResourceNotFoundError(
+          'Parece que há algo errado, localizamos mais de um acesso para este mesmo CRM.',
+        ),
+      );
+    }
+
+    const queryMedical = listMedical[0];
 
     if (!queryMedical.active) {
       return left(

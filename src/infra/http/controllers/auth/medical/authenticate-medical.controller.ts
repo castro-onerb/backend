@@ -42,6 +42,8 @@ export class MedicalAuthenticateController {
       password,
     });
 
+    console.log(result);
+
     return {
       result,
     };
