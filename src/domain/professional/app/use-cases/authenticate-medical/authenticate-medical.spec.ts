@@ -1,35 +1,95 @@
-import { InMemoryMedicalRepository } from 'test/memory/repositories/medical.repository';
-import { beforeEach, describe, it } from 'vitest';
+import { mock } from 'vitest-mock-extended';
+import { Mocked } from 'vitest';
+import { Hasher } from '@/core/cryptography/hasher';
 import { MedicalAuthenticateUseCase } from './authenticate-medical.use-case';
-import { makeMedical } from 'test/factories/make-medical';
-import { CRM } from 'src/core/object-values/crm';
-import { Md5Hasher } from 'src/infra/cryptography/md5-hasher';
+import { CRM } from '@/core/object-values/crm';
+import { ResourceNotFoundError } from '@/core/errors/resource-not-found.error';
+import { InMemoryMedicalRepository } from 'test/memory/repositories/medical.repository';
 
-let medicalRepository: InMemoryMedicalRepository;
-let hasher: Md5Hasher;
-let medicalAuthenticateUseCase: MedicalAuthenticateUseCase;
+describe('Authenticate Medical Use Case', () => {
+  let useCase: MedicalAuthenticateUseCase;
+  let medicalRepository: InMemoryMedicalRepository;
+  let hasher: Mocked<Hasher>;
 
-describe('Authenticate Medical UseCase', () => {
   beforeEach(() => {
     medicalRepository = new InMemoryMedicalRepository();
-    hasher = new Md5Hasher();
-    medicalAuthenticateUseCase = new MedicalAuthenticateUseCase(
-      medicalRepository,
-      hasher,
-    );
-    const { medical } = makeMedical();
-    medicalRepository.medicals.push(medical);
+    hasher = mock<Hasher>();
+
+    useCase = new MedicalAuthenticateUseCase(medicalRepository, hasher);
   });
 
-  it('It should be able the doctor authenticate himself', async () => {
-    const crm = new CRM('123456/UF');
+  it('It should not authenticate without finding a doctor with the provided CRM.', async () => {
+    const crm = CRM.create('123456-CE');
     const password = '123456';
 
-    const medicalAuth = await medicalAuthenticateUseCase.execute({
-      crm,
+    if (crm.isLeft()) {
+      throw new Error('CRM inválido');
+    }
+
+    medicalRepository.save({
+      crm: '654321-CE',
+      password: 'e10adc3949ba59abbe56e057f20f883e',
+    });
+
+    hasher.compare.mockResolvedValue(true);
+
+    const result = await useCase.execute({
+      crm: crm.value,
       password,
     });
 
-    console.log(medicalAuth);
+    expect(result.isLeft()).toBe(true);
+    expect(result.value).toBeInstanceOf(ResourceNotFoundError);
+  });
+
+  it('should authenticate a medical with valid CRM and password', async () => {
+    const crm = CRM.create('123456-CE');
+    const password = '123456';
+
+    if (crm.isLeft()) {
+      throw new Error('CRM inválido');
+    }
+
+    medicalRepository.save({
+      crm: crm.value.value,
+      password: 'e10adc3949ba59abbe56e057f20f883e',
+    });
+
+    hasher.compare.mockResolvedValue(true);
+
+    const result = await useCase.execute({
+      crm: crm.value,
+      password,
+    });
+
+    expect(result.isRight()).toBe(true);
+    if (result.isRight()) {
+      expect(result.value.medical).toMatchObject({
+        crm: crm.value.value,
+      });
+    }
+  });
+
+  it('should not authenticate a medical with valid CRM and icorrect password', async () => {
+    const crm = CRM.create('123456-CE');
+    const password = '1234';
+
+    if (crm.isLeft()) {
+      throw new Error('CRM inválido');
+    }
+
+    medicalRepository.save({
+      crm: crm.value.value,
+      password: 'e10adc3949ba59abbe56e057f20f883e',
+    });
+
+    hasher.compare.mockResolvedValue(false);
+
+    const result = await useCase.execute({
+      crm: crm.value,
+      password,
+    });
+
+    expect(result.isLeft()).toBe(true);
   });
 });

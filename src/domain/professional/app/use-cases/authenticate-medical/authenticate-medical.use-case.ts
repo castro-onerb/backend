@@ -1,12 +1,20 @@
-import { Inject, Injectable, UnauthorizedException } from '@nestjs/common';
+import {
+  Inject,
+  Injectable,
+  InternalServerErrorException,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { MedicalAuthenticateUseCaseRequest } from './dto';
 import { IMedicalRepository } from '../../repositories/medical.repository';
 import { Hasher } from 'src/core/cryptography/hasher';
 import { Either, left, right } from '@/core/either';
 import { Medical } from '@/domain/professional/enterprise/entities/medical.entity';
+import { ResourceNotFoundError } from '@/core/errors/resource-not-found.error';
+import { CRM } from '@/core/object-values/crm';
+import { UniqueID } from '@/core/object-values/unique-id';
 
 type MedicalAuthenticateUseCaseResponse = Either<
-  UnauthorizedException,
+  UnauthorizedException | ResourceNotFoundError,
   { medical: ReturnType<Medical['toObject']> }
 >;
 
@@ -21,19 +29,70 @@ export class MedicalAuthenticateUseCase {
     crm,
     password,
   }: MedicalAuthenticateUseCaseRequest): Promise<MedicalAuthenticateUseCaseResponse> {
-    const medicalOrError = await this.medicalRepository.findByCrm(crm);
+    const queryMedical = await this.medicalRepository.findByCrm(crm);
 
-    if (medicalOrError.isLeft()) {
-      return left(new UnauthorizedException(medicalOrError.value));
+    if (!queryMedical) {
+      return left(
+        new ResourceNotFoundError(
+          'Não localizamos um médico com o CRM informado. Que tal conferir os dados?',
+        ),
+      );
     }
 
-    const medical = medicalOrError.value;
+    if (!queryMedical.active) {
+      return left(
+        new UnauthorizedException(
+          'Este perfil encontra-se desativado. Se precisar de ajuda, fale com o suporte.',
+        ),
+      );
+    }
 
+    if (!queryMedical.password) {
+      return left(
+        new ResourceNotFoundError(
+          'O acesso está indisponível porque o perfil não possui uma senha cadastrada.',
+        ),
+      );
+    }
+
+    const crmResult = CRM.create(queryMedical.crm);
+
+    if (crmResult.isLeft()) {
+      return left(
+        new InternalServerErrorException(
+          'Encontramos o médico, mas o CRM registrado parece estar em um formato inválido.',
+        ),
+      );
+    }
+
+    const medicalCreated = Medical.create(
+      {
+        name: queryMedical.fullname,
+        crm: crmResult.value,
+        cpf: queryMedical.cpf,
+        email: queryMedical.email,
+        username: queryMedical.username,
+        password: queryMedical.password,
+      },
+      new UniqueID(`${queryMedical.id}`),
+    );
+
+    if (medicalCreated.isLeft()) {
+      return left(
+        new InternalServerErrorException(
+          'Falha ao preparar as informações do médico. Por favor, tente novamente mais tarde.',
+        ),
+      );
+    }
+
+    const medical = medicalCreated.value;
     const isValid = await medical.compare(password, this.hasher);
 
     if (!isValid) {
       return left(
-        new UnauthorizedException('A senha que você inseriu está incorreta.'),
+        new UnauthorizedException(
+          'Não conseguimos validar sua senha. Confira e tente novamente.',
+        ),
       );
     }
 

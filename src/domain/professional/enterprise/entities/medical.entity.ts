@@ -20,7 +20,6 @@ export class Medical extends Person<MedicalEntityType> {
   }
 
   async compare(raw: string, hasher: Hasher): Promise<boolean> {
-    console.log(raw, hasher);
     return this._auth.compareHash(raw, hasher);
   }
 

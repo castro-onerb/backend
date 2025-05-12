@@ -1,3 +1,5 @@
+import { Either, left, right } from '@/core/either';
+
 export class CRM {
   private readonly _value: string;
 
@@ -5,11 +7,7 @@ export class CRM {
     return this._value;
   }
 
-  constructor(crm: string) {
-    if (!CRM.isValid(crm)) {
-      throw new Error('O CRM fornecido não parece válido.');
-    }
-
+  private constructor(crm: string) {
     this._value = crm;
   }
 
@@ -18,23 +16,28 @@ export class CRM {
     return crmRegex.test(crm);
   }
 
+  static create(crm: string): Either<Error, CRM> {
+    if (!this.isValid(crm)) {
+      return left(
+        new Error(
+          'Hmm... não conseguimos reconhecer esse CRM. Verifique se está no formato certo.',
+        ),
+      );
+    }
+    return right(new CRM(crm));
+  }
+
   equals(other: CRM) {
     return this._value === other.value;
   }
 
-  static fromParts(crm: string, uf: string): CRM {
+  static fromParts(crm: string, uf: string): Either<Error, CRM> {
     const crmString = `${crm}-${uf.toUpperCase()}`;
-    if (!CRM.isValid(crmString)) {
-      throw new Error('CRM composto inválido.');
-    }
-    return new CRM(crmString);
+    return this.create(crmString);
   }
 
   split(): { crm: string; uf: string } {
     const [crm, uf] = this._value.split('-');
-    return {
-      crm,
-      uf,
-    };
+    return { crm, uf };
   }
 }
