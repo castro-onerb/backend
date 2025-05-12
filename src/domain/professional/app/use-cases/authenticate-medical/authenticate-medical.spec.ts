@@ -5,6 +5,7 @@ import { MedicalAuthenticateUseCase } from './authenticate-medical.use-case';
 import { CRM } from '@/core/object-values/crm';
 import { ResourceNotFoundError } from '@/core/errors/resource-not-found.error';
 import { InMemoryMedicalRepository } from 'test/memory/repositories/medical.repository';
+import { UnauthorizedException } from '@nestjs/common';
 
 describe('Authenticate Medical Use Case', () => {
   let useCase: MedicalAuthenticateUseCase;
@@ -40,6 +41,29 @@ describe('Authenticate Medical Use Case', () => {
 
     expect(result.isLeft()).toBe(true);
     expect(result.value).toBeInstanceOf(ResourceNotFoundError);
+  });
+
+  it('shoul not be able authenticate with profile inactive', async () => {
+    const crm = CRM.create('123456-CE');
+    const password = '123456';
+
+    if (crm.isLeft()) {
+      throw new Error('CRM inválido');
+    }
+
+    medicalRepository.save({
+      crm: crm.value.value,
+      password: 'e10adc3949ba59abbe56e057f20f883e',
+      active: false,
+    });
+
+    const result = await useCase.execute({
+      crm: crm.value,
+      password,
+    });
+
+    expect(result.isLeft()).toBe(true);
+    expect(result.value).toBeInstanceOf(UnauthorizedException);
   });
 
   it('should authenticate a medical with valid CRM and password', async () => {
