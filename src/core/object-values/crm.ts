@@ -14,7 +14,7 @@ export class CRM {
   }
 
   static isValid(crm: string): boolean {
-    const crmRegex = /^\d{4,6}\/[A-Z]{2}$/;
+    const crmRegex = /^\d{4,7}-[A-Z]{2}$/;
     return crmRegex.test(crm);
   }
 
@@ -23,7 +23,7 @@ export class CRM {
   }
 
   static fromParts(crm: string, uf: string): CRM {
-    const crmString = `${crm}/${uf.toUpperCase()}`;
+    const crmString = `${crm}-${uf.toUpperCase()}`;
     if (!CRM.isValid(crmString)) {
       throw new Error('CRM composto inválido.');
     }
@@ -31,7 +31,7 @@ export class CRM {
   }
 
   split(): { crm: string; uf: string } {
-    const [crm, uf] = this._value.split('/');
+    const [crm, uf] = this._value.split('-');
     return {
       crm,
       uf,

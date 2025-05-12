@@ -1,0 +1,15 @@
+services:
+  postgres:
+    container_name: prontuario
+    image: bitnami/postgresql
+    ports:
+      - 5432:5432
+    environment:
+      POSTGRESQL_DATABASE: ${DA}
+      POSTGRESQL_USERNAME: ${USERNAME}
+      POSTGRESQL_PASSWORD: ${PASSWORD}
+      POSTGRESQL_POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRESQL_TIMEZONE: ${TIMEZONE}
+      POSTGRESQL_LOG_TIMEZONE: ${TIMEZONE}
+    volumes:
+      - ./database/pg:/bitnami/postgresql

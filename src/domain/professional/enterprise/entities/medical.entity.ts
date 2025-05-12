@@ -4,10 +4,10 @@ import { MedicalEntityType } from '../@types/medical';
 import { CRM } from 'src/core/object-values/crm';
 import { Authenticable } from 'src/core/entities/authenticable.entity';
 import { Hasher } from 'src/core/cryptography/hasher';
+import { Either, left, right } from '@/core/either';
+import { BadRequestException } from '@nestjs/common';
 
-export type MedicalEntityResponse = {
-  medical: Medical;
-};
+export type MedicalEntityResponse = Either<BadRequestException, Medical>;
 
 export class Medical extends Person<MedicalEntityType> {
   private _auth: Authenticable;
@@ -33,18 +33,33 @@ export class Medical extends Person<MedicalEntityType> {
     props: MedicalEntityType,
     id?: UniqueID,
   ): MedicalEntityResponse {
-    const auth = new Authenticable({ password: props.password });
+    const auth = Authenticable.create({
+      password: props.password,
+      email: props.email,
+      username: props.username,
+    });
+
+    if (auth.isLeft()) {
+      return left(auth.value);
+    }
 
     const medical = new Medical(
       {
         ...props,
       },
-      auth,
+      auth.value,
       id,
     );
 
+    return right(medical);
+  }
+
+  toObject() {
     return {
-      medical,
+      id: this.id.toString(),
+      name: this.props.name,
+      email: this.props.email,
+      crm: this.props.crm.value,
     };
   }
 }
