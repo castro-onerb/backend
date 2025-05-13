@@ -1,14 +1,8 @@
-import { left } from '@/core/either';
+import { mapDomainErrorToHttp } from '@/core/errors/map-domain-errors-http';
 import { CRM } from '@/core/object-values/crm';
 import { MedicalAuthenticateUseCase } from '@/domain/professional/app/use-cases/authenticate-medical/authenticate-medical.use-case';
 import { ZodValidationPipe } from '@/infra/http/pipes/zod-validation.pipe';
-import {
-  BadRequestException,
-  Body,
-  Controller,
-  Post,
-  UsePipes,
-} from '@nestjs/common';
+import { Body, Controller, Post, UsePipes } from '@nestjs/common';
 import { z } from 'zod';
 
 const schemaBodyRequest = z.object({
@@ -30,11 +24,7 @@ export class MedicalAuthenticateController {
     const crmValid = CRM.create(crm);
 
     if (crmValid.isLeft()) {
-      return left(
-        new BadRequestException(
-          'Hmm... não conseguimos reconhecer esse CRM. Verifique se está no formato certo.',
-        ),
-      );
+      return mapDomainErrorToHttp(crmValid.value);
     }
 
     const result = await this.authenticateUseCase.execute({
@@ -42,7 +32,9 @@ export class MedicalAuthenticateController {
       password,
     });
 
-    console.log(result);
+    if (result.isLeft()) {
+      return mapDomainErrorToHttp(result.value);
+    }
 
     return {
       result,

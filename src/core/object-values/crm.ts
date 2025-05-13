@@ -1,4 +1,5 @@
 import { Either, left, right } from '@/core/either';
+import { BadRequestException } from '@nestjs/common';
 
 export class CRM {
   private readonly _value: string;
@@ -16,10 +17,10 @@ export class CRM {
     return crmRegex.test(crm);
   }
 
-  static create(crm: string): Either<Error, CRM> {
+  static create(crm: string): Either<BadRequestException, CRM> {
     if (!this.isValid(crm)) {
       return left(
-        new Error(
+        new BadRequestException(
           'Hmm... não conseguimos reconhecer esse CRM. Verifique se está no formato certo.',
         ),
       );
