@@ -26,5 +26,5 @@
       "multer"
     ]
   },
-  "include": ["src"]
+  "include": ["src", "test"]
 }

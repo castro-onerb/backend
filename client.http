@@ -6,7 +6,12 @@ Content-Type: application/json
   "password": "123456"
 }
 
-# "crm": "7673-CE",
-# "password": "123456"
-# "crm": "11014-CE",
-# "password": "12345678"
+###
+
+POST http://localhost:3333/auth/operator
+Content-Type: application/json
+
+{
+  "username": "breno.castro",
+  "password": "123456"
+}

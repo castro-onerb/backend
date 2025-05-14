@@ -3,6 +3,7 @@ import { CRM } from '@/core/object-values/crm';
 import { MedicalAuthenticateUseCase } from '@/domain/professional/app/use-cases/authenticate-medical/authenticate-medical.use-case';
 import { ZodValidationPipe } from '@/infra/http/pipes/zod-validation.pipe';
 import { Body, Controller, Post, UsePipes } from '@nestjs/common';
+import { JwtService } from '@nestjs/jwt';
 import { z } from 'zod';
 
 const schemaBodyRequest = z.object({
@@ -14,6 +15,7 @@ const schemaBodyRequest = z.object({
 export class MedicalAuthenticateController {
   constructor(
     private readonly authenticateUseCase: MedicalAuthenticateUseCase,
+    private readonly jwt: JwtService,
   ) {}
 
   @Post('medical')
@@ -36,8 +38,10 @@ export class MedicalAuthenticateController {
       return mapDomainErrorToHttp(result.value);
     }
 
+    const token = this.jwt.sign({ sub: result.value.medical.id });
+
     return {
-      result,
+      token,
     };
   }
 }

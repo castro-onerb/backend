@@ -12,6 +12,8 @@ import { Medical } from '@/domain/professional/enterprise/entities/medical.entit
 import { ResourceNotFoundError } from '@/core/errors/resource-not-found.error';
 import { CRM } from '@/core/object-values/crm';
 import { UniqueID } from '@/core/object-values/unique-id';
+import { DatabaseUnavailableError } from '@/core/errors/database-unavailable.error';
+import { MedicalRawResult } from '@/domain/professional/enterprise/@types/raw.medical';
 
 type MedicalAuthenticateUseCaseResponse = Either<
   UnauthorizedException | ResourceNotFoundError,
@@ -29,7 +31,13 @@ export class MedicalAuthenticateUseCase {
     crm,
     password,
   }: MedicalAuthenticateUseCaseRequest): Promise<MedicalAuthenticateUseCaseResponse> {
-    const listMedical = await this.medicalRepository.findByCrm(crm);
+    let listMedical: MedicalRawResult[] | null;
+
+    try {
+      listMedical = await this.medicalRepository.findByCrm(crm);
+    } catch {
+      return left(new DatabaseUnavailableError());
+    }
 
     if (!listMedical || listMedical.length === 0) {
       return left(
