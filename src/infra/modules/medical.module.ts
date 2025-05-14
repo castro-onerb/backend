@@ -4,6 +4,7 @@ import { MedicalAuthenticateController } from '../http/controllers/auth/medical/
 import { PrismaMedicalRepository } from '../database/prisma/clinicas/repositories/medical.repository';
 import { PrismaClinicasService } from '../database/prisma/clinicas/prisma-clinicas.service';
 import { Md5Hasher } from '../cryptography/md5-hasher';
+import { TokenService } from '@/core/auth/auth.service';
 
 const MEDICAL_REPOSITORY = 'IMedicalRepository';
 
@@ -25,6 +26,7 @@ const MEDICAL_REPOSITORY = 'IMedicalRepository';
         new PrismaMedicalRepository(prismaService),
       inject: [PrismaClinicasService],
     },
+    TokenService,
   ],
 })
 export class MedicalModule {}

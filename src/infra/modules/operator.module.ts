@@ -4,6 +4,7 @@ import { OperatorAuthenticateController } from '../http/controllers/auth/operato
 import { PrismaOperatorRepository } from '../database/prisma/clinicas/repositories/operator.repository';
 import { PrismaClinicasService } from '../database/prisma/clinicas/prisma-clinicas.service';
 import { Md5Hasher } from '../cryptography/md5-hasher';
+import { TokenService } from '@/core/auth/auth.service';
 
 const OPERATOR_REPOSITORY = 'IOperatorRepository';
 
@@ -25,6 +26,7 @@ const OPERATOR_REPOSITORY = 'IOperatorRepository';
         new PrismaOperatorRepository(prismaService),
       inject: [PrismaClinicasService],
     },
+    TokenService,
   ],
 })
 export class OperatorModule {}

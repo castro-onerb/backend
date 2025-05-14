@@ -1,9 +1,10 @@
+import { TokenService } from '@/core/auth/auth.service';
 import { mapDomainErrorToHttp } from '@/core/errors/map-domain-errors-http';
 import { CRM } from '@/core/object-values/crm';
 import { MedicalAuthenticateUseCase } from '@/domain/professional/app/use-cases/authenticate-medical/authenticate-medical.use-case';
 import { ZodValidationPipe } from '@/infra/http/pipes/zod-validation.pipe';
-import { Body, Controller, Post, UsePipes } from '@nestjs/common';
-import { JwtService } from '@nestjs/jwt';
+import { Body, Controller, Post, Res, UsePipes } from '@nestjs/common';
+import { Response } from 'express';
 import { z } from 'zod';
 
 const schemaBodyRequest = z.object({
@@ -15,12 +16,15 @@ const schemaBodyRequest = z.object({
 export class MedicalAuthenticateController {
   constructor(
     private readonly authenticateUseCase: MedicalAuthenticateUseCase,
-    private readonly jwt: JwtService,
+    private readonly tokenService: TokenService,
   ) {}
 
   @Post('medical')
   @UsePipes(new ZodValidationPipe(schemaBodyRequest))
-  async login(@Body() body: { crm: string; password: string }) {
+  async login(
+    @Body() body: { crm: string; password: string },
+    @Res({ passthrough: true }) res: Response,
+  ) {
     const { crm, password } = body;
 
     const crmValid = CRM.create(crm);
@@ -38,10 +42,25 @@ export class MedicalAuthenticateController {
       return mapDomainErrorToHttp(result.value);
     }
 
-    const token = this.jwt.sign({ sub: result.value.medical.id });
+    const medicalId = result.value.medical.id;
+    const accessToken = this.tokenService.generateAccessToken({
+      sub: medicalId,
+    });
+    const refreshToken = this.tokenService.generateRefreshToken({
+      sub: medicalId,
+    });
+
+    res.cookie('refresh_token', refreshToken, {
+      httpOnly: true,
+      secure: true,
+      sameSite: 'strict',
+      maxAge: 7 * 24 * 60 * 60 * 1000, // 7 dias
+      path: '/auth/refresh-token',
+    });
 
     return {
-      token,
+      access_token: accessToken,
+      refresh_token: refreshToken,
     };
   }
 }

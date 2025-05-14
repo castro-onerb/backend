@@ -13,5 +13,10 @@ Content-Type: application/json
 
 {
   "username": "breno.castro",
-  "password": "123456"
+  "password": "92363893"
 }
+
+###
+
+GET http://localhost:3333/
+Authorization: Bearer eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI1ODcwMCIsImlhdCI6MTc0NzIyNTcwOCwiZXhwIjoxNzQ3ODMwNTA4fQ.crI_YJijGLjSTkrIY4tN5iLjUQgzWto-NCiPJhaI8P2R9-zvx4wPdSgRyzkF-OkDAk0scTvqcq-dpQIhohHK7Qaigg1D9GlzEObePCPXldzJNN6KVbqHojDmsEbKxg_ROUITDUrZjsYyiPdr2N-ol5G2mFLisNHH4CuPe2jQAvikmrf91sVZJ79TLwwR_erztsNSlAt5vtz5lSZ-vNzR83RgLALM1XAQVz4i_litoO0-MGYTMvbcWvI3-nlbv69u0iQcS9rKy_vu2IRbB1rHXJ5FuAD8Ry2PXgjtAr_TsSDktdha9FL7tPXATWHVRXQdqv6pMJWEyq7eToONuwsrZQ
