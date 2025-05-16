@@ -9,7 +9,7 @@ import {
 import { Response } from 'express';
 
 @Controller('auth')
-export class AuthController {
+export class TokenController {
   constructor(private readonly tokenService: TokenService) {}
 
   @Post('refresh-token')

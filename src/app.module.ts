@@ -6,6 +6,8 @@ import { AuthModule } from './core/auth/auth.module';
 import { EnvModule } from './infra/env/env.module';
 import { DatabaseModule } from './infra/database/database.module';
 import { OperatorModule } from './infra/modules/operator.module';
+import { AdaptersModule } from './infra/adapters/adapters.module';
+import { AuthHttpModule } from './infra/modules/auth-http.module';
 
 @Module({
   imports: [
@@ -13,7 +15,9 @@ import { OperatorModule } from './infra/modules/operator.module';
     OperatorModule,
     EnvModule,
     AuthModule,
+    AuthHttpModule,
     DatabaseModule,
+    AdaptersModule,
   ],
   controllers: [AppController],
   providers: [AppService],
