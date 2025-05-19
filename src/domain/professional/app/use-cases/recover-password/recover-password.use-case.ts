@@ -52,7 +52,7 @@ export class RecoverPasswordUseCase {
     await this.mail.send({
       to: email,
       subject: 'Deovita - Recuperação de senha',
-      template: 'recover-password',
+      template: 'auth/recover-password',
       context: { name, code },
     });
 

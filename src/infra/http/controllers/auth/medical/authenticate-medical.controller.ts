@@ -1,10 +1,11 @@
+import { IpLocationService } from '@/core/services/ip-location.service';
 import { TokenService } from '@/core/auth/auth.service';
 import { mapDomainErrorToHttp } from '@/core/errors/map-domain-errors-http';
 import { CRM } from '@/core/object-values/crm';
 import { MedicalAuthenticateUseCase } from '@/domain/professional/app/use-cases/authenticate-medical/authenticate-medical.use-case';
 import { ZodValidationPipe } from '@/infra/http/pipes/zod-validation.pipe';
-import { Body, Controller, Post, Res, UsePipes } from '@nestjs/common';
-import { Response } from 'express';
+import { Body, Controller, Post, Req, Res, UsePipes } from '@nestjs/common';
+import { Request, Response } from 'express';
 import { z } from 'zod';
 
 const schemaBodyRequest = z.object({
@@ -17,12 +18,14 @@ export class MedicalAuthenticateController {
   constructor(
     private readonly authenticateUseCase: MedicalAuthenticateUseCase,
     private readonly tokenService: TokenService,
+    private readonly ipLocationService: IpLocationService,
   ) {}
 
   @Post('medical')
   @UsePipes(new ZodValidationPipe(schemaBodyRequest))
   async login(
     @Body() body: { crm: string; password: string },
+    @Req() req: Request, // adicione o Request
     @Res({ passthrough: true }) res: Response,
   ) {
     const { crm, password } = body;
@@ -40,6 +43,19 @@ export class MedicalAuthenticateController {
 
     if (result.isLeft()) {
       return mapDomainErrorToHttp(result.value);
+    }
+
+    const ip =
+      (req.headers['x-forwarded-for'] as string)?.split(',')[0].trim() ||
+      req.socket.remoteAddress ||
+      req.ip;
+
+    if (ip) {
+      try {
+        const location = await this.ipLocationService.lookup(ip);
+      } catch (err) {
+        console.warn('Não foi possível localizar IP:', err.message);
+      }
     }
 
     const medicalId = result.value.medical.id;

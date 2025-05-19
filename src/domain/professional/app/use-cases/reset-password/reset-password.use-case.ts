@@ -53,8 +53,8 @@ export class ResetPasswordUseCase {
 
       await this.mail.send({
         to: email,
-        subject: 'Deovita - Tentativa de Redefinição',
-        template: 'alert-recover-password',
+        subject: 'Deovita - Alerta de Segurança',
+        template: 'auth/alert-recover-password',
         context: { redirect_url, email },
       });
 
@@ -78,8 +78,8 @@ export class ResetPasswordUseCase {
 
     await this.mail.send({
       to: email,
-      subject: 'Deovita - Confirmação de senha',
-      template: 'confirm-recover-password',
+      subject: 'Deovita - Senha redefinida',
+      template: 'auth/confirm-recover-password',
       context: { code },
     });
 

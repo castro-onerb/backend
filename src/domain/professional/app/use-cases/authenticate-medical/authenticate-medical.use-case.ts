@@ -14,6 +14,7 @@ import { CRM } from '@/core/object-values/crm';
 import { UniqueID } from '@/core/object-values/unique-id';
 import { DatabaseUnavailableError } from '@/core/errors/database-unavailable.error';
 import { MedicalRawResult } from '@/domain/professional/enterprise/@types/raw.medical';
+import { MailEntity } from '@/core/entities/mail.entity';
 
 type MedicalAuthenticateUseCaseResponse = Either<
   UnauthorizedException | ResourceNotFoundError,
@@ -25,6 +26,7 @@ export class MedicalAuthenticateUseCase {
   constructor(
     @Inject('IMedicalRepository') private medicalRepository: IMedicalRepository,
     @Inject('Hasher') private readonly hasher: Hasher,
+    private readonly mail: MailEntity,
   ) {}
 
   async execute({
