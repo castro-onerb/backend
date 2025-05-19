@@ -27,5 +27,15 @@ POST http://localhost:3333/auth/recovery
 Content-Type: application/json
 
 {
-  "email": "breno.castro@deovita.com.br"
+  "email": "reinam.sharles@deovita.com.br"
+}
+###
+
+POST http://localhost:3333/auth/reset
+Content-Type: application/json
+
+{
+  "email": "reinam.sharles@deovita.com.br",
+  "code": "1UL9DI",
+  "password": "SHARles2003!"
 }

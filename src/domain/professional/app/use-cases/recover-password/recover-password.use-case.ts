@@ -3,8 +3,9 @@ import { Inject, Injectable, UnauthorizedException } from '@nestjs/common';
 import { RecoverPasswordUseCaseRequest } from './dto';
 import { left, right } from '@/core/either';
 import { ResourceNotFoundError } from '@/core/errors/resource-not-found.error';
-import { IRecoveryPasswordRepository } from '@/infra/database/prisma/repositories/@types/interface-recovery-password';
 import { MailEntity } from '@/core/entities/mail.entity';
+import { formatName } from '@/core/utils/format-name';
+import { IRecoveryPasswordRepository } from '../../repositories/interface-recovery-password';
 
 @Injectable()
 export class RecoverPasswordUseCase {
@@ -13,7 +14,7 @@ export class RecoverPasswordUseCase {
     private readonly operatorRepository: IOperatorRepository,
 
     @Inject('IRecoveryPasswordRepository')
-    private readonly recoverypasswordrepository: IRecoveryPasswordRepository,
+    private readonly recoveryPasswordRepository: IRecoveryPasswordRepository,
 
     private readonly mail: MailEntity,
   ) {}
@@ -22,7 +23,9 @@ export class RecoverPasswordUseCase {
     const operator = await this.operatorRepository.findByEmail(email);
 
     if (!operator || operator.length === 0) {
-      return left(new ResourceNotFoundError());
+      return left(
+        new ResourceNotFoundError('Não encontramos acesso a esse email.'),
+      );
     }
 
     if (operator.length > 1) {
@@ -37,18 +40,20 @@ export class RecoverPasswordUseCase {
 
     const code = this.generateCode();
 
-    await this.recoverypasswordrepository.save({
+    await this.recoveryPasswordRepository.save({
       userId: user.id,
       email,
       code,
-      expiresAt: new Date(Date.now() + 10 * 60 * 1000),
+      expiresAt: new Date(Date.now() + 1000 * 60 * 5), // 5 minutos
     });
+
+    const { name } = formatName(user.fullname);
 
     await this.mail.send({
       to: email,
-      subject: 'Recuperação de senha',
-      template: 'recouver-password',
-      context: { name: user.fullname, code },
+      subject: 'Deovita - Recuperação de senha',
+      template: 'recover-password',
+      context: { name, code },
     });
 
     return right({ success: true });

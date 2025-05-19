@@ -4,13 +4,25 @@ import { TokenService } from '@/core/auth/auth.service';
 import { RecoverPasswordUseCase } from '@/domain/professional/app/use-cases/recover-password/recover-password.use-case';
 import { PrismaService } from '../database/prisma/prisma.service';
 import { PrismaRecoveryPasswordRepository } from '../database/prisma/repositories/recovery-password.repository';
-import { AdaptersModule } from '@/infra/adapters/adapters.module'; // <- importe aqui
+import { AdaptersModule } from '@/infra/adapters/adapters.module';
 import { PrismaOperatorRepository } from '../database/prisma/clinicas/repositories/operator.repository';
 import { RecoveryPasswordController } from '../http/controllers/auth/recovery-password.controller';
+import { ResetPasswordUseCase } from '@/domain/professional/app/use-cases/reset-password/reset-password.use-case';
+import { ResetPasswordController } from '../http/controllers/auth/reset-password.controller';
+import { Md5Hasher } from '../cryptography/md5-hasher';
+import { AuthLogoutController } from '../http/controllers/auth/authenticate-logout.controller';
+import { InvalidateCodeRecoverController } from '../http/controllers/auth/invalidate-recoveries.controller';
+import { InvalidateCodeRecoverUseCase } from '@/domain/professional/app/use-cases/invalidate-code-recover/invalidate-code-recover.use-case';
 
 @Module({
   imports: [AdaptersModule],
-  controllers: [RecoveryPasswordController, TokenController],
+  controllers: [
+    RecoveryPasswordController,
+    ResetPasswordController,
+    TokenController,
+    AuthLogoutController,
+    InvalidateCodeRecoverController,
+  ],
   providers: [
     PrismaService,
     TokenService,
@@ -19,10 +31,16 @@ import { RecoveryPasswordController } from '../http/controllers/auth/recovery-pa
       useClass: PrismaRecoveryPasswordRepository,
     },
     {
+      provide: 'Hasher',
+      useClass: Md5Hasher,
+    },
+    {
       provide: 'IOperatorRepository',
       useClass: PrismaOperatorRepository,
     },
     RecoverPasswordUseCase,
+    ResetPasswordUseCase,
+    InvalidateCodeRecoverUseCase,
   ],
 })
 export class AuthHttpModule {}

@@ -4,7 +4,7 @@ import { Hasher } from '@/core/cryptography/hasher';
 import { MedicalAuthenticateUseCase } from './authenticate-medical.use-case';
 import { CRM } from '@/core/object-values/crm';
 import { ResourceNotFoundError } from '@/core/errors/resource-not-found.error';
-import { InMemoryMedicalRepository } from 'test/memory/repositories/medical.repository';
+import { InMemoryMedicalRepository } from 'test/memory/repositories/clinicas/medical.repository';
 import { UnauthorizedException } from '@nestjs/common';
 
 describe('Authenticate Medical Use Case', () => {

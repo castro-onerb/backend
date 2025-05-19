@@ -3,7 +3,7 @@ import { Mocked } from 'vitest';
 import { Hasher } from '@/core/cryptography/hasher';
 import { OperatorAuthenticateUseCase } from './authenticate-operator.use-case';
 import { ResourceNotFoundError } from '@/core/errors/resource-not-found.error';
-import { InMemoryOperatorRepository } from 'test/memory/repositories/operator.repository';
+import { InMemoryOperatorRepository } from 'test/memory/repositories/clinicas/operator.repository';
 import { UnauthorizedException } from '@nestjs/common';
 
 describe('Authenticate Operator Use Case', () => {
