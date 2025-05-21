@@ -41,8 +41,9 @@ export class InvalidateCodeRecoverUseCase {
 
     if (username) {
       const result = await this.resolveOperatorId(username);
-      if (result.isLeft())
-        return left(new NotFoundException(result.value.message));
+      if (result.isLeft()) {
+        return left(result.value);
+      }
       operatorId = result.value;
     }
 
@@ -55,7 +56,7 @@ export class InvalidateCodeRecoverUseCase {
     if (!result) {
       return left(
         new InternalServerErrorException(
-          `Não existe nenhum código para desativar para o email ${email}.`,
+          `Não existe nenhum código para desativar para este usuário.`,
         ),
       );
     }

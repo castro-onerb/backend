@@ -1,8 +1,12 @@
 import { IOperatorRepository } from '@/domain/professional/app/repositories/operator.repository';
-import { Inject, Injectable, UnauthorizedException } from '@nestjs/common';
+import {
+  Inject,
+  Injectable,
+  NotFoundException,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { RecoverPasswordUseCaseRequest } from './dto';
-import { left, right } from '@/core/either';
-import { ResourceNotFoundError } from '@/core/errors/resource-not-found.error';
+import { Either, left, right } from '@/core/either';
 import { MailEntity } from '@/core/entities/mail.entity';
 import { formatName } from '@/core/utils/format-name';
 import { IRecoveryPasswordRepository } from '../../repositories/recovery-password.repository';
@@ -19,12 +23,16 @@ export class RecoverPasswordUseCase {
     private readonly mail: MailEntity,
   ) {}
 
-  async execute({ email }: RecoverPasswordUseCaseRequest) {
+  async execute({
+    email,
+  }: RecoverPasswordUseCaseRequest): Promise<
+    Either<NotFoundException | UnauthorizedException, { success: true }>
+  > {
     const operator = await this.operatorRepository.findByEmail(email);
 
     if (!operator || operator.length === 0) {
       return left(
-        new ResourceNotFoundError('Não encontramos acesso a esse email.'),
+        new NotFoundException('Não encontramos acesso a esse email.'),
       );
     }
 

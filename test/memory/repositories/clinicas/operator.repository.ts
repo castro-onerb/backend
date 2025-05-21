@@ -3,8 +3,11 @@ import { OperatorRawResult } from '@/domain/professional/enterprise/@types/raw.o
 import { faker } from '@faker-js/faker';
 
 export class InMemoryOperatorRepository implements IOperatorRepository {
+  operators: OperatorRawResult[] = [];
+
   findByEmail(email: string): Promise<OperatorRawResult[] | null> {
-    throw new Error('Method not implemented.');
+    const operator = this.operators.filter((item) => item.email === email);
+    return Promise.resolve(operator ?? null);
   }
 
   updatePassword(
@@ -13,7 +16,6 @@ export class InMemoryOperatorRepository implements IOperatorRepository {
   ): Promise<boolean> {
     throw new Error('Method not implemented.');
   }
-  operators: OperatorRawResult[] = [];
 
   findByUsername(username: string): Promise<OperatorRawResult[] | null> {
     const operator = this.operators.filter(
@@ -37,5 +39,9 @@ export class InMemoryOperatorRepository implements IOperatorRepository {
 
     this.operators.push(operator);
     return operator;
+  }
+
+  clear() {
+    this.operators = [];
   }
 }

@@ -1,8 +1,12 @@
 import { IOperatorRepository } from '@/domain/professional/app/repositories/operator.repository';
-import { Inject, Injectable, UnauthorizedException } from '@nestjs/common';
+import {
+  Inject,
+  Injectable,
+  NotFoundException,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { ResetPasswordUseCaseRequest } from './dto';
-import { left, right } from '@/core/either';
-import { ResourceNotFoundError } from '@/core/errors/resource-not-found.error';
+import { Either, left, right } from '@/core/either';
 import { MailEntity } from '@/core/entities/mail.entity';
 import { IRecoveryPasswordRepository } from '../../repositories/recovery-password.repository';
 import { Hasher } from '@/core/cryptography/hasher';
@@ -26,7 +30,13 @@ export class ResetPasswordUseCase {
     private readonly mail: MailEntity,
   ) {}
 
-  async execute({ email, code, password }: ResetPasswordUseCaseRequest) {
+  async execute({
+    email,
+    code,
+    password,
+  }: ResetPasswordUseCaseRequest): Promise<
+    Either<UnauthorizedException | NotFoundException, { success: true }>
+  > {
     const lastUsed = await this.passwordRepository.findLastUsedCode(email);
 
     if (lastUsed) {
@@ -59,7 +69,7 @@ export class ResetPasswordUseCase {
       });
 
       return left(
-        new ResourceNotFoundError(
+        new NotFoundException(
           'Não conseguimos identificar o código fornecido.',
         ),
       );

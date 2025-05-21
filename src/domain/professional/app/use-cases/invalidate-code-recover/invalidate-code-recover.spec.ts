@@ -1,9 +1,12 @@
 import { InMemoryRecoveryPasswordRepository } from 'test/memory/repositories/prontuario/recovery-password.repository';
 import { InvalidateCodeRecoverUseCase } from './invalidate-code-recover.use-case';
 import { InMemoryOperatorRepository } from 'test/memory/repositories/clinicas/operator.repository';
-import { BadRequestException, NotFoundException } from '@nestjs/common';
-import { makeOperator } from 'test/factories/clinicas/make-operator';
-import { left } from '@/core/either';
+import {
+  BadRequestException,
+  ConflictException,
+  InternalServerErrorException,
+  NotFoundException,
+} from '@nestjs/common';
 
 describe('InvalidateCodeRecoverUseCase', () => {
   let useCase: InvalidateCodeRecoverUseCase;
@@ -36,43 +39,117 @@ describe('InvalidateCodeRecoverUseCase', () => {
   });
 
   it('should return NotFoundException if username not found', async () => {
-    const spy = vi
-      .spyOn(operatorRepository, 'findByUsername')
-      .mockResolvedValue(null);
-
-    const operator = makeOperator({
+    operatorRepository.operators.push({
+      id: 'user-01',
+      fullname: 'Jon Doe',
+      cpf: '12345678910',
       username: 'jon.doe',
       email: 'jondoe@example.com',
+      password: '123456',
+      type: 4,
+      active: true,
     });
 
-    if (operator.isLeft()) {
-      return left(
-        new BadRequestException('Erro ao criar instância do operador'),
-      );
+    const result = await useCase.execute({
+      email: undefined,
+      username: 'jane.doe',
+    });
+
+    expect(result.isLeft()).toBe(true);
+    expect(result.value).toBeInstanceOf(NotFoundException);
+    if (result.isLeft()) {
+      expect(result.value.message).toMatch(/Usuário não encontrado/i);
     }
+  });
 
-    const newOperator = {
-      ...operator.value,
-      id: operator.value.id.toString(),
-    };
+  it('should return ConflictException if multiple users with the same username are found', async () => {
+    operatorRepository.operators.push({
+      id: 'user-01',
+      fullname: 'Jon Doe',
+      cpf: '12345678910',
+      username: 'jon.doe',
+      email: 'jondoe@example.com',
+      password: '123456',
+      type: 4,
+      active: true,
+    });
 
-    const operacao = operatorRepository.save(newOperator);
-
-    console.log(newOperator);
-    console.log(operatorRepository.operators);
+    operatorRepository.operators.push({
+      id: 'user-02',
+      fullname: 'Jon Doe Silva',
+      cpf: '12345678910',
+      username: 'jon.doe',
+      email: 'jondoe@example.com',
+      password: '123456',
+      type: 4,
+      active: true,
+    });
 
     const result = await useCase.execute({
       email: undefined,
       username: 'jon.doe',
     });
 
-    console.log(result);
-
-    expect(spy).toHaveBeenCalledWith('jon.doe');
     expect(result.isLeft()).toBe(true);
-    expect(result.value).toBeInstanceOf(NotFoundException);
+    expect(result.value).toBeInstanceOf(ConflictException);
     if (result.isLeft()) {
-      expect(result.value.message).toMatch(/Erro ao buscar operador/i);
+      expect(result.value.message).toMatch(
+        /Mais de um operador com este usuário/i,
+      );
     }
+  });
+
+  it('should return InternalServerErrorException if operator is null', async () => {
+    operatorRepository.operators.push({
+      id: 'user-01',
+      fullname: 'Jon Doe',
+      cpf: '12345678910',
+      username: 'jon.doe',
+      email: 'jondoe@example.com',
+      password: '123456',
+      type: 4,
+      active: true,
+    });
+
+    const result = await useCase.execute({
+      email: undefined,
+      username: 'jon.doe',
+    });
+
+    expect(result.isLeft()).toBe(true);
+    expect(result.value).toBeInstanceOf(InternalServerErrorException);
+    if (result.isLeft()) {
+      expect(result.value.message).toMatch(
+        /Não existe nenhum código para desativar/i,
+      );
+    }
+  });
+
+  it('should be able invalidate code recovery password', async () => {
+    operatorRepository.operators.push({
+      id: 'user-01',
+      fullname: 'Jon Doe',
+      cpf: '12345678910',
+      username: 'jon.doe',
+      email: 'jondoe@example.com',
+      password: '123456',
+      type: 4,
+      active: true,
+    });
+
+    await passwordRepository.save({
+      code: 'K5MG8H',
+      userId: 'user-01',
+      email: 'jondoe@example.com',
+      expiresAt: new Date(),
+    });
+
+    const result = await useCase.execute({
+      email: undefined,
+      username: 'jon.doe',
+    });
+
+    expect(result.isRight()).toBe(true);
+    expect(result.value).toEqual(expect.objectContaining({ success: true }));
   });
 });

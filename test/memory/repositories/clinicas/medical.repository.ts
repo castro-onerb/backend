@@ -28,4 +28,8 @@ export class InMemoryMedicalRepository implements IMedicalRepository {
     this.medicals.push(medical);
     return medical;
   }
+
+  clear() {
+    this.medicals = [];
+  }
 }

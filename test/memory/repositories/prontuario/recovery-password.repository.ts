@@ -7,7 +7,7 @@ import {
 export class InMemoryRecoveryPasswordRepository
   implements IRecoveryPasswordRepository
 {
-  private recoveryRequests: (IRecoveryPasswordRequest & {
+  recoveryRequests: (IRecoveryPasswordRequest & {
     id: string;
     used: boolean;
     createdAt: Date;
@@ -75,5 +75,9 @@ export class InMemoryRecoveryPasswordRepository
       }
     }
     return Promise.resolve(null);
+  }
+
+  clear() {
+    this.recoveryRequests = [];
   }
 }
