@@ -5,12 +5,15 @@ import { PrismaOperatorRepository } from '../database/prisma/clinicas/repositori
 import { PrismaClinicasService } from '../database/prisma/clinicas/prisma-clinicas.service';
 import { Md5Hasher } from '../cryptography/md5-hasher';
 import { TokenService } from '@/core/auth/auth.service';
+import { NodemailerService } from '../adapters/mail/nodemailer.service';
+import { IpLocationService } from '@/core/services/ip-location.service';
 
 const OPERATOR_REPOSITORY = 'IOperatorRepository';
 
 @Module({
   controllers: [OperatorAuthenticateController],
   providers: [
+    IpLocationService,
     OperatorAuthenticateUseCase,
     {
       provide: OPERATOR_REPOSITORY,
@@ -19,6 +22,10 @@ const OPERATOR_REPOSITORY = 'IOperatorRepository';
     {
       provide: 'Hasher',
       useClass: Md5Hasher,
+    },
+    {
+      provide: 'MailEntity',
+      useClass: NodemailerService,
     },
     {
       provide: OPERATOR_REPOSITORY,

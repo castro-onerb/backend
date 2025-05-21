@@ -5,7 +5,7 @@ import { left, right } from '@/core/either';
 import { ResourceNotFoundError } from '@/core/errors/resource-not-found.error';
 import { MailEntity } from '@/core/entities/mail.entity';
 import { formatName } from '@/core/utils/format-name';
-import { IRecoveryPasswordRepository } from '../../repositories/interface-recovery-password';
+import { IRecoveryPasswordRepository } from '../../repositories/recovery-password.repository';
 
 @Injectable()
 export class RecoverPasswordUseCase {

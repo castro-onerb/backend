@@ -5,6 +5,7 @@ import { Hasher } from 'src/core/cryptography/hasher';
 import { Either, left, right } from '@/core/either';
 import { BadRequestException } from '@nestjs/common';
 import { OperatorEntityType } from '../@types/operator';
+import { OperatorRawResult } from '../@types/raw.operator';
 
 export type OperatorEntityResponse = Either<BadRequestException, Operator>;
 
@@ -51,6 +52,19 @@ export class Operator extends Person<OperatorEntityType> {
       name: this.props.name,
       username: this.props.username,
       email: this.props.email,
+    };
+  }
+
+  toRaw(): OperatorRawResult {
+    return {
+      id: this.id.toString(),
+      fullname: this.props.name,
+      cpf: this.props.cpf,
+      email: this.props.email,
+      username: this.props.username,
+      password: this.props.password,
+      type: 4,
+      active: true,
     };
   }
 }

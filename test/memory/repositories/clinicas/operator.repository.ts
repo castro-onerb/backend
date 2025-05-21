@@ -3,6 +3,16 @@ import { OperatorRawResult } from '@/domain/professional/enterprise/@types/raw.o
 import { faker } from '@faker-js/faker';
 
 export class InMemoryOperatorRepository implements IOperatorRepository {
+  findByEmail(email: string): Promise<OperatorRawResult[] | null> {
+    throw new Error('Method not implemented.');
+  }
+
+  updatePassword(
+    props: { username?: string; email?: string },
+    password?: string,
+  ): Promise<boolean> {
+    throw new Error('Method not implemented.');
+  }
   operators: OperatorRawResult[] = [];
 
   findByUsername(username: string): Promise<OperatorRawResult[] | null> {

@@ -7,7 +7,7 @@ import {
   InternalServerErrorException,
   NotFoundException,
 } from '@nestjs/common';
-import { IRecoveryPasswordRepository } from '../../repositories/interface-recovery-password';
+import { IRecoveryPasswordRepository } from '../../repositories/recovery-password.repository';
 import {
   InvalidateCodeRecoverUseCaseRequest,
   InvalidateCodeRecoverUseCaseResponse,

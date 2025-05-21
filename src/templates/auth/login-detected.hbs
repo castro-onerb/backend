@@ -20,6 +20,16 @@
         box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
       }
 
+      .box {
+        padding: 12px;
+        border: 1.5px solid #888;
+        border-radius: 6px;
+        text-align: center;
+        font-weight: 600;
+        color: #555;
+        font-size: 24px;
+      }
+
       .title {
         font-size: 24px;
         font-weight: bold;
@@ -67,13 +77,15 @@
     <div class="container">
       <div class="title">Nova atividade de login</div>
       <div class="text">
-        <p class="text">Detectamos um novo login na sua Conta Deovita. Se foi você que fez isso, nenhuma ação é necessária 🌝. Se não foi você, ajudaremos a proteger sua conta.</p>
+        <p class="text">Detectamos um novo login na sua Conta Deovita. Se foi você que fez isso, nenhuma ação é necessária 🌝.</p>
         <p class="text"></p>
       </div>
 
-      <div>
-        <a class="button" target="_blank" href="{{redirect_url}}/invalidate-codes?email={{email}}">Não fui eu</a>
+      {{#if city}}
+      <div class="box">
+        Login em {{city}}/{{region}}
       </div>
+      {{/if}}
 
       <div class="footer">
         <p class="text">Atenciosamente,</p>

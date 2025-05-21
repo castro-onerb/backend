@@ -15,7 +15,8 @@ export class IpLocationService {
 
     return new IpLocation({
       country: data.country,
-      region: data.regionName,
+      region: data.region,
+      regionName: data.regionName,
       city: data.city,
       lat: data.lat,
       lon: data.lon,

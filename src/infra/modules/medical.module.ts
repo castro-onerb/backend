@@ -5,12 +5,15 @@ import { PrismaMedicalRepository } from '../database/prisma/clinicas/repositorie
 import { PrismaClinicasService } from '../database/prisma/clinicas/prisma-clinicas.service';
 import { Md5Hasher } from '../cryptography/md5-hasher';
 import { TokenService } from '@/core/auth/auth.service';
+import { IpLocationService } from '@/core/services/ip-location.service';
+import { NodemailerService } from '../adapters/mail/nodemailer.service';
 
 const MEDICAL_REPOSITORY = 'IMedicalRepository';
 
 @Module({
   controllers: [MedicalAuthenticateController],
   providers: [
+    IpLocationService,
     MedicalAuthenticateUseCase,
     {
       provide: MEDICAL_REPOSITORY,
@@ -19,6 +22,10 @@ const MEDICAL_REPOSITORY = 'IMedicalRepository';
     {
       provide: 'Hasher',
       useClass: Md5Hasher,
+    },
+    {
+      provide: 'MailEntity',
+      useClass: NodemailerService,
     },
     {
       provide: MEDICAL_REPOSITORY,

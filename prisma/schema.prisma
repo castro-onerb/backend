@@ -18,3 +18,18 @@ model PasswordRecovery {
 
   @@map("passwords_recoveries")
 }
+
+model ActiveSession {
+  id         String   @id @default(uuid())
+  userId     String   @map("user_id")
+  token      String   @unique
+  ip         String?
+  device     String?
+  latitude   String?
+  longitude  String?
+  isActive   Boolean  @default(true)
+  createdAt  DateTime @default(now()) @map("created_at")
+  lastSeenAt DateTime @updatedAt @map("last_seen_at")
+
+  @@map("active_sessions")
+}

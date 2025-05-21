@@ -38,6 +38,7 @@ export function mapDomainErrorToHttp(error: unknown) {
       hasMessage(error) ? error.message : undefined,
     );
   }
+  console.log(error);
 
   throw new BadRequestException(
     hasMessage(error) ? error.message : 'Erro de negócio.',

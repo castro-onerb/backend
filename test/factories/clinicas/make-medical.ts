@@ -8,12 +8,20 @@ import { Md5Hasher } from 'src/infra/cryptography/md5-hasher';
 export function makeMedical(
   override: Partial<ConstructorParameters<typeof Medical>[0]> = {},
 ) {
+  const crm = CRM.create('123456-UF');
+
+  if (crm.isLeft()) {
+    throw new Error('Não conseguimos criar um CRM válido');
+  }
+
   return Medical.create(
     {
       name: faker.person.fullName(),
-      crm: new CRM('123456/UF'),
+      crm: crm.value,
       password: new Md5Hasher().hash('123456'),
+      email: faker.internet.email(),
       cpf: '96227468100',
+      username: faker.internet.username(),
       ...override,
     },
     new UniqueID(),

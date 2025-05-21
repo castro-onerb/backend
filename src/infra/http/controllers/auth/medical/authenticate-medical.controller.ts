@@ -4,9 +4,19 @@ import { mapDomainErrorToHttp } from '@/core/errors/map-domain-errors-http';
 import { CRM } from '@/core/object-values/crm';
 import { MedicalAuthenticateUseCase } from '@/domain/professional/app/use-cases/authenticate-medical/authenticate-medical.use-case';
 import { ZodValidationPipe } from '@/infra/http/pipes/zod-validation.pipe';
-import { Body, Controller, Post, Req, Res, UsePipes } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Inject,
+  Post,
+  Req,
+  Res,
+  UsePipes,
+} from '@nestjs/common';
 import { Request, Response } from 'express';
 import { z } from 'zod';
+import { MailEntity } from '@/core/entities/mail.entity';
+import { IpLocation } from '@/core/object-values/ip-location';
 
 const schemaBodyRequest = z.object({
   crm: z.string(),
@@ -19,13 +29,14 @@ export class MedicalAuthenticateController {
     private readonly authenticateUseCase: MedicalAuthenticateUseCase,
     private readonly tokenService: TokenService,
     private readonly ipLocationService: IpLocationService,
+    @Inject('MailEntity') private readonly mail: MailEntity,
   ) {}
 
   @Post('medical')
   @UsePipes(new ZodValidationPipe(schemaBodyRequest))
   async login(
     @Body() body: { crm: string; password: string },
-    @Req() req: Request, // adicione o Request
+    @Req() req: Request,
     @Res({ passthrough: true }) res: Response,
   ) {
     const { crm, password } = body;
@@ -45,18 +56,14 @@ export class MedicalAuthenticateController {
       return mapDomainErrorToHttp(result.value);
     }
 
-    const ip =
+    const rawIp =
       (req.headers['x-forwarded-for'] as string)?.split(',')[0].trim() ||
       req.socket.remoteAddress ||
       req.ip;
 
-    if (ip) {
-      try {
-        const location = await this.ipLocationService.lookup(ip);
-      } catch (err) {
-        console.warn('Não foi possível localizar IP:', err.message);
-      }
-    }
+    const ip =
+      rawIp === '::1' || rawIp === '127.0.0.1' ? '206.42.45.142' : rawIp;
+    let locationObject: IpLocation | null = null;
 
     const medicalId = result.value.medical.id;
     const accessToken = this.tokenService.generateAccessToken({
@@ -64,6 +71,37 @@ export class MedicalAuthenticateController {
     });
     const refreshToken = this.tokenService.generateRefreshToken({
       sub: medicalId,
+    });
+
+    const email = result.value.medical.email;
+
+    if (ip) {
+      try {
+        locationObject = await this.ipLocationService.lookup(ip);
+      } catch (err) {
+        if (err instanceof Error) {
+          console.warn('Não foi possível localizar IP:', err.message);
+        } else {
+          console.warn('Não foi possível localizar IP:', err);
+        }
+      }
+    }
+
+    let context: Record<string, any> = {};
+
+    if (locationObject && email) {
+      context = {
+        city: locationObject.city,
+        region: locationObject.region,
+        country: locationObject.country,
+      };
+    }
+
+    await this.mail.send({
+      to: email,
+      subject: 'Deovita - Alerta de segurança',
+      template: 'auth/login-detected',
+      context,
     });
 
     res.cookie('refresh_token', refreshToken, {

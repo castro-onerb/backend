@@ -4,7 +4,7 @@ import { ResetPasswordUseCaseRequest } from './dto';
 import { left, right } from '@/core/either';
 import { ResourceNotFoundError } from '@/core/errors/resource-not-found.error';
 import { MailEntity } from '@/core/entities/mail.entity';
-import { IRecoveryPasswordRepository } from '../../repositories/interface-recovery-password';
+import { IRecoveryPasswordRepository } from '../../repositories/recovery-password.repository';
 import { Hasher } from '@/core/cryptography/hasher';
 import { ConfigService } from '@nestjs/config';
 import { Env } from '@/infra/env/env';

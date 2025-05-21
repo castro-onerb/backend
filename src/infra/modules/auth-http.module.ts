@@ -13,6 +13,8 @@ import { Md5Hasher } from '../cryptography/md5-hasher';
 import { AuthLogoutController } from '../http/controllers/auth/authenticate-logout.controller';
 import { InvalidateCodeRecoverController } from '../http/controllers/auth/invalidate-recoveries.controller';
 import { InvalidateCodeRecoverUseCase } from '@/domain/professional/app/use-cases/invalidate-code-recover/invalidate-code-recover.use-case';
+import { CloseSessionUseCase } from '@/domain/professional/app/use-cases/sessions/close-session/close-session.use-case';
+import { PrismaActiveSessionsRepository } from '../database/prisma/repositories/active-sessions.repository';
 
 @Module({
   imports: [AdaptersModule],
@@ -35,12 +37,17 @@ import { InvalidateCodeRecoverUseCase } from '@/domain/professional/app/use-case
       useClass: Md5Hasher,
     },
     {
+      provide: 'IActiveSessionsRepository',
+      useClass: PrismaActiveSessionsRepository,
+    },
+    {
       provide: 'IOperatorRepository',
       useClass: PrismaOperatorRepository,
     },
     RecoverPasswordUseCase,
     ResetPasswordUseCase,
     InvalidateCodeRecoverUseCase,
+    CloseSessionUseCase,
   ],
 })
 export class AuthHttpModule {}
