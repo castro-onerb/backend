@@ -4,7 +4,6 @@ import {
   ServiceUnavailableException,
   UnauthorizedException,
 } from '@nestjs/common';
-import { ResourceNotFoundError } from './resource-not-found.error';
 import { DatabaseUnavailableError } from './database-unavailable.error';
 
 function hasMessage(error: unknown): error is { message: string } {
@@ -17,7 +16,7 @@ function hasMessage(error: unknown): error is { message: string } {
 }
 
 export function mapDomainErrorToHttp(error: unknown) {
-  if (error instanceof ResourceNotFoundError) {
+  if (error instanceof NotFoundException) {
     throw new NotFoundException(hasMessage(error) ? error.message : undefined);
   }
 

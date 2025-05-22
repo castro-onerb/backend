@@ -2,11 +2,11 @@ import { mock } from 'vitest-mock-extended';
 import { Mocked, vi } from 'vitest';
 import { Hasher } from '@/core/cryptography/hasher';
 import { OperatorAuthenticateUseCase } from './authenticate-operator.use-case';
-import { ResourceNotFoundError } from '@/core/errors/resource-not-found.error';
 import { InMemoryOperatorRepository } from 'test/memory/repositories/clinicas/operator.repository';
 import {
   UnauthorizedException,
   InternalServerErrorException,
+  NotFoundException,
 } from '@nestjs/common';
 import { Operator } from '@/domain/professional/enterprise/entities/operator.entity';
 import { left } from '@/core/either';
@@ -37,7 +37,7 @@ describe('Authenticate Operator Use Case', () => {
     const result = await useCase.execute({ username, password });
 
     expect(result.isLeft()).toBe(true);
-    expect(result.value).toBeInstanceOf(ResourceNotFoundError);
+    expect(result.value).toBeInstanceOf(NotFoundException);
   });
 
   it('should not authenticate if multiple operators share the same username', async () => {
@@ -59,8 +59,8 @@ describe('Authenticate Operator Use Case', () => {
     const result = await useCase.execute({ username, password });
 
     expect(result.isLeft()).toBe(true);
-    expect(result.value).toBeInstanceOf(ResourceNotFoundError);
-    expect((result.value as ResourceNotFoundError).message).toMatch(
+    expect(result.value).toBeInstanceOf(NotFoundException);
+    expect((result.value as NotFoundException).message).toMatch(
       /mais de um acesso/,
     );
   });
@@ -96,8 +96,8 @@ describe('Authenticate Operator Use Case', () => {
     const result = await useCase.execute({ username, password });
 
     expect(result.isLeft()).toBe(true);
-    expect(result.value).toBeInstanceOf(ResourceNotFoundError);
-    expect((result.value as ResourceNotFoundError).message).toMatch(
+    expect(result.value).toBeInstanceOf(NotFoundException);
+    expect((result.value as NotFoundException).message).toMatch(
       /não possui uma senha/,
     );
   });

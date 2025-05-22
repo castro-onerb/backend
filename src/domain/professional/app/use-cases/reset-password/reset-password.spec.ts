@@ -75,12 +75,10 @@ describe('RecoverPasswordUseCase', () => {
       email: fakeEmail,
       userId: 'op-01',
       code: fakeCode,
-      expiresAt: new Date(Date.now() + 1000 * 60 * 5), // 1h no futuro
+      expiresAt: new Date(Date.now() + 1000 * 60 * 5), // 1h
       used: false,
       createdAt: new Date(),
     });
-
-    console.log('prev', recoveryRepository.recoveryRequests);
 
     const result = await useCase.execute({
       email: fakeEmail,
@@ -98,7 +96,30 @@ describe('RecoverPasswordUseCase', () => {
       expect(updated[0].password).toBe('hashed_password');
     }
 
-    expect(recoveryRepository.recoveryRequests[0].used).toBeInstanceOf(Date);
+    expect(recoveryRepository.recoveryRequests[0].used).toBe(true);
     expect(mailMock.send).toHaveBeenCalled();
+  });
+
+  it('should return UnauthorizedException if the code is expired', async () => {
+    recoveryRepository.recoveryRequests.push({
+      id: 'rec-02',
+      email: fakeEmail,
+      userId: 'op-01',
+      code: fakeCode,
+      createdAt: new Date(),
+      expiresAt: new Date(Date.now() - 1000), // 1 segundo
+      used: false,
+    });
+
+    const result = await useCase.execute({
+      email: fakeEmail,
+      code: fakeCode,
+      password: fakePassword,
+    });
+
+    expect(result.isLeft()).toBe(true);
+    if (result.isLeft()) {
+      expect(result.value.message).toMatch(/já expirou/i);
+    }
   });
 });

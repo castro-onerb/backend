@@ -70,10 +70,6 @@ export class PrismaRecoveryPasswordRepository
       where: {
         email,
         code,
-        used: false,
-        expiresAt: {
-          gte: new Date(),
-        },
       },
       select: {
         id: true,

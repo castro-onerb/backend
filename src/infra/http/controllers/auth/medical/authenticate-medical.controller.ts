@@ -11,12 +11,14 @@ import {
   Post,
   Req,
   Res,
+  UseGuards,
   UsePipes,
 } from '@nestjs/common';
 import { Request, Response } from 'express';
 import { z } from 'zod';
 import { MailEntity } from '@/core/entities/mail.entity';
 import { IpLocation } from '@/core/object-values/ip-location';
+import { ThrottlerGuard } from '@nestjs/throttler';
 
 const schemaBodyRequest = z.object({
   crm: z.string(),
@@ -24,6 +26,7 @@ const schemaBodyRequest = z.object({
 });
 
 @Controller('auth')
+@UseGuards(ThrottlerGuard)
 export class MedicalAuthenticateController {
   constructor(
     private readonly authenticateUseCase: MedicalAuthenticateUseCase,
@@ -108,7 +111,8 @@ export class MedicalAuthenticateController {
       httpOnly: true,
       secure: true,
       sameSite: 'strict',
-      maxAge: 7 * 24 * 60 * 60 * 1000, // 7 dias
+      // maxAge: 7 * 24 * 60 * 60 * 1000, // 7 dias
+      maxAge: 1000 * 60 * 2, // 5 minutos
       path: '/auth/refresh-token',
     });
 

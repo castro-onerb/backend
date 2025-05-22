@@ -40,6 +40,7 @@ export class RecoveryPasswordController {
     }
 
     return {
+      success: true,
       message: 'Código de recuperação enviado para o email informado.',
     };
   }

@@ -3,9 +3,13 @@ import { Mocked } from 'vitest';
 import { Hasher } from '@/core/cryptography/hasher';
 import { MedicalAuthenticateUseCase } from './authenticate-medical.use-case';
 import { CRM } from '@/core/object-values/crm';
-import { ResourceNotFoundError } from '@/core/errors/resource-not-found.error';
 import { InMemoryMedicalRepository } from 'test/memory/repositories/clinicas/medical.repository';
-import { BadRequestException, UnauthorizedException } from '@nestjs/common';
+import {
+  BadRequestException,
+  ConflictException,
+  NotFoundException,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { Medical } from '@/domain/professional/enterprise/entities/medical.entity';
 import { left } from '@/core/either';
 
@@ -42,7 +46,7 @@ describe('Authenticate Medical Use Case', () => {
     });
 
     expect(result.isLeft()).toBe(true);
-    expect(result.value).toBeInstanceOf(ResourceNotFoundError);
+    expect(result.value).toBeInstanceOf(NotFoundException);
   });
 
   it('should not authenticate if doctor has no password set', async () => {
@@ -64,8 +68,8 @@ describe('Authenticate Medical Use Case', () => {
     });
 
     expect(result.isLeft()).toBe(true);
-    expect(result.value).toBeInstanceOf(ResourceNotFoundError);
-    expect((result.value as ResourceNotFoundError).message).toMatch(
+    expect(result.value).toBeInstanceOf(NotFoundException);
+    expect((result.value as NotFoundException).message).toMatch(
       /não possui uma senha/,
     );
   });
@@ -158,10 +162,7 @@ describe('Authenticate Medical Use Case', () => {
     });
 
     expect(result.isLeft()).toBe(true);
-    expect(result.value).toBeInstanceOf(ResourceNotFoundError);
-    expect((result.value as ResourceNotFoundError).message).toMatch(
-      /mais de um acesso/,
-    );
+    expect(result.value).toBeInstanceOf(ConflictException);
   });
 
   it('should authenticate a medical with valid CRM and password', async () => {

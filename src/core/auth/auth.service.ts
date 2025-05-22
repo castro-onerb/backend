@@ -21,14 +21,14 @@ export class TokenService {
 
   generateAccessToken(payload: object) {
     return this.jwtService.sign(payload, {
-      expiresIn: '15m',
+      expiresIn: '1m',
     });
   }
 
   generateRefreshToken(payload: object) {
     const privateKey = this.config.get('JWT_SECRET_KEY', { infer: true });
     return this.jwtService.sign(payload, {
-      expiresIn: '7d',
+      expiresIn: '2m',
       privateKey: Buffer.from(privateKey, 'base64'),
       algorithm: 'RS256',
     });

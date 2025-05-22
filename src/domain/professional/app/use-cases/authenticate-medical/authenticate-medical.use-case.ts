@@ -1,7 +1,9 @@
 import {
+  ConflictException,
   Inject,
   Injectable,
   InternalServerErrorException,
+  NotFoundException,
   UnauthorizedException,
 } from '@nestjs/common';
 import { MedicalAuthenticateUseCaseRequest } from './dto';
@@ -9,14 +11,17 @@ import { IMedicalRepository } from '../../repositories/medical.repository';
 import { Hasher } from 'src/core/cryptography/hasher';
 import { Either, left, right } from '@/core/either';
 import { Medical } from '@/domain/professional/enterprise/entities/medical.entity';
-import { ResourceNotFoundError } from '@/core/errors/resource-not-found.error';
 import { CRM } from '@/core/object-values/crm';
 import { UniqueID } from '@/core/object-values/unique-id';
 import { DatabaseUnavailableError } from '@/core/errors/database-unavailable.error';
 import { MedicalRawResult } from '@/domain/professional/enterprise/@types/raw.medical';
 
 type MedicalAuthenticateUseCaseResponse = Either<
-  UnauthorizedException | ResourceNotFoundError,
+  | UnauthorizedException
+  | DatabaseUnavailableError
+  | NotFoundException
+  | InternalServerErrorException
+  | ConflictException,
   { medical: ReturnType<Medical['toObject']> }
 >;
 
@@ -41,7 +46,7 @@ export class MedicalAuthenticateUseCase {
 
     if (!listMedical || listMedical.length === 0) {
       return left(
-        new ResourceNotFoundError(
+        new NotFoundException(
           'Não localizamos um médico com o CRM informado. Que tal conferir os dados?',
         ),
       );
@@ -49,12 +54,11 @@ export class MedicalAuthenticateUseCase {
 
     if (listMedical.length > 1) {
       return left(
-        new ResourceNotFoundError(
-          'Parece que há algo errado, localizamos mais de um acesso para este mesmo CRM.',
+        new ConflictException(
+          'Localizamos mais de um médico com esse mesmo acesso.',
         ),
       );
     }
-
     const queryMedical = listMedical[0];
 
     if (!queryMedical.active) {
@@ -67,7 +71,7 @@ export class MedicalAuthenticateUseCase {
 
     if (!queryMedical.password) {
       return left(
-        new ResourceNotFoundError(
+        new NotFoundException(
           'O acesso está indisponível porque o perfil não possui uma senha cadastrada.',
         ),
       );

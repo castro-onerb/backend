@@ -32,10 +32,8 @@ export class InMemoryRecoveryPasswordRepository
     email: string,
     code: string,
   ): Promise<(IRecoveryPasswordRequest & { id: string }) | null> {
-    const now = new Date();
     const request = this.recoveryRequests.find(
-      (r) =>
-        r.email === email && r.code === code && !r.used && r.expiresAt > now,
+      (r) => r.email === email && r.code === code,
     );
     return Promise.resolve(request ?? null);
   }
@@ -70,7 +68,8 @@ export class InMemoryRecoveryPasswordRepository
     const now = new Date();
     for (let i = this.recoveryRequests.length - 1; i >= 0; i--) {
       const r = this.recoveryRequests[i];
-      if (r.email === email && !r.used && r.expiresAt > now) {
+      if (r.email === email && r.used && r.expiresAt > now) {
+        console.log(r);
         return Promise.resolve(r);
       }
     }

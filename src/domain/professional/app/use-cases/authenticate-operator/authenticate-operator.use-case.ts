@@ -2,20 +2,20 @@ import {
   Inject,
   Injectable,
   InternalServerErrorException,
+  NotFoundException,
   UnauthorizedException,
 } from '@nestjs/common';
 import { OperatorAuthenticateUseCaseRequest } from './dto';
 import { Hasher } from 'src/core/cryptography/hasher';
 import { Either, left, right } from '@/core/either';
 import { Operator } from '@/domain/professional/enterprise/entities/operator.entity';
-import { ResourceNotFoundError } from '@/core/errors/resource-not-found.error';
 import { UniqueID } from '@/core/object-values/unique-id';
 import { DatabaseUnavailableError } from '@/core/errors/database-unavailable.error';
 import { IOperatorRepository } from '../../repositories/operator.repository';
 import { OperatorRawResult } from '@/domain/professional/enterprise/@types/raw.operator';
 
 type OperatorAuthenticateUseCaseResponse = Either<
-  UnauthorizedException | ResourceNotFoundError,
+  UnauthorizedException | NotFoundException | DatabaseUnavailableError,
   { operator: ReturnType<Operator['toObject']> }
 >;
 
@@ -41,7 +41,7 @@ export class OperatorAuthenticateUseCase {
 
     if (!listOperator || listOperator.length === 0) {
       return left(
-        new ResourceNotFoundError(
+        new NotFoundException(
           'Não localizamos um operador com um usuário informado. Que tal conferir os dados?',
         ),
       );
@@ -49,7 +49,7 @@ export class OperatorAuthenticateUseCase {
 
     if (listOperator.length > 1) {
       return left(
-        new ResourceNotFoundError(
+        new NotFoundException(
           'Parece que há algo errado, localizamos mais de um acesso para este mesmo usuário.',
         ),
       );
@@ -67,7 +67,7 @@ export class OperatorAuthenticateUseCase {
 
     if (!queryOperator.password) {
       return left(
-        new ResourceNotFoundError(
+        new NotFoundException(
           'O acesso está indisponível porque o perfil não possui uma senha cadastrada.',
         ),
       );

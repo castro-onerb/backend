@@ -12,8 +12,10 @@ import {
   Post,
   Req,
   Res,
+  UseGuards,
   UsePipes,
 } from '@nestjs/common';
+import { ThrottlerGuard } from '@nestjs/throttler';
 import { Request, Response } from 'express';
 import { z } from 'zod';
 
@@ -32,6 +34,7 @@ export class OperatorAuthenticateController {
   ) {}
 
   @Post('operator')
+  @UseGuards(ThrottlerGuard)
   @UsePipes(new ZodValidationPipe(schemaBodyRequest))
   async login(
     @Body() body: { username: string; password: string },
@@ -101,7 +104,8 @@ export class OperatorAuthenticateController {
       httpOnly: true,
       secure: true,
       sameSite: 'strict',
-      maxAge: 7 * 24 * 60 * 60 * 1000, // 7 dias
+      // maxAge: 7 * 24 * 60 * 60 * 1000, // 7 dias
+      maxAge: 1000 * 60 * 2, // 5 minutos
       path: '/auth/refresh-token',
     });
 

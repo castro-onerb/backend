@@ -14,7 +14,21 @@ export class InMemoryOperatorRepository implements IOperatorRepository {
     props: { username?: string; email?: string },
     password?: string,
   ): Promise<boolean> {
-    throw new Error('Method not implemented.');
+    const { username, email } = props;
+
+    const index = this.operators.findIndex((item) => {
+      if (username) return item.username === username;
+      if (email) return item.email === email;
+      return false;
+    });
+
+    if (index === -1) {
+      return Promise.resolve(false);
+    }
+
+    this.operators[index].password = password ?? this.operators[index].password;
+
+    return Promise.resolve(true);
   }
 
   findByUsername(username: string): Promise<OperatorRawResult[] | null> {

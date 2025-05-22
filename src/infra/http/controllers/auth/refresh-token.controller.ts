@@ -31,7 +31,8 @@ export class TokenController {
         httpOnly: true,
         secure: true,
         sameSite: 'strict',
-        maxAge: 7 * 24 * 60 * 60 * 1000, // 7 dias
+        // maxAge: 7 * 24 * 60 * 60 * 1000, // 7 dias
+        maxAge: 1000 * 60 * 2, // 5 minutos
         path: '/auth/refresh-token',
       });
 
