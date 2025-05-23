@@ -2,7 +2,7 @@ import {
   IInvalidateAllCodesByEmailOrUserRequest,
   IRecoveryPasswordRepository,
   IRecoveryPasswordRequest,
-} from '@/domain/professional/app/repositories/recovery-password.repository';
+} from '@/app/repositories/recovery-password.repository';
 
 export class InMemoryRecoveryPasswordRepository
   implements IRecoveryPasswordRepository

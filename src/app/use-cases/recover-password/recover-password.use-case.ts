@@ -1,4 +1,4 @@
-import { IOperatorRepository } from '@/domain/professional/app/repositories/operator.repository';
+import { IOperatorRepository } from '@/app/repositories/operator.repository';
 import {
   Inject,
   Injectable,

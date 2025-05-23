@@ -1,10 +1,10 @@
 import { Module } from '@nestjs/common';
-import { MedicalAuthenticateUseCase } from 'src/domain/professional/app/use-cases/authenticate-medical/authenticate-medical.use-case';
+import { MedicalAuthenticateUseCase } from '@/app/use-cases/authenticate-medical/authenticate-medical.use-case';
 import { MedicalAuthenticateController } from '../http/controllers/auth/medical/authenticate-medical.controller';
 import { PrismaMedicalRepository } from '../database/prisma/clinicas/repositories/medical.repository';
 import { PrismaClinicasService } from '../database/prisma/clinicas/prisma-clinicas.service';
 import { Md5Hasher } from '../cryptography/md5-hasher';
-import { TokenService } from '@/core/auth/auth.service';
+import { TokenService } from '@/infra/auth/auth.service';
 import { IpLocationService } from '@/core/services/ip-location.service';
 import { NodemailerService } from '../adapters/mail/nodemailer.service';
 

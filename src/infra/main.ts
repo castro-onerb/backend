@@ -1,8 +1,8 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { ConfigService } from '@nestjs/config';
-import { Env } from './infra/env/env';
-import { PrismaInitExceptionFilter } from './infra/database/prisma/clinicas/prisma-filter.service';
+import { Env } from './env/env';
+import { PrismaInitExceptionFilter } from './database/prisma/clinicas/prisma-filter.service';
 import cookieParser from 'cookie-parser';
 
 async function bootstrap() {

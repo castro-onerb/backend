@@ -1,4 +1,4 @@
-import { Operator } from 'src/domain/professional/enterprise/entities/operator.entity';
+import { Operator } from 'src/domain/professional/entities/operator.entity';
 
 export type OperatorAuthenticateUseCaseRequest = {
   username: string;

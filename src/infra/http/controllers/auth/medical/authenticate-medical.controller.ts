@@ -1,8 +1,8 @@
 import { IpLocationService } from '@/core/services/ip-location.service';
-import { TokenService } from '@/core/auth/auth.service';
+import { TokenService } from '@/infra/auth/auth.service';
 import { mapDomainErrorToHttp } from '@/core/errors/map-domain-errors-http';
 import { CRM } from '@/core/object-values/crm';
-import { MedicalAuthenticateUseCase } from '@/domain/professional/app/use-cases/authenticate-medical/authenticate-medical.use-case';
+import { MedicalAuthenticateUseCase } from '@/app/use-cases/authenticate-medical/authenticate-medical.use-case';
 import { ZodValidationPipe } from '@/infra/http/pipes/zod-validation.pipe';
 import {
   Body,
@@ -35,7 +35,7 @@ export class MedicalAuthenticateController {
     @Inject('MailEntity') private readonly mail: MailEntity,
   ) {}
 
-  @Post('medical')
+  @Post('login/medical')
   @UsePipes(new ZodValidationPipe(schemaBodyRequest))
   async login(
     @Body() body: { crm: string; password: string },

@@ -10,11 +10,11 @@ import { MedicalAuthenticateUseCaseRequest } from './dto';
 import { IMedicalRepository } from '../../repositories/medical.repository';
 import { Hasher } from 'src/core/cryptography/hasher';
 import { Either, left, right } from '@/core/either';
-import { Medical } from '@/domain/professional/enterprise/entities/medical.entity';
 import { CRM } from '@/core/object-values/crm';
 import { UniqueID } from '@/core/object-values/unique-id';
 import { DatabaseUnavailableError } from '@/core/errors/database-unavailable.error';
-import { MedicalRawResult } from '@/domain/professional/enterprise/@types/raw.medical';
+import { MedicalRawResult } from '@/domain/professional/@types/raw.medical';
+import { Medical } from '@/domain/professional/entities/medical.entity';
 
 type MedicalAuthenticateUseCaseResponse = Either<
   | UnauthorizedException

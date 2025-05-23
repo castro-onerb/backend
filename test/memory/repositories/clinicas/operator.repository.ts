@@ -1,5 +1,5 @@
 import { IOperatorRepository } from '@/domain/professional/app/repositories/operator.repository';
-import { OperatorRawResult } from '@/domain/professional/enterprise/@types/raw.operator';
+import { OperatorRawResult } from '@/domain/professional/@types/raw.operator';
 import { faker } from '@faker-js/faker';
 
 export class InMemoryOperatorRepository implements IOperatorRepository {

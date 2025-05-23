@@ -5,9 +5,9 @@ import tsConfigPaths from 'vite-tsconfig-paths';
 export default defineConfig({
   test: {
     globals: true,
-    name: "UNIT",
+    name: "INTEGRATION",
     root: './',
-    include: ['src/**/*.spec.ts'],
+    include: ['src/**/*.e2e-spec.ts'],
     environment: 'node',
     setupFiles: ['./test/setup.ts']
   },

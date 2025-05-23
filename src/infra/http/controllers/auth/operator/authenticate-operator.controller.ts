@@ -1,9 +1,9 @@
-import { TokenService } from '@/core/auth/auth.service';
+import { TokenService } from '@/infra/auth/auth.service';
 import { MailEntity } from '@/core/entities/mail.entity';
 import { mapDomainErrorToHttp } from '@/core/errors/map-domain-errors-http';
 import { IpLocation } from '@/core/object-values/ip-location';
 import { IpLocationService } from '@/core/services/ip-location.service';
-import { OperatorAuthenticateUseCase } from '@/domain/professional/app/use-cases/authenticate-operator/authenticate-operator.use-case';
+import { OperatorAuthenticateUseCase } from '@/app/use-cases/authenticate-operator/authenticate-operator.use-case';
 import { ZodValidationPipe } from '@/infra/http/pipes/zod-validation.pipe';
 import {
   Body,
@@ -33,7 +33,7 @@ export class OperatorAuthenticateController {
     @Inject('MailEntity') private readonly mail: MailEntity,
   ) {}
 
-  @Post('operator')
+  @Post('login/operator')
   @UseGuards(ThrottlerGuard)
   @UsePipes(new ZodValidationPipe(schemaBodyRequest))
   async login(

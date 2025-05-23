@@ -8,11 +8,11 @@ import {
 import { OperatorAuthenticateUseCaseRequest } from './dto';
 import { Hasher } from 'src/core/cryptography/hasher';
 import { Either, left, right } from '@/core/either';
-import { Operator } from '@/domain/professional/enterprise/entities/operator.entity';
+import { Operator } from '@/domain/professional/entities/operator.entity';
 import { UniqueID } from '@/core/object-values/unique-id';
 import { DatabaseUnavailableError } from '@/core/errors/database-unavailable.error';
 import { IOperatorRepository } from '../../repositories/operator.repository';
-import { OperatorRawResult } from '@/domain/professional/enterprise/@types/raw.operator';
+import { OperatorRawResult } from '@/domain/professional/@types/raw.operator';
 
 type OperatorAuthenticateUseCaseResponse = Either<
   UnauthorizedException | NotFoundException | DatabaseUnavailableError,

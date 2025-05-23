@@ -10,8 +10,8 @@ import {
   NotFoundException,
   UnauthorizedException,
 } from '@nestjs/common';
-import { Medical } from '@/domain/professional/enterprise/entities/medical.entity';
 import { left } from '@/core/either';
+import { Medical } from '@/domain/professional/entities/medical.entity';
 
 describe('Authenticate Medical Use Case', () => {
   let useCase: MedicalAuthenticateUseCase;

@@ -1,8 +1,13 @@
+GET http://localhost:3333/
+Authorization: Bearer eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI1MzUwMyIsImlhdCI6MTc0Nzk1NDk3NywiZXhwIjoxNzQ3OTU1MDM3fQ.SHCVpIK8BPa-42D4FOtJw7jY9OHTXjH7Bnwqn0kgkK7MVCBIXQkaKQtYziWqaNzKXvslVzPsnZK_XhrAdPeUvSEQf4aG-nj5BsYPwZgKf7hKPRyJGNPoemHQ-xXEa_tR1H7TVxs7lnRSoDqwSxNjeCXwWXzr_CGaCFSnw6A7hQ2000sc2Z5vSaXdnT7adfRUuquJ29GOnDd3OMHi21N0VvLs2otX1WJPiE_Ig2AES5WD4H2PVRQZFS4kNX5nwrzZ9PCTc7NBWyryElogFHTckXY2cjB2qAOPdWaQ5Res9e0GtCA5IPjZHShtww9lRtmkDxUYRNC6r4TZmkBNDZ7A9g
+
+###
+
 POST http://localhost:3333/auth/medical
 Content-Type: application/json
 
 {
-  "crm": "7673-CE",
+  "crm": "000000-CE",
   "password": "123456"
 }
 

@@ -1,7 +1,7 @@
 import { Body, Controller, Post, UseGuards, UsePipes } from '@nestjs/common';
 import { z } from 'zod';
 import { ZodValidationPipe } from '../../pipes/zod-validation.pipe';
-import { ResetPasswordUseCase } from '@/domain/professional/app/use-cases/reset-password/reset-password.use-case';
+import { ResetPasswordUseCase } from '@/app/use-cases/reset-password/reset-password.use-case';
 import { Password } from '@/core/object-values/password';
 import { mapDomainErrorToHttp } from '@/core/errors/map-domain-errors-http';
 import { ThrottlerGuard } from '@nestjs/throttler';
@@ -18,7 +18,7 @@ type requestBodyResetPassword = z.infer<typeof schemaBodyRequest>;
 export class ResetPasswordController {
   constructor(private readonly resetPassword: ResetPasswordUseCase) {}
 
-  @Post('reset')
+  @Post('reset-password')
   @UseGuards(ThrottlerGuard)
   @UsePipes(new ZodValidationPipe(schemaBodyRequest))
   async reset(@Body() body: requestBodyResetPassword) {

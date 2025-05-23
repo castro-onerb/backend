@@ -1,4 +1,4 @@
-import { MedicalRawResult } from '@/domain/professional/enterprise/@types/raw.medical';
+import { MedicalRawResult } from '@/domain/professional/@types/raw.medical';
 import { faker } from '@faker-js/faker';
 import { CRM } from 'src/core/object-values/crm';
 import { IMedicalRepository } from 'src/domain/professional/app/repositories/medical.repository';

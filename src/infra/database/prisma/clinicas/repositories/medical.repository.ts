@@ -1,7 +1,7 @@
 import { CRM } from '@/core/object-values/crm';
 import { IMedicalRepository } from '@/domain/professional/app/repositories/medical.repository';
 import { PrismaClinicasService } from '../prisma-clinicas.service';
-import { MedicalRawResult } from '@/domain/professional/enterprise/@types/raw.medical';
+import { MedicalRawResult } from '@/domain/professional/@types/raw.medical';
 
 export class PrismaMedicalRepository implements IMedicalRepository {
   constructor(private db: PrismaClinicasService) {}

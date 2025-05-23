@@ -1,13 +1,13 @@
 import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { MedicalModule } from './infra/modules/medical.module';
-import { AuthModule } from './core/auth/auth.module';
-import { EnvModule } from './infra/env/env.module';
-import { DatabaseModule } from './infra/database/database.module';
-import { OperatorModule } from './infra/modules/operator.module';
-import { AdaptersModule } from './infra/adapters/adapters.module';
-import { AuthHttpModule } from './infra/modules/auth-http.module';
+import { MedicalModule } from './modules/medical.module';
+import { AuthModule } from './auth/auth.module';
+import { EnvModule } from './env/env.module';
+import { DatabaseModule } from './database/database.module';
+import { OperatorModule } from './modules/operator.module';
+import { AdaptersModule } from './adapters/adapters.module';
+import { AuthHttpModule } from './modules/auth-http.module';
 import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
 import { APP_GUARD } from '@nestjs/core';
 

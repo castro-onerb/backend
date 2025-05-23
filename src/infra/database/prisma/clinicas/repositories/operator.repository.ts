@@ -1,6 +1,6 @@
 import { IOperatorRepository } from '@/domain/professional/app/repositories/operator.repository';
 import { PrismaClinicasService } from '../prisma-clinicas.service';
-import { OperatorRawResult } from '@/domain/professional/enterprise/@types/raw.operator';
+import { OperatorRawResult } from '@/domain/professional/@types/raw.operator';
 import { Prisma } from '@prisma/client';
 import { Injectable } from '@nestjs/common';
 

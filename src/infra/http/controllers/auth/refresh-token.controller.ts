@@ -1,4 +1,4 @@
-import { TokenService } from '@/core/auth/auth.service';
+import { TokenService } from '@/infra/auth/auth.service';
 import {
   Body,
   Controller,

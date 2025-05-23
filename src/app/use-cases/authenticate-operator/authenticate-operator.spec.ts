@@ -8,7 +8,7 @@ import {
   InternalServerErrorException,
   NotFoundException,
 } from '@nestjs/common';
-import { Operator } from '@/domain/professional/enterprise/entities/operator.entity';
+import { Operator } from '@/domain/professional/entities/operator.entity';
 import { left } from '@/core/either';
 
 describe('Authenticate Operator Use Case', () => {

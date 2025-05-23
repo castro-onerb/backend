@@ -1,4 +1,4 @@
-import { RecoverPasswordUseCase } from '@/domain/professional/app/use-cases/recover-password/recover-password.use-case';
+import { RecoverPasswordUseCase } from '@/app/use-cases/recover-password/recover-password.use-case';
 import {
   Body,
   Controller,
@@ -20,7 +20,7 @@ type requestBodyRecoveryPassword = z.infer<typeof schemaBodyRequest>;
 export class RecoveryPasswordController {
   constructor(private readonly recoveryPassword: RecoverPasswordUseCase) {}
 
-  @Post('recovery')
+  @Post('recover-password')
   @UsePipes(new ZodValidationPipe(schemaBodyRequest))
   async recovery(@Body() body: requestBodyRecoveryPassword) {
     const { email } = body;
