@@ -1,0 +1,246 @@
+* {
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
+}
+body {
+  background-color: #FFFFFF;
+  padding: 20px;
+  font-family: 'Segoe UI', Arial, sans-serif;
+}
+.container {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  max-width: 800px;
+  margin: 0 auto;
+}
+.header {
+  padding: 24px;
+}
+.header .logo {
+  width: 100%;
+  max-width: 125px;
+}
+.body {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  padding: 24px;
+  border: 1px solid #F5F5F5;
+  border-radius: 24px;
+}
+.box {
+  display: flex;
+  flex-direction: column;
+  padding: 24px;
+  gap: 24px;
+}
+.box-center {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 24px 80px;
+  gap: 20px;
+}
+.box-agroup {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.box-agroup-center {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+}
+
+.box-fill-center {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 24px;
+  padding: 24px 80px;
+  background-color: #FAFAFA;
+  border-radius: 16px;
+  border: 1px solid #F5F5F5;
+}
+
+.footer {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.footer .logo {
+  width: 100%;
+  max-width: 50px;
+}
+
+.title {
+  font-weight: 700;
+  font-family: Verdana, Geneva, Tahoma, sans-serif;
+  font-size: 48px;
+  line-height: 52px;
+  color: #3FA19C;
+}
+.code {
+  font-family: monospace;
+  font-size: 60px;
+  letter-spacing: 1ch;
+}
+.subtitle{
+  font-size: 28px;
+  font-weight: 700;
+  color: #757575;
+  text-align: center;
+  line-height: 36px;
+}
+.mini-title {
+  font-weight: 800;
+  font-size: 26px;
+  line-height: 28px;
+  color: #757575;
+}
+.mini-title.-light {
+  font-weight: 400;
+}
+
+.paragraph {
+  font-size: 24px;
+  color: #757575;
+  line-height: 26px;
+  font-weight: 400;
+}
+.paragraph-center {
+  font-size: 24px;
+  color: #757575;
+  line-height: 26px;
+  font-weight: 400;
+  text-align: center;
+}
+
+.legend {
+  font-size: 14px;
+  color: #757575;
+  line-height: 18px;
+}
+
+.icon {
+  font-size: 32px;
+  color: #3FA19C;
+}
+
+a {
+  text-decoration: none;
+  color: #3FA19C;
+  transition: all 0.14s;
+}
+a:hover {
+  color: #378581;
+}
+
+.button {
+  font-weight: 600;
+  font-size: 20px;
+  line-height: 20px;
+  background-color: transparent;
+  border: 2px solid transparent;
+  padding: 16px;
+  border-radius: 100px;
+  cursor: pointer;
+  transition: all 0.14s;
+}
+
+.button.-outline {
+  border-color: #9E9E9E;
+  color: #757575;
+}
+.button.-outline:hover {
+  background-color: #9E9E9E;
+  color: #FFFFFF;
+}
+.button.-primary {
+  border-color: #3FA19C;
+  color: #3FA19C;
+}
+.button.-primary:hover {
+  background-color: #3FA19C;
+  color: #FFFFFF;
+}
+
+.line-horizontal {
+  width: 100%;           /* ocupa toda a largura do contêiner */
+  height: 1px;           /* espessura da linha */
+  background-color: #ccc; /* cor da linha */
+  margin: 16px 0;        /* espaçamento acima e abaixo */
+  border: none;          /* sem borda */
+}
+.line-horizontal.thick {
+  height: 2px;
+  background-color: #333;
+}
+
+.line-horizontal.gradient {
+  height: 1px;
+  background: linear-gradient(to right, #ccc, #333, #ccc);
+}
+.line-horizontal.dashed {
+  border-top: 1px dashed #aaa;
+  background: none;
+  height: 0;
+}
+
+@media screen and (max-width: 540px) {
+  body {
+    padding: 12px;
+  }
+  .container {
+    padding: 12px;
+    gap: 12px;
+    max-width: 100%;
+  }
+  .header {
+    padding: 16px;
+  }
+  .body {
+    padding: 16px;
+    gap: 16px;
+  }
+  .box {
+    padding: 16px;
+    gap: 16px;
+  }
+  .box-center,
+  .box-fill-center {
+    padding: 16px 24px;
+    gap: 16px;
+  }
+  .title {
+    font-size: 32px;
+    line-height: 38px;
+  }
+  .subtitle {
+    font-size: 20px;
+    line-height: 28px;
+  }
+  .mini-title {
+    font-size: 18px;
+    line-height: 24px;
+  }
+  .paragraph,
+  .paragraph-center {
+    font-size: 18px;
+    line-height: 24px;
+  }
+  .legend {
+    font-size: 12px;
+    line-height: 16px;
+  }
+  .icon {
+    font-size: 22px;
+  }
+  .button {
+    font-size: 16px;
+    padding: 12px;
+  }
+}

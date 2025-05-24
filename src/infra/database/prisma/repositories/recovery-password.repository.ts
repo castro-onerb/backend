@@ -4,7 +4,7 @@ import {
   IInvalidateAllCodesByEmailOrUserRequest,
   IRecoveryPasswordRepository,
   IRecoveryPasswordRequest,
-} from '@/domain/professional/app/repositories/recovery-password.repository';
+} from '@/app/repositories/recovery-password.repository';
 import { Prisma } from '@prisma/client';
 
 @Injectable()

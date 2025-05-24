@@ -1,5 +1,5 @@
 import { CRM } from '@/core/object-values/crm';
-import { IMedicalRepository } from '@/domain/professional/app/repositories/medical.repository';
+import { IMedicalRepository } from '@/app/repositories/medical.repository';
 import { PrismaClinicasService } from '../prisma-clinicas.service';
 import { MedicalRawResult } from '@/domain/professional/@types/raw.medical';
 

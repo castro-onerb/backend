@@ -7,7 +7,7 @@ export default defineConfig({
     globals: true,
     name: "INTEGRATION",
     root: './',
-    include: ['src/**/*.e2e-spec.ts'],
+    include: ['src/**/*.int-spec.ts'],
     environment: 'node',
     setupFiles: ['./test/setup.ts']
   },

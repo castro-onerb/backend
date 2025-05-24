@@ -2,95 +2,52 @@
 <html lang="pt-BR">
   <head>
     <meta charset="UTF-8" />
-    <title>Recuperação de Senha</title>
-    <style>
-      body {
-        background-color: #4E9E8F;
-        margin: 0;
-        padding: 20px;
-        font-family: 'Segoe UI', Arial, sans-serif;
-      }
-
-      .container {
-        max-width: 600px;
-        margin: 40px auto;
-        background: #ffffff;
-        padding: 32px;
-        border-radius: 8px;
-        box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
-      }
-
-      .box {
-        padding: 12px;
-        border: 1.5px solid #888;
-        border-radius: 6px;
-        text-align: center;
-        font-weight: 600;
-        color: #555;
-        font-size: 24px;
-      }
-
-      .title {
-        font-size: 24px;
-        font-weight: bold;
-        color: #222;
-        margin-bottom: 16px;
-      }
-
-      .text {
-        font-size: 16px;
-        color: #555;
-        line-height: 1.5;
-        padding: 0;
-        margin: 0;
-      }
-
-      .button {
-        display: block;
-        margin: 20px auto;
-        max-width: 120px;
-        text-align: center;
-        text-decoration: none;
-        padding: 12px 4px;
-        font-size: 14px;
-        border-radius: 6px;
-        background-color: #4E9E8F;
-        color: #FFFFFF;
-        font-weight: 700;
-        transition: all 0.14s;
-      }
-
-      .button:hover {
-        background-color: #3f7d72;
-      }
-
-      .footer {
-        display: flex;
-        flex-direction: column;
-        font-size: 12px;
-        color: #888;
-        margin-top: 10px;
-      }
-    </style>
+    <title>Alerta de segurança</title>
+    <link href="../assets/css/style.css" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
   </head>
   <body>
     <div class="container">
-      <div class="title">Nova atividade de login</div>
-      <div class="text">
-        <p class="text">Detectamos um novo login na sua Conta Deovita. Se foi você que fez isso, nenhuma ação é necessária 🌝.</p>
-        <p class="text"></p>
+      <div class="header">
+        <img class="logo" src="../assets/img/logo-horizontal-color.svg" alt="Logo Deovita - Saúde Inteligente">
       </div>
-
-      {{#if city}}
-      <div class="box">
-        Login em {{city}}/{{region}}
+      <div class="body">
+        <div class="box">
+          <h1 class="title">Detectamos uma nova atividade na sua conta</h1>
+          <div class="box-agroup">
+            <p class="paragraph">Olá, user!</p>
+            <p class="paragraph">Notamos um novo login na sua conta DeoVita. Se essa tentativa foi feita por você, não se preocupe, nenhuma ação é necessária. Se não reconhece essa atividade, estamos prontos para te ajudar a proteger sua conta.</p>
+          </div>
+        </div>
+        <div class="line-horizontal"></div>
+        <div class="box-center">
+          <i class="fa-solid fa-map-location-dot icon"></i>
+          <div class="box-agroup-center">
+            <p class="mini-title -light">Login em</p>
+            <h2 class="title">Iguatu/CE</h2>
+          </div>
+          <div class="box-agroup-center">
+            <a href="#" class="button -outline">Não reconheço</a>
+          </div>
+        </div>
+        <div class="box-fill-center">
+          <i class="fa-solid fa-triangle-exclamation icon"></i>
+          <h2 class="subtitle">Sua segurança é prioridade para nós</h2>
+          <p class="paragraph-center">Ficou com alguma dúvida ou quer revisar os acessos da sua conta? Entre em contato com a gente ou acesse seu perfil para mais detalhes.</p>
+          <button class="button -primary">Acessar sua conta</button>
+        </div>
       </div>
-      {{/if}}
-
       <div class="footer">
-        <p class="text">Atenciosamente,</p>
-        <p class="text">Equipe Deovita - Saúde Inteligente</p>
-        <p class="text">© 2025 Deovita. Todos os direitos reservados.</p>
+        <div class="box-fill-center">
+          <img class="logo" src="../assets/img/logo-symbol-color.svg" alt="Logo Deovita - Saúde Inteligente">
+          <div class="box-agroup-center">
+            <h3 class="mini-title">Entre no nosso site</h3>
+            <p class="paragraph-center"><a href="#">deovita.com.br</a></p>
+          </div>
+          <div class="box-agroup">
+            <p class="legend">© Deovita - Todos os direitos reservados.</p>
+          </div>
+        </div>
       </div>
     </div>
   </body>
