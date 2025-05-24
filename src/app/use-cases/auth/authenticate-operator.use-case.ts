@@ -5,14 +5,18 @@ import {
   NotFoundException,
   UnauthorizedException,
 } from '@nestjs/common';
-import { OperatorAuthenticateUseCaseRequest } from './dto';
 import { Hasher } from 'src/core/cryptography/hasher';
 import { Either, left, right } from '@/core/either';
 import { Operator } from '@/domain/professional/entities/operator.entity';
 import { UniqueID } from '@/core/object-values/unique-id';
 import { DatabaseUnavailableError } from '@/core/errors/database-unavailable.error';
-import { IOperatorRepository } from '../../repositories/operator.repository';
+import { OperatorRepository } from '../../repositories/operator.repository';
 import { OperatorRawResult } from '@/domain/professional/@types/raw.operator';
+
+export type OperatorAuthenticateUseCaseRequest = {
+  username: string;
+  password: string;
+};
 
 type OperatorAuthenticateUseCaseResponse = Either<
   UnauthorizedException | NotFoundException | DatabaseUnavailableError,
@@ -22,8 +26,7 @@ type OperatorAuthenticateUseCaseResponse = Either<
 @Injectable()
 export class OperatorAuthenticateUseCase {
   constructor(
-    @Inject('IOperatorRepository')
-    private operatorRepository: IOperatorRepository,
+    private operatorRepository: OperatorRepository,
     @Inject('Hasher') private readonly hasher: Hasher,
   ) {}
 

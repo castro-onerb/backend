@@ -1,7 +1,7 @@
 import { Body, Controller, Post, UseGuards, UsePipes } from '@nestjs/common';
 import { z } from 'zod';
 import { ZodValidationPipe } from '../../pipes/zod-validation.pipe';
-import { ResetPasswordUseCase } from '@/app/use-cases/reset-password/reset-password.use-case';
+import { ResetPasswordUseCase } from '@/app/use-cases/auth/reset-password.use-case';
 import { Password } from '@/core/object-values/password';
 import { mapDomainErrorToHttp } from '@/core/errors/map-domain-errors-http';
 import { ThrottlerGuard } from '@nestjs/throttler';

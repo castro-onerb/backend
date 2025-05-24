@@ -3,7 +3,7 @@ import { MailEntity } from '@/core/entities/mail.entity';
 import { mapDomainErrorToHttp } from '@/core/errors/map-domain-errors-http';
 import { IpLocation } from '@/core/object-values/ip-location';
 import { IpLocationService } from '@/core/services/ip-location.service';
-import { OperatorAuthenticateUseCase } from '@/app/use-cases/authenticate-operator/authenticate-operator.use-case';
+import { OperatorAuthenticateUseCase } from '@/app/use-cases/auth/authenticate-operator.use-case';
 import { ZodValidationPipe } from '@/infra/http/pipes/zod-validation.pipe';
 import {
   Body,

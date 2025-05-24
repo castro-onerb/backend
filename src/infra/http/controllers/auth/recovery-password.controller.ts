@@ -1,4 +1,4 @@
-import { RecoverPasswordUseCase } from '@/app/use-cases/recover-password/recover-password.use-case';
+import { RecoverPasswordUseCase } from '@/app/use-cases/auth/recover-password.use-case';
 import {
   Body,
   Controller,

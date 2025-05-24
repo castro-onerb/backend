@@ -9,7 +9,7 @@ import {
 } from '@nestjs/common';
 import { ZodValidationPipe } from '../../pipes/zod-validation.pipe';
 import { z } from 'zod';
-import { InvalidateCodeRecoverUseCase } from '@/app/use-cases/invalidate-code-recover/invalidate-code-recover.use-case';
+import { InvalidateCodeRecoverUseCase } from '@/app/use-cases/auth/invalidate-code-recover.use-case';
 
 const schemaQueryEmail = z.string().email();
 

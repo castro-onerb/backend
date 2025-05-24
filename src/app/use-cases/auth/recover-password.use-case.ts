@@ -1,47 +1,38 @@
-import { IOperatorRepository } from '@/app/repositories/operator.repository';
-import {
-  Inject,
-  Injectable,
-  NotFoundException,
-  UnauthorizedException,
-} from '@nestjs/common';
-import { RecoverPasswordUseCaseRequest } from './dto';
+import { OperatorRepository } from '@/app/repositories/operator.repository';
 import { Either, left, right } from '@/core/either';
 import { MailEntity } from '@/core/entities/mail.entity';
 import { formatName } from '@/core/utils/format-name';
-import { IRecoveryPasswordRepository } from '../../repositories/recovery-password.repository';
+import { RecoveryPasswordRepository } from '../../repositories/recovery-password.repository';
+import {
+  RecoverPasswordEmailNotFoundError,
+  RecoverPasswordMultipleUsersError,
+} from './errors';
+import { Injectable } from '@nestjs/common';
+
+export type RecoverPasswordUseCaseRequest = {
+  email: string;
+};
+
+export type OperatorAuthenticateUseCaseResponse = Either<
+  RecoverPasswordEmailNotFoundError | RecoverPasswordMultipleUsersError,
+  { success: true }
+>;
 
 @Injectable()
 export class RecoverPasswordUseCase {
   constructor(
-    @Inject('IOperatorRepository')
-    private readonly operatorRepository: IOperatorRepository,
-
-    @Inject('IRecoveryPasswordRepository')
-    private readonly recoveryPasswordRepository: IRecoveryPasswordRepository,
-
+    private readonly operatorRepository: OperatorRepository,
+    private readonly recoveryPasswordRepository: RecoveryPasswordRepository,
     private readonly mail: MailEntity,
   ) {}
 
   async execute({
     email,
-  }: RecoverPasswordUseCaseRequest): Promise<
-    Either<NotFoundException | UnauthorizedException, { success: true }>
-  > {
+  }: RecoverPasswordUseCaseRequest): Promise<OperatorAuthenticateUseCaseResponse> {
     const operator = await this.operatorRepository.findByEmail(email);
 
     if (!operator || operator.length === 0) {
-      return left(
-        new NotFoundException('Não encontramos acesso a esse email.'),
-      );
-    }
-
-    if (operator.length > 1) {
-      return left(
-        new UnauthorizedException(
-          'Encontramos mais de um operador com esse email vinculado.',
-        ),
-      );
+      return left(new RecoverPasswordEmailNotFoundError());
     }
 
     const user = operator[0];

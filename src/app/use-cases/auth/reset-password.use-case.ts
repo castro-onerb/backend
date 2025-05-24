@@ -1,32 +1,37 @@
-import { IOperatorRepository } from '@/app/repositories/operator.repository';
-import {
-  Inject,
-  Injectable,
-  NotFoundException,
-  UnauthorizedException,
-} from '@nestjs/common';
-import { ResetPasswordUseCaseRequest } from './dto';
+import { OperatorRepository } from '@/app/repositories/operator.repository';
+import { Injectable } from '@nestjs/common';
 import { Either, left, right } from '@/core/either';
 import { MailEntity } from '@/core/entities/mail.entity';
-import { IRecoveryPasswordRepository } from '../../repositories/recovery-password.repository';
+import { RecoveryPasswordRepository } from '../../repositories/recovery-password.repository';
 import { Hasher } from '@/core/cryptography/hasher';
 import { ConfigService } from '@nestjs/config';
 import { Env } from '@/infra/env/env';
+import {
+  RecoverPasswordCodeExpiredError,
+  RecoverPasswordCodeNotFoundError,
+  RecoverPasswordCooldownError,
+} from './errors';
+
+export type ResetPasswordUseCaseRequest = {
+  email: string;
+  code: string;
+  password: string;
+};
+
+export type ResetPasswordUseCaseResponse = Either<
+  | RecoverPasswordCooldownError
+  | RecoverPasswordCodeNotFoundError
+  | RecoverPasswordCodeExpiredError,
+  { success: true }
+>;
 
 @Injectable()
 export class ResetPasswordUseCase {
   constructor(
-    @Inject('IOperatorRepository')
-    private readonly operatorRepository: IOperatorRepository,
-
-    @Inject('IRecoveryPasswordRepository')
-    private readonly passwordRepository: IRecoveryPasswordRepository,
-
-    @Inject('Hasher')
+    private readonly operatorRepository: OperatorRepository,
+    private readonly passwordRepository: RecoveryPasswordRepository,
     private readonly hasher: Hasher,
-
     private config: ConfigService<Env, true>,
-
     private readonly mail: MailEntity,
   ) {}
 
@@ -34,9 +39,7 @@ export class ResetPasswordUseCase {
     email,
     code,
     password,
-  }: ResetPasswordUseCaseRequest): Promise<
-    Either<UnauthorizedException | NotFoundException, { success: true }>
-  > {
+  }: ResetPasswordUseCaseRequest): Promise<ResetPasswordUseCaseResponse> {
     const lastUsed = await this.passwordRepository.findLastUsedCode(email);
 
     if (lastUsed) {
@@ -45,11 +48,7 @@ export class ResetPasswordUseCase {
       const diffInHours = diffInMs / (1000 * 60 * 60);
 
       if (diffInHours < 12) {
-        return left(
-          new UnauthorizedException(
-            'Por segurança, só é possível redefinir a senha a cada 12 horas desde a última vez.',
-          ),
-        );
+        return left(new RecoverPasswordCooldownError());
       }
     }
 
@@ -68,17 +67,11 @@ export class ResetPasswordUseCase {
         context: { redirect_url, email },
       });
 
-      return left(
-        new NotFoundException(
-          'Não conseguimos identificar o código fornecido.',
-        ),
-      );
+      return left(new RecoverPasswordCodeNotFoundError());
     }
 
     if (record.expiresAt < new Date()) {
-      return left(
-        new UnauthorizedException('Este código já expirou, solicite outro'),
-      );
+      return left(new RecoverPasswordCodeExpiredError());
     }
 
     const hashed = await this.hasher.hash(password);

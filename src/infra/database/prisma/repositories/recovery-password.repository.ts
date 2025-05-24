@@ -2,14 +2,14 @@ import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma.service';
 import {
   IInvalidateAllCodesByEmailOrUserRequest,
-  IRecoveryPasswordRepository,
+  RecoveryPasswordRepository,
   IRecoveryPasswordRequest,
 } from '@/app/repositories/recovery-password.repository';
 import { Prisma } from '@prisma/client';
 
 @Injectable()
 export class PrismaRecoveryPasswordRepository
-  implements IRecoveryPasswordRepository
+  implements RecoveryPasswordRepository
 {
   constructor(private readonly prisma: PrismaService) {}
 

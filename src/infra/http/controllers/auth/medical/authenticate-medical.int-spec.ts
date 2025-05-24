@@ -2,7 +2,7 @@ import { describe, it, beforeAll, afterAll, expect } from 'vitest';
 import request from 'supertest';
 import { Test, TestingModule } from '@nestjs/testing';
 import { INestApplication } from '@nestjs/common';
-import { MedicalAuthenticateUseCase } from '@/app/use-cases/authenticate-medical/authenticate-medical.use-case';
+import { MedicalAuthenticateUseCase } from '@/app/use-cases/auth/authenticate-medical.use-case';
 import { TokenService } from '@/infra/auth/auth.service';
 import { IpLocationService } from '@/core/services/ip-location.service';
 import { IpLocation } from '@/core/object-values/ip-location';

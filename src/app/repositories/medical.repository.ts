@@ -1,6 +1,6 @@
+import { MedicalRawResult } from '@/domain/professional/@types/raw.medical';
 import { CRM } from 'src/core/object-values/crm';
-import { MedicalRawResult } from '../../enterprise/@types/raw.medical';
 
-export interface IMedicalRepository {
-  findByCrm(crm: CRM): Promise<MedicalRawResult[] | null>;
+export abstract class MedicalRepository {
+  abstract findByCrm(crm: CRM): Promise<MedicalRawResult[] | null>;
 }

@@ -1,9 +1,9 @@
 import { CRM } from '@/core/object-values/crm';
-import { IMedicalRepository } from '@/app/repositories/medical.repository';
 import { PrismaClinicasService } from '../prisma-clinicas.service';
 import { MedicalRawResult } from '@/domain/professional/@types/raw.medical';
+import { MedicalRepository } from '@/app/repositories/medical.repository';
 
-export class PrismaMedicalRepository implements IMedicalRepository {
+export class PrismaMedicalRepository implements MedicalRepository {
   constructor(private db: PrismaClinicasService) {}
 
   async findByCrm(crm: CRM): Promise<MedicalRawResult[] | null> {

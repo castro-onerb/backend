@@ -1,11 +1,11 @@
-import { IOperatorRepository } from '@/domain/professional/app/repositories/operator.repository';
 import { PrismaClinicasService } from '../prisma-clinicas.service';
 import { OperatorRawResult } from '@/domain/professional/@types/raw.operator';
 import { Prisma } from '@prisma/client';
 import { Injectable } from '@nestjs/common';
+import { OperatorRepository } from '@/app/repositories/operator.repository';
 
 @Injectable()
-export class PrismaOperatorRepository implements IOperatorRepository {
+export class PrismaOperatorRepository implements OperatorRepository {
   constructor(private db: PrismaClinicasService) {}
 
   async findByEmail(email: string): Promise<OperatorRawResult[] | null> {

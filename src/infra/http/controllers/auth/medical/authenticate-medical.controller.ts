@@ -2,7 +2,7 @@ import { IpLocationService } from '@/core/services/ip-location.service';
 import { TokenService } from '@/infra/auth/auth.service';
 import { mapDomainErrorToHttp } from '@/core/errors/map-domain-errors-http';
 import { CRM } from '@/core/object-values/crm';
-import { MedicalAuthenticateUseCase } from '@/app/use-cases/authenticate-medical/authenticate-medical.use-case';
+import { MedicalAuthenticateUseCase } from '@/app/use-cases/auth/authenticate-medical.use-case';
 import { ZodValidationPipe } from '@/infra/http/pipes/zod-validation.pipe';
 import {
   Body,

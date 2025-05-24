@@ -10,20 +10,20 @@ export interface IInvalidateAllCodesByEmailOrUserRequest {
   user?: string;
 }
 
-export interface IRecoveryPasswordRepository {
-  save(data: IRecoveryPasswordRequest): Promise<void>;
+export abstract class RecoveryPasswordRepository {
+  abstract save(data: IRecoveryPasswordRequest): Promise<void>;
 
-  findByEmailAndCode(
+  abstract findByEmailAndCode(
     email: string,
     code: string,
   ): Promise<(IRecoveryPasswordRequest & { id: string }) | null>;
 
-  invalidateCode(id: string): Promise<void>;
-  invalidateAllCodesByEmailOrUser({
+  abstract invalidateCode(id: string): Promise<void>;
+  abstract invalidateAllCodesByEmailOrUser({
     email,
     user,
   }: IInvalidateAllCodesByEmailOrUserRequest): Promise<boolean>;
-  findLastUsedCode(
+  abstract findLastUsedCode(
     email: string,
   ): Promise<(IRecoveryPasswordRequest & { id: string }) | null>;
 }
