@@ -12,6 +12,10 @@ export type OperatorEntityResponse = Either<BadRequestException, Operator>;
 export class Operator extends Person<OperatorEntityType> {
   private _auth: Authenticable;
 
+  get username(): string {
+    return this._auth.username;
+  }
+
   async compare(raw: string, hasher: Hasher): Promise<boolean> {
     return this._auth.compareHash(raw, hasher);
   }

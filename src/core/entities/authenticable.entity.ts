@@ -6,13 +6,19 @@ import { Either, left, right } from '../either';
 type AuthenticableResponse = Either<BadRequestException, Authenticable>;
 
 export class Authenticable {
+  protected readonly _username: string;
   protected readonly _password: string;
 
   get password(): string {
     return this._password;
   }
 
+  get username(): string {
+    return this._username;
+  }
+
   constructor(props: AuthCredentialsProps) {
+    this._username = props.username;
     this._password = props.password;
   }
 
