@@ -2,7 +2,9 @@ import { CRM } from '@/core/object-values/crm';
 import { PrismaClinicasService } from '../prisma-clinicas.service';
 import { MedicalRawResult } from '@/domain/professional/@types/raw.medical';
 import { MedicalRepository } from '@/app/repositories/medical.repository';
+import { Injectable } from '@nestjs/common';
 
+@Injectable()
 export class PrismaMedicalRepository implements MedicalRepository {
   constructor(private db: PrismaClinicasService) {}
 

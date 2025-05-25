@@ -1,15 +1,15 @@
 import { UniqueID } from 'src/core/object-values/unique-id';
-import { Person } from 'src/core/entities/person.entity';
 import { Authenticable } from 'src/core/entities/authenticable.entity';
 import { Hasher } from 'src/core/cryptography/hasher';
 import { Either, left, right } from '@/core/either';
 import { BadRequestException } from '@nestjs/common';
 import { OperatorEntityType } from '../@types/operator';
-import { OperatorRawResult } from '../@types/raw.operator';
+import { AggregateRoot } from '@/core/entities/aggregate-root';
+import { NewAccessAccount } from '../events/new-access-account.event';
 
 export type OperatorEntityResponse = Either<BadRequestException, Operator>;
 
-export class Operator extends Person<OperatorEntityType> {
+export class Operator extends AggregateRoot<OperatorEntityType> {
   private _auth: Authenticable;
 
   get username(): string {
@@ -50,25 +50,13 @@ export class Operator extends Person<OperatorEntityType> {
     return right(operator);
   }
 
-  toObject() {
-    return {
-      id: this.id.toString(),
-      name: this.props.name,
-      username: this.props.username,
-      email: this.props.email,
-    };
-  }
-
-  toRaw(): OperatorRawResult {
-    return {
-      id: this.id.toString(),
-      fullname: this.props.name,
-      cpf: this.props.cpf,
-      email: this.props.email,
-      username: this.props.username,
-      password: this.props.password,
-      type: 4,
-      active: true,
-    };
+  public recordAccess(ip?: string) {
+    this.addDomainEvent(
+      new NewAccessAccount({
+        aggregateId: this.id,
+        email: this.props.email,
+        ip,
+      }),
+    );
   }
 }

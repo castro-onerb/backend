@@ -16,6 +16,7 @@ import {
   MultipleDoctorsFoundError,
 } from './errors';
 import { DatabaseUnavailableError } from '@/core/errors/database-unavailable.error';
+import { DomainEvents } from '@/core/events/domain-events';
 
 export type MedicalAuthenticateUseCaseRequest = {
   crm: CRM;
@@ -31,7 +32,7 @@ type MedicalAuthenticateUseCaseResponse = Either<
   | MedicalEntityBuildError
   | InvalidPasswordError
   | MultipleDoctorsFoundError,
-  { medical: ReturnType<Medical['toObject']> }
+  { medical: Medical }
 >;
 
 @Injectable()
@@ -49,7 +50,8 @@ export class MedicalAuthenticateUseCase {
 
     try {
       listMedical = await this.medicalRepository.findByCrm(crm);
-    } catch {
+    } catch (err) {
+      console.error('[MedicalRepository] Erro ao buscar médico por CRM:', err);
       return left(new DatabaseUnavailableError());
     }
 
@@ -98,9 +100,11 @@ export class MedicalAuthenticateUseCase {
     if (!isValid) {
       return left(new InvalidPasswordError());
     }
+    medical.recordAccess();
+    DomainEvents.dispatchEventsForAggregate(medical.id);
 
     return right({
-      medical: medical.toObject(),
+      medical,
     });
   }
 }

@@ -8,8 +8,9 @@ export class SendMailRecouverPasswordService {
   async execute(email: string): Promise<void> {
     await this.mail.send({
       to: email,
+      template: 'auth/login-detected',
       subject: 'Solicitação de recuperação de senha.',
-      body: '<h1>Olá e bem-vindo à nossa plataforma!</h1>',
+      context: { name: email },
     });
   }
 }

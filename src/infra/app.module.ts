@@ -9,9 +9,11 @@ import { AdaptersModule } from './adapters/adapters.module';
 import { AuthHttpModule } from './modules/auth-http.module';
 import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
 import { APP_GUARD } from '@nestjs/core';
+import { EventsModule } from './events/events.module';
 
 @Module({
   imports: [
+    EventsModule,
     MedicalModule,
     OperatorModule,
     EnvModule,

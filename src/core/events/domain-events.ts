@@ -1,37 +1,41 @@
 import { AggregateRoot } from '../entities/aggregate-root';
 import { UniqueID } from '../object-values/unique-id';
 import { DomainEvent } from './domain-event';
-
-type DomainEventCallback = (event: unknown) => void;
+import { EventHandler } from './event-handler';
 
 export class DomainEvents {
-  private static handlersMap: Record<string, DomainEventCallback[]> = {};
+  private static handlersMap: Record<string, EventHandler[]> = {};
   private static markedAggregates: AggregateRoot<unknown>[] = [];
 
-  public static shouldRun = true;
+  // ✅ REGISTRAR HANDLER PARA UM EVENTO
+  public static register(eventName: string, handler: EventHandler): void {
+    if (!this.handlersMap[eventName]) {
+      this.handlersMap[eventName] = [];
+    }
 
+    this.handlersMap[eventName].push(handler);
+  }
+
+  // ✅ MARCAR ENTIDADE PARA DISPATCH
   public static markAggregateForDispatch(aggregate: AggregateRoot<unknown>) {
-    const aggregateFound = !!this.findMarkedAggregateByID(aggregate.id);
+    const alreadyMarked = !!this.findMarkedAggregateByID(aggregate.id);
 
-    if (!aggregateFound) {
+    if (!alreadyMarked) {
       this.markedAggregates.push(aggregate);
     }
   }
 
-  private static async dispatchAggregateEvents(
-    aggregate: AggregateRoot<unknown>,
-  ) {
-    for (const event of aggregate.domainEvents) {
-      await this.dispatch(event);
+  // ✅ DESPACHAR EVENTOS DE UMA ENTIDADE MARCADA
+  public static dispatchEventsForAggregate(aggregateId: UniqueID) {
+    const aggregate = this.findMarkedAggregateByID(aggregateId);
+
+    if (!aggregate) {
+      return;
     }
-  }
 
-  private static removeAggregateFromMarkedDispatchList(
-    aggregate: AggregateRoot<unknown>,
-  ) {
-    const index = this.markedAggregates.findIndex((a) => a.equals(aggregate));
-
-    this.markedAggregates.splice(index, 1);
+    this.dispatchAggregateEvents(aggregate);
+    aggregate.clearEvents();
+    this.removeAggregateFromMarkedDispatchList(aggregate);
   }
 
   private static findMarkedAggregateByID(
@@ -40,44 +44,42 @@ export class DomainEvents {
     return this.markedAggregates.find((aggregate) => aggregate.id.equals(id));
   }
 
-  public static async dispatchEventsForAggregate(id: UniqueID) {
-    const aggregate = this.findMarkedAggregateByID(id);
-
-    if (aggregate) {
-      await this.dispatchAggregateEvents(aggregate);
-      aggregate.clearEvents();
-      this.removeAggregateFromMarkedDispatchList(aggregate);
-    }
-  }
-
-  public static register(
-    callback: DomainEventCallback,
-    eventClassName: string,
+  private static removeAggregateFromMarkedDispatchList(
+    aggregate: AggregateRoot<unknown>,
   ) {
-    const wasEventRegisteredBefore = eventClassName in this.handlersMap;
+    const index = this.markedAggregates.findIndex((a) =>
+      a.id.equals(aggregate.id),
+    );
 
-    if (!wasEventRegisteredBefore) {
-      this.handlersMap[eventClassName] = [];
+    if (index !== -1) {
+      this.markedAggregates.splice(index, 1);
     }
-
-    this.handlersMap[eventClassName].push(callback);
   }
 
-  public static clearHandlers() {
-    this.handlersMap = {};
+  private static dispatchAggregateEvents(aggregate: AggregateRoot<unknown>) {
+    const events = aggregate.domainEvents;
+
+    for (const event of events) {
+      this.dispatch(event);
+    }
   }
 
-  public static clearMarkedAggregates() {
-    this.markedAggregates = [];
-  }
+  private static dispatch(event: DomainEvent) {
+    const eventName = event.constructor.name;
 
-  private static async dispatch(event: DomainEvent) {
-    const eventClassName: string = event.constructor.name;
-    const isEventRegistered = eventClassName in this.handlersMap;
+    const handlers = this.handlersMap[eventName] || [];
 
-    if (!this.shouldRun || !isEventRegistered) return;
-
-    const handlers = this.handlersMap[eventClassName];
-    await Promise.all(handlers.map((h) => h(event)));
+    for (const handler of handlers) {
+      setTimeout(() => {
+        handler
+          .handle(event)
+          .catch((err) =>
+            console.error(
+              `[DomainEvents] Error on handler for ${eventName}:`,
+              err,
+            ),
+          );
+      }, 0);
+    }
   }
 }

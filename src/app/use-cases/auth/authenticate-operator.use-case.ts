@@ -1,5 +1,4 @@
 import {
-  Inject,
   Injectable,
   InternalServerErrorException,
   NotFoundException,
@@ -12,6 +11,7 @@ import { UniqueID } from '@/core/object-values/unique-id';
 import { DatabaseUnavailableError } from '@/core/errors/database-unavailable.error';
 import { OperatorRepository } from '../../repositories/operator.repository';
 import { OperatorRawResult } from '@/domain/professional/@types/raw.operator';
+import { DomainEvents } from '@/core/events/domain-events';
 
 export type OperatorAuthenticateUseCaseRequest = {
   username: string;
@@ -20,14 +20,14 @@ export type OperatorAuthenticateUseCaseRequest = {
 
 type OperatorAuthenticateUseCaseResponse = Either<
   UnauthorizedException | NotFoundException | DatabaseUnavailableError,
-  { operator: ReturnType<Operator['toObject']> }
+  { operator: Operator }
 >;
 
 @Injectable()
 export class OperatorAuthenticateUseCase {
   constructor(
     private operatorRepository: OperatorRepository,
-    @Inject('Hasher') private readonly hasher: Hasher,
+    private readonly hasher: Hasher,
   ) {}
 
   async execute({
@@ -106,8 +106,11 @@ export class OperatorAuthenticateUseCase {
       );
     }
 
+    operator.recordAccess();
+    DomainEvents.dispatchEventsForAggregate(operator.id);
+
     return right({
-      operator: operator.toObject(),
+      operator,
     });
   }
 }

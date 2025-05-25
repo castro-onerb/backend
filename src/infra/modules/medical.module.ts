@@ -6,6 +6,7 @@ import { TokenService } from '@/infra/auth/auth.service';
 import { IpLocationService } from '@/core/services/ip-location.service';
 import { NodemailerService } from '../adapters/mail/nodemailer.service';
 import { DatabaseModule } from '../database/database.module';
+import { Hasher } from '@/core/cryptography/hasher';
 
 @Module({
   controllers: [MedicalAuthenticateController],
@@ -14,7 +15,7 @@ import { DatabaseModule } from '../database/database.module';
     IpLocationService,
     MedicalAuthenticateUseCase,
     {
-      provide: 'Hasher',
+      provide: Hasher,
       useClass: Md5Hasher,
     },
     {

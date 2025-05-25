@@ -12,6 +12,7 @@ import { AuthLogoutController } from '../http/controllers/auth/authenticate-logo
 import { InvalidateCodeRecoverController } from '../http/controllers/auth/invalidate-recoveries.controller';
 import { InvalidateCodeRecoverUseCase } from '@/app/use-cases/auth/invalidate-code-recover.use-case';
 import { DatabaseModule } from '../database/database.module';
+import { Hasher } from '@/core/cryptography/hasher';
 
 @Module({
   imports: [AdaptersModule, DatabaseModule],
@@ -26,7 +27,7 @@ import { DatabaseModule } from '../database/database.module';
     PrismaService,
     TokenService,
     {
-      provide: 'Hasher',
+      provide: Hasher,
       useClass: Md5Hasher,
     },
     RecoverPasswordUseCase,

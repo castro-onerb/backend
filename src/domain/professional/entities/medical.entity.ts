@@ -1,15 +1,16 @@
 import { UniqueID } from 'src/core/object-values/unique-id';
-import { Person } from 'src/core/entities/person.entity';
 import { MedicalEntityType } from '../@types/medical';
 import { CRM } from 'src/core/object-values/crm';
 import { Authenticable } from 'src/core/entities/authenticable.entity';
 import { Hasher } from 'src/core/cryptography/hasher';
 import { Either, left, right } from '@/core/either';
 import { BadRequestException } from '@nestjs/common';
+import { AggregateRoot } from '@/core/entities/aggregate-root';
+import { NewAccessAccount } from '../events/new-access-account.event';
 
 export type MedicalEntityResponse = Either<BadRequestException, Medical>;
 
-export class Medical extends Person<MedicalEntityType> {
+export class Medical extends AggregateRoot<MedicalEntityType> {
   private _auth: Authenticable;
 
   get crm(): CRM {
@@ -17,6 +18,10 @@ export class Medical extends Person<MedicalEntityType> {
       throw new Error('CRM não encontrado para este médico.');
     }
     return this.props.crm;
+  }
+
+  get email(): string {
+    return this.props.email;
   }
 
   async compare(raw: string, hasher: Hasher): Promise<boolean> {
@@ -53,12 +58,13 @@ export class Medical extends Person<MedicalEntityType> {
     return right(medical);
   }
 
-  toObject() {
-    return {
-      id: this.id.toString(),
-      name: this.props.name,
-      email: this.props.email,
-      crm: this.props.crm.value,
-    };
+  public recordAccess(ip?: string) {
+    this.addDomainEvent(
+      new NewAccessAccount({
+        aggregateId: this.id,
+        email: this.props.email,
+        ip,
+      }),
+    );
   }
 }
