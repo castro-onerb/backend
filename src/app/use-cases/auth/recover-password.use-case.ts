@@ -1,13 +1,15 @@
 import { OperatorRepository } from '@/app/repositories/operator.repository';
 import { Either, left, right } from '@/core/either';
-import { MailEntity } from '@/core/entities/mail.entity';
-import { formatName } from '@/core/utils/format-name';
 import { RecoveryPasswordRepository } from '../../repositories/recovery-password.repository';
 import {
   RecoverPasswordEmailNotFoundError,
   RecoverPasswordMultipleUsersError,
 } from './errors';
 import { Injectable } from '@nestjs/common';
+import { DomainEvents } from '@/core/events/domain-events';
+import { UniqueID } from '@/core/object-values/unique-id';
+import { PasswordRecoveryRequested } from '@/domain/professional/events/password-recovery-requested.event';
+import { formatName } from '@/core/utils/format-name';
 
 export type RecoverPasswordUseCaseRequest = {
   email: string;
@@ -23,7 +25,6 @@ export class RecoverPasswordUseCase {
   constructor(
     private readonly operatorRepository: OperatorRepository,
     private readonly recoveryPasswordRepository: RecoveryPasswordRepository,
-    private readonly mail: MailEntity,
   ) {}
 
   async execute({
@@ -35,6 +36,10 @@ export class RecoverPasswordUseCase {
       return left(new RecoverPasswordEmailNotFoundError());
     }
 
+    if (operator.length > 1) {
+      return left(new RecoverPasswordMultipleUsersError());
+    }
+
     const user = operator[0];
 
     const code = this.generateCode();
@@ -43,17 +48,19 @@ export class RecoverPasswordUseCase {
       userId: user.id,
       email,
       code,
-      expiresAt: new Date(Date.now() + 1000 * 60 * 5), // 5 minutos
+      expiresAt: new Date(Date.now() + 1000 * 60 * 10), // 10 minutos
     });
 
     const { name } = formatName(user.fullname);
 
-    await this.mail.send({
-      to: email,
-      subject: 'Deovita - Recuperação de senha',
-      template: 'auth/recover-password',
-      context: { name, code },
-    });
+    DomainEvents.dispatch(
+      new PasswordRecoveryRequested({
+        aggregateId: new UniqueID(user.id),
+        email,
+        name,
+        code,
+      }),
+    );
 
     return right({ success: true });
   }

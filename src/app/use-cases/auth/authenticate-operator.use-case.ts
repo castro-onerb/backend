@@ -1,9 +1,3 @@
-import {
-  Injectable,
-  InternalServerErrorException,
-  NotFoundException,
-  UnauthorizedException,
-} from '@nestjs/common';
 import { Hasher } from 'src/core/cryptography/hasher';
 import { Either, left, right } from '@/core/either';
 import { Operator } from '@/domain/professional/entities/operator.entity';
@@ -12,6 +6,15 @@ import { DatabaseUnavailableError } from '@/core/errors/database-unavailable.err
 import { OperatorRepository } from '../../repositories/operator.repository';
 import { OperatorRawResult } from '@/domain/professional/@types/raw.operator';
 import { DomainEvents } from '@/core/events/domain-events';
+import {
+  MultipleOperatorsFoundError,
+  OperatorEntityBuildError,
+  OperatorInactiveError,
+  OperatorNotFoundError,
+  OperatorPasswordNotSetError,
+} from './errors/operators.errors';
+import { InvalidPasswordError } from './errors';
+import { Injectable } from '@nestjs/common';
 
 export type OperatorAuthenticateUseCaseRequest = {
   username: string;
@@ -19,7 +22,12 @@ export type OperatorAuthenticateUseCaseRequest = {
 };
 
 type OperatorAuthenticateUseCaseResponse = Either<
-  UnauthorizedException | NotFoundException | DatabaseUnavailableError,
+  | MultipleOperatorsFoundError
+  | OperatorEntityBuildError
+  | OperatorInactiveError
+  | OperatorNotFoundError
+  | OperatorPasswordNotSetError
+  | DatabaseUnavailableError,
   { operator: Operator }
 >;
 
@@ -43,37 +51,21 @@ export class OperatorAuthenticateUseCase {
     }
 
     if (!listOperator || listOperator.length === 0) {
-      return left(
-        new NotFoundException(
-          'Não localizamos um operador com um usuário informado. Que tal conferir os dados?',
-        ),
-      );
+      return left(new OperatorNotFoundError());
     }
 
     if (listOperator.length > 1) {
-      return left(
-        new NotFoundException(
-          'Parece que há algo errado, localizamos mais de um acesso para este mesmo usuário.',
-        ),
-      );
+      return left(new MultipleOperatorsFoundError());
     }
 
     const queryOperator = listOperator[0];
 
     if (!queryOperator.active) {
-      return left(
-        new UnauthorizedException(
-          'Este perfil encontra-se desativado. Se precisar de ajuda, fale com o suporte.',
-        ),
-      );
+      return left(new OperatorInactiveError());
     }
 
     if (!queryOperator.password) {
-      return left(
-        new NotFoundException(
-          'O acesso está indisponível porque o perfil não possui uma senha cadastrada.',
-        ),
-      );
+      return left(new OperatorPasswordNotSetError());
     }
 
     const operatorCreated = Operator.create(
@@ -88,22 +80,14 @@ export class OperatorAuthenticateUseCase {
     );
 
     if (operatorCreated.isLeft()) {
-      return left(
-        new InternalServerErrorException(
-          'Falha ao preparar as informações do operador. Por favor, tente novamente mais tarde.',
-        ),
-      );
+      return left(new OperatorEntityBuildError());
     }
 
     const operator = operatorCreated.value;
     const isValid = await operator.compare(password, this.hasher);
 
     if (!isValid) {
-      return left(
-        new UnauthorizedException(
-          'Não conseguimos validar sua senha. Confira e tente novamente.',
-        ),
-      );
+      return left(new InvalidPasswordError());
     }
 
     operator.recordAccess();

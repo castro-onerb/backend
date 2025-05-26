@@ -1,11 +1,11 @@
 import {
   IInvalidateAllCodesByEmailOrUserRequest,
-  IRecoveryPasswordRepository,
+  RecoveryPasswordRepository,
   IRecoveryPasswordRequest,
 } from '@/app/repositories/recovery-password.repository';
 
 export class InMemoryRecoveryPasswordRepository
-  implements IRecoveryPasswordRepository
+  implements RecoveryPasswordRepository
 {
   recoveryRequests: (IRecoveryPasswordRequest & {
     id: string;

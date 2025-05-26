@@ -5,13 +5,17 @@ import { ResetPasswordUseCase } from './reset-password.use-case';
 import { Hasher } from '@/core/cryptography/hasher';
 import { ConfigService } from '@nestjs/config';
 import { Env } from '@/infra/env/env';
-import { NotFoundException } from '@nestjs/common';
+import {
+  RecoverPasswordCodeExpiredError,
+  RecoverPasswordCodeNotFoundError,
+} from './errors';
+import { DomainEvents } from '@/core/events/domain-events';
+import { PasswordSuccessfullyReset } from '@/domain/professional/events/password-successfully-reset.event';
 
 describe('RecoverPasswordUseCase', () => {
   let useCase: ResetPasswordUseCase;
   let operatorRepository: InMemoryOperatorRepository;
   let recoveryRepository: InMemoryRecoveryPasswordRepository;
-  let mailMock: { send: ReturnType<typeof vi.fn> };
 
   const fakeEmail = 'john.doe@example.com';
   const fakeCode = '123456';
@@ -20,10 +24,6 @@ describe('RecoverPasswordUseCase', () => {
   beforeEach(() => {
     operatorRepository = new InMemoryOperatorRepository();
     recoveryRepository = new InMemoryRecoveryPasswordRepository();
-
-    mailMock = {
-      send: vi.fn().mockResolvedValue(undefined),
-    };
 
     const hasherMock = {
       hash: vi.fn().mockResolvedValue('hashed_password'),
@@ -39,13 +39,12 @@ describe('RecoverPasswordUseCase', () => {
       recoveryRepository,
       hasherMock,
       configMock,
-      mailMock,
     );
 
     recoveryRepository.clear();
   });
 
-  it('should return NotFoundException if the code/email combination is not found', async () => {
+  it('should return error when recovery code for the given email is not found', async () => {
     const result = await useCase.execute({
       email: fakeEmail,
       code: fakeCode,
@@ -53,15 +52,10 @@ describe('RecoverPasswordUseCase', () => {
     });
 
     expect(result.isLeft()).toBe(true);
-    expect(result.value).toBeInstanceOf(NotFoundException);
-    if (result.isLeft()) {
-      expect(result.value.message).toMatch(
-        /Não conseguimos identificar o código fornecido/i,
-      );
-    }
+    expect(result.value).toBeInstanceOf(RecoverPasswordCodeNotFoundError);
   });
 
-  it('should reset the password successfully when code is valid and not expired', async () => {
+  it('should successfully reset the password when code is valid and not expired', async () => {
     operatorRepository.save({
       id: 'op-01',
       fullname: 'John Doe',
@@ -97,10 +91,51 @@ describe('RecoverPasswordUseCase', () => {
     }
 
     expect(recoveryRepository.recoveryRequests[0].used).toBe(true);
-    expect(mailMock.send).toHaveBeenCalled();
   });
 
-  it('should return UnauthorizedException if the code is expired', async () => {
+  it('should dispatch PasswordSuccessfullyReset event after successful reset', async () => {
+    const dispatchSpy = vi.spyOn(DomainEvents, 'dispatch');
+
+    operatorRepository.save({
+      id: 'op-01',
+      fullname: 'John Doe',
+      cpf: '12345678900',
+      email: fakeEmail,
+      password: 'old_password',
+    });
+
+    recoveryRepository.recoveryRequests.push({
+      id: 'rec-01',
+      email: fakeEmail,
+      userId: 'op-01',
+      code: fakeCode,
+      expiresAt: new Date(Date.now() + 1000 * 60 * 10), // válido
+      used: false,
+      createdAt: new Date(),
+    });
+
+    const result = await useCase.execute({
+      email: fakeEmail,
+      code: fakeCode,
+      password: fakePassword,
+    });
+
+    expect(result.isRight()).toBe(true);
+    expect(dispatchSpy).toHaveBeenCalledWith(
+      expect.any(PasswordSuccessfullyReset),
+    );
+
+    const dispatchedEvent = dispatchSpy.mock.calls.find(
+      ([event]) => event instanceof PasswordSuccessfullyReset,
+    )?.[0];
+
+    expect(dispatchedEvent).toBeDefined();
+    expect(dispatchedEvent).toMatchObject({
+      email: fakeEmail,
+    });
+  });
+
+  it('should return error when the recovery code is expired', async () => {
     recoveryRepository.recoveryRequests.push({
       id: 'rec-02',
       email: fakeEmail,
@@ -118,8 +153,6 @@ describe('RecoverPasswordUseCase', () => {
     });
 
     expect(result.isLeft()).toBe(true);
-    if (result.isLeft()) {
-      expect(result.value.message).toMatch(/já expirou/i);
-    }
+    expect(result.value).toBeInstanceOf(RecoverPasswordCodeExpiredError);
   });
 });

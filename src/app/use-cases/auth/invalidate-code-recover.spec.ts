@@ -2,11 +2,11 @@ import { InMemoryRecoveryPasswordRepository } from 'test/memory/repositories/pro
 import { InvalidateCodeRecoverUseCase } from './invalidate-code-recover.use-case';
 import { InMemoryOperatorRepository } from 'test/memory/repositories/clinicas/operator.repository';
 import {
-  BadRequestException,
-  ConflictException,
-  InternalServerErrorException,
-  NotFoundException,
-} from '@nestjs/common';
+  RecoverPasswordMissingIdentifierError,
+  RecoverPasswordNoCodesToInvalidateError,
+  RecoverPasswordUserConflictError,
+  RecoverPasswordUserNotFoundError,
+} from './errors';
 
 describe('InvalidateCodeRecoverUseCase', () => {
   let useCase: InvalidateCodeRecoverUseCase;
@@ -23,22 +23,17 @@ describe('InvalidateCodeRecoverUseCase', () => {
     );
   });
 
-  it('should return BadRequestException if no email and no username provided', async () => {
+  it('should return error when neither email nor username are provided', async () => {
     const result = await useCase.execute({
       email: undefined,
       username: undefined,
     });
 
     expect(result.isLeft()).toBe(true);
-    expect(result.value).toBeInstanceOf(BadRequestException);
-    if (result.isLeft()) {
-      expect(result.value.message).toMatch(
-        /precisamos de um email ou usuário/i,
-      );
-    }
+    expect(result.value).toBeInstanceOf(RecoverPasswordMissingIdentifierError);
   });
 
-  it('should return NotFoundException if username not found', async () => {
+  it('should return error when username does not match any user', async () => {
     operatorRepository.operators.push({
       id: 'user-01',
       fullname: 'Jon Doe',
@@ -56,13 +51,10 @@ describe('InvalidateCodeRecoverUseCase', () => {
     });
 
     expect(result.isLeft()).toBe(true);
-    expect(result.value).toBeInstanceOf(NotFoundException);
-    if (result.isLeft()) {
-      expect(result.value.message).toMatch(/Usuário não encontrado/i);
-    }
+    expect(result.value).toBeInstanceOf(RecoverPasswordUserNotFoundError);
   });
 
-  it('should return ConflictException if multiple users with the same username are found', async () => {
+  it('should return error when multiple users are found with the same username', async () => {
     operatorRepository.operators.push({
       id: 'user-01',
       fullname: 'Jon Doe',
@@ -91,15 +83,10 @@ describe('InvalidateCodeRecoverUseCase', () => {
     });
 
     expect(result.isLeft()).toBe(true);
-    expect(result.value).toBeInstanceOf(ConflictException);
-    if (result.isLeft()) {
-      expect(result.value.message).toMatch(
-        /Mais de um operador com este usuário/i,
-      );
-    }
+    expect(result.value).toBeInstanceOf(RecoverPasswordUserConflictError);
   });
 
-  it('should return InternalServerErrorException if operator is null', async () => {
+  it('should return error when no recovery code exists for the user', async () => {
     operatorRepository.operators.push({
       id: 'user-01',
       fullname: 'Jon Doe',
@@ -117,12 +104,9 @@ describe('InvalidateCodeRecoverUseCase', () => {
     });
 
     expect(result.isLeft()).toBe(true);
-    expect(result.value).toBeInstanceOf(InternalServerErrorException);
-    if (result.isLeft()) {
-      expect(result.value.message).toMatch(
-        /Não existe nenhum código para desativar/i,
-      );
-    }
+    expect(result.value).toBeInstanceOf(
+      RecoverPasswordNoCodesToInvalidateError,
+    );
   });
 
   it('should be able invalidate code recovery password', async () => {

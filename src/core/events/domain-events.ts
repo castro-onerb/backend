@@ -64,7 +64,7 @@ export class DomainEvents {
     }
   }
 
-  private static dispatch(event: DomainEvent) {
+  static dispatch(event: DomainEvent) {
     const eventName = event.constructor.name;
 
     const handlers = this.handlersMap[eventName] || [];

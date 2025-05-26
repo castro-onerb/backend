@@ -1,5 +1,11 @@
-import { BadRequestException } from '@nestjs/common';
 import { Either, left, right } from '../either';
+import {
+  PasswordGenerationLengthError,
+  PasswordMissingSymbolError,
+  PasswordMissingUppercaseError,
+  PasswordSequentialNumberError,
+  PasswordTooShortError,
+} from '../errors';
 
 export class Password {
   private readonly value: string;
@@ -10,7 +16,13 @@ export class Password {
 
   public static create(
     password: string,
-  ): Either<BadRequestException, Password> {
+  ): Either<
+    | PasswordMissingSymbolError
+    | PasswordMissingUppercaseError
+    | PasswordSequentialNumberError
+    | PasswordTooShortError,
+    Password
+  > {
     const pwd = new Password(password);
     const validation = pwd.validate();
 
@@ -21,11 +33,11 @@ export class Password {
     return right(pwd);
   }
 
-  public static generate(length = 12): Either<BadRequestException, Password> {
+  public static generate(
+    length = 12,
+  ): Either<PasswordGenerationLengthError, Password> {
     if (length < 6) {
-      return left(
-        new BadRequestException('A senha precisa ter ao menos 6 caracteres'),
-      );
+      return left(new PasswordGenerationLengthError());
     }
 
     const upper = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
@@ -59,35 +71,27 @@ export class Password {
     return right(password);
   }
 
-  private validate(): Either<BadRequestException, void> {
+  private validate(): Either<
+    | PasswordMissingSymbolError
+    | PasswordMissingUppercaseError
+    | PasswordSequentialNumberError
+    | PasswordTooShortError,
+    void
+  > {
     if (this.value.length < 6) {
-      return left(
-        new BadRequestException(
-          'Sua senha precisa ter pelo menos 6 caracteres.',
-        ),
-      );
+      return left(new PasswordTooShortError());
     }
 
     if (!/[A-Z]/.test(this.value)) {
-      return left(
-        new BadRequestException(
-          'Sua senha deve conter ao menos uma letra maiúscula.',
-        ),
-      );
+      return left(new PasswordMissingUppercaseError());
     }
 
     if (!/[!@#$%^&*(),.?":{}|<>]/.test(this.value)) {
-      return left(
-        new BadRequestException('Sua senha deve conter ao menos um símbolo.'),
-      );
+      return left(new PasswordMissingSymbolError());
     }
 
     if (this.hasSequentialNumbers().isRight()) {
-      return left(
-        new BadRequestException(
-          'Sua senha não deve conter números sequenciais',
-        ),
-      );
+      return left(new PasswordSequentialNumberError());
     }
 
     return right(undefined);

@@ -1,33 +1,45 @@
-import { SendMailWhenNewAccessAccount } from '@/domain/mail/handlers/send-mail-when-new-access-account.handler';
 import { DomainEvents } from './domain-events';
 import { NewAccessAccount } from '@/domain/professional/events/new-access-account.event';
+import { EventHandler } from './event-handler';
+import { UniqueID } from '../object-values/unique-id';
 
-describe('Domains Events Dispatch', () => {
-  it('should be able register an Domain Event', () => {
-    const eventDispatcher = new DomainEvents();
-    const eventHandler = new SendMailWhenNewAccessAccount();
-
-    eventDispatcher.register(eventHandler, 'NewAccessAccount');
-
-    expect(eventDispatcher.eventHandlers['NewAccessAccount']).toBeDefined();
-    expect(eventDispatcher.eventHandlers['NewAccessAccount'].length).toBe(1);
+describe('DomainEvents', () => {
+  afterEach(() => {
+    DomainEvents['handlersMap'] = {};
   });
 
-  it('should be able notify when an event occured', () => {
-    const eventDispatcher = new DomainEvents();
-    const eventHandler = new SendMailWhenNewAccessAccount();
-    eventDispatcher.register(eventHandler, 'NewAccessAccount');
+  it('should register a handler for an event', () => {
+    const handler: EventHandler = {
+      handle: vi.fn(),
+    };
 
-    vi.spyOn(eventHandler, 'handle');
+    DomainEvents.register('NewAccessAccount', handler);
+
+    const handlers = DomainEvents['handlersMap']['NewAccessAccount'];
+    expect(handlers).toBeDefined();
+    expect(handlers).toContain(handler);
+  });
+
+  it('should dispatch a registered event to the handler', async () => {
+    const handleMock = vi.fn().mockResolvedValue(undefined);
+
+    const handler: EventHandler = {
+      handle: handleMock,
+    };
+
+    DomainEvents.register('NewAccessAccount', handler);
 
     const event = new NewAccessAccount({
-      email: 'breno.castro.ofc@gmail.com',
-      date: new Date(),
-      localtion: 'Iguatu/CE',
+      aggregateId: new UniqueID(),
+      email: 'breno@example.com',
+      name: 'Breno Castro',
     });
 
-    eventDispatcher.notify(event);
+    DomainEvents.dispatch(event);
 
-    expect(eventHandler.handle).toHaveBeenCalled();
+    // aguarda o setTimeout interno rodar
+    await new Promise((resolve) => setTimeout(resolve, 10));
+
+    expect(handleMock).toHaveBeenCalledWith(event);
   });
 });

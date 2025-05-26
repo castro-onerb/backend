@@ -1,12 +1,10 @@
 import { TokenService } from '@/infra/auth/auth.service';
-import { MailEntity } from '@/core/entities/mail.entity';
 import { mapDomainErrorToHttp } from '@/core/errors/map-domain-errors-http';
 import { OperatorAuthenticateUseCase } from '@/app/use-cases/auth/authenticate-operator.use-case';
 import { ZodValidationPipe } from '@/infra/http/pipes/zod-validation.pipe';
 import {
   Body,
   Controller,
-  Inject,
   Post,
   Req,
   Res,
@@ -27,7 +25,6 @@ export class OperatorAuthenticateController {
   constructor(
     private readonly authenticateUseCase: OperatorAuthenticateUseCase,
     private readonly tokenService: TokenService,
-    @Inject('MailEntity') private readonly mail: MailEntity,
   ) {}
 
   @Post('login/operator')
@@ -67,7 +64,6 @@ export class OperatorAuthenticateController {
 
     return {
       access_token: accessToken,
-      refresh_token: refreshToken,
     };
   }
 }

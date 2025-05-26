@@ -1,8 +1,8 @@
-import { IOperatorRepository } from '@/domain/professional/app/repositories/operator.repository';
+import { OperatorRepository } from '@/app/repositories/operator.repository';
 import { OperatorRawResult } from '@/domain/professional/@types/raw.operator';
 import { faker } from '@faker-js/faker';
 
-export class InMemoryOperatorRepository implements IOperatorRepository {
+export class InMemoryOperatorRepository implements OperatorRepository {
   operators: OperatorRawResult[] = [];
 
   findByEmail(email: string): Promise<OperatorRawResult[] | null> {

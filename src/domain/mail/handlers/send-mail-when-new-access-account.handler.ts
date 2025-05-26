@@ -8,16 +8,15 @@ export class SendMailWhenNewAccessAccount
   constructor(private readonly mail: MailEntity) {}
 
   async handle(event: NewAccessAccount) {
-    console.log('evento disparado');
-    const emailresult = await this.mail.send({
+    await this.mail.send({
       to: event.email,
       subject: 'Deovita - Novo acesso detectado',
       template: 'auth/login-detected',
       context: {
-        ip: event.ip ?? 'Desconhecido',
+        ip: event.ip ?? undefined,
         date: event.ocurredAt.toLocaleString(),
+        name: event.name,
       },
     });
-    console.log('evento finalizado', emailresult);
   }
 }

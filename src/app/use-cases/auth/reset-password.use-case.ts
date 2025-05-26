@@ -1,7 +1,6 @@
 import { OperatorRepository } from '@/app/repositories/operator.repository';
 import { Injectable } from '@nestjs/common';
 import { Either, left, right } from '@/core/either';
-import { MailEntity } from '@/core/entities/mail.entity';
 import { RecoveryPasswordRepository } from '../../repositories/recovery-password.repository';
 import { Hasher } from '@/core/cryptography/hasher';
 import { ConfigService } from '@nestjs/config';
@@ -11,6 +10,9 @@ import {
   RecoverPasswordCodeNotFoundError,
   RecoverPasswordCooldownError,
 } from './errors';
+import { DomainEvents } from '@/core/events/domain-events';
+import { PasswordRecoveryAttemptFailed } from '@/domain/professional/events/password-recovery-attempt-failed.event';
+import { PasswordSuccessfullyReset } from '@/domain/professional/events/password-successfully-reset.event';
 
 export type ResetPasswordUseCaseRequest = {
   email: string;
@@ -32,7 +34,6 @@ export class ResetPasswordUseCase {
     private readonly passwordRepository: RecoveryPasswordRepository,
     private readonly hasher: Hasher,
     private config: ConfigService<Env, true>,
-    private readonly mail: MailEntity,
   ) {}
 
   async execute({
@@ -60,12 +61,12 @@ export class ResetPasswordUseCase {
     if (!record) {
       const redirect_url = this.config.get('FRONTEND_URL', { infer: true });
 
-      await this.mail.send({
-        to: email,
-        subject: 'Deovita - Alerta de Segurança',
-        template: 'auth/alert-recover-password',
-        context: { redirect_url, email },
-      });
+      DomainEvents.dispatch(
+        new PasswordRecoveryAttemptFailed({
+          email,
+          redirectUrl: redirect_url,
+        }),
+      );
 
       return left(new RecoverPasswordCodeNotFoundError());
     }
@@ -79,12 +80,11 @@ export class ResetPasswordUseCase {
 
     await this.passwordRepository.invalidateCode(record.id);
 
-    await this.mail.send({
-      to: email,
-      subject: 'Deovita - Senha redefinida',
-      template: 'auth/confirm-recover-password',
-      context: { code },
-    });
+    DomainEvents.dispatch(
+      new PasswordSuccessfullyReset({
+        email,
+      }),
+    );
 
     return right({ success: true });
   }

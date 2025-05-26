@@ -1,4 +1,3 @@
-import { IpLocationService } from '@/core/services/ip-location.service';
 import { TokenService } from '@/infra/auth/auth.service';
 import { mapDomainErrorToHttp } from '@/core/errors/map-domain-errors-http';
 import { CRM } from '@/core/object-values/crm';
@@ -7,7 +6,6 @@ import { ZodValidationPipe } from '@/infra/http/pipes/zod-validation.pipe';
 import {
   Body,
   Controller,
-  Inject,
   Post,
   Req,
   Res,
@@ -16,7 +14,6 @@ import {
 } from '@nestjs/common';
 import { Request, Response } from 'express';
 import { z } from 'zod';
-import { MailEntity } from '@/core/entities/mail.entity';
 import { ThrottlerGuard } from '@nestjs/throttler';
 
 const schemaBodyRequest = z.object({
@@ -30,8 +27,6 @@ export class MedicalAuthenticateController {
   constructor(
     private readonly authenticateUseCase: MedicalAuthenticateUseCase,
     private readonly tokenService: TokenService,
-    private readonly ipLocationService: IpLocationService,
-    @Inject('MailEntity') private readonly mail: MailEntity,
   ) {}
 
   @Post('login/medical')
@@ -76,7 +71,6 @@ export class MedicalAuthenticateController {
 
     return {
       access_token: accessToken,
-      refresh_token: refreshToken,
     };
   }
 }

@@ -8,7 +8,7 @@ Content-Type: application/json
 
 {
   "crm": "000000-CE",
-  "password": "123456"
+  "password": "@12Bagaiaro"
 }
 
 ###
@@ -28,19 +28,19 @@ Authorization: Bearer eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI1ODcwMCIsI
 
 ###
 
-POST http://localhost:3333/auth/recovery
+POST http://localhost:3333/auth/recover-password
 Content-Type: application/json
 
 {
-  "email": "reinam.sharles@deovita.com.br"
+  "email": "breno.castro@deovita.com.br"
 }
 ###
 
-POST http://localhost:3333/auth/reset
+POST http://localhost:3333/auth/reset-password
 Content-Type: application/json
 
 {
-  "email": "reinam.sharles@deovita.com.br",
-  "code": "1UL9DI",
-  "password": "SHARles2003!"
+  "email": "breno.castro@deovita.com.br",
+  "code": "UJLHKY",
+  "password": "@12Bagaiaro"
 }

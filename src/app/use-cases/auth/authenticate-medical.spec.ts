@@ -4,14 +4,18 @@ import { Hasher } from '@/core/cryptography/hasher';
 import { MedicalAuthenticateUseCase } from './authenticate-medical.use-case';
 import { CRM } from '@/core/object-values/crm';
 import { InMemoryMedicalRepository } from 'test/memory/repositories/clinicas/medical.repository';
-import {
-  BadRequestException,
-  ConflictException,
-  NotFoundException,
-  UnauthorizedException,
-} from '@nestjs/common';
 import { left } from '@/core/either';
 import { Medical } from '@/domain/professional/entities/medical.entity';
+import {
+  InvalidPasswordError,
+  MedicalEntityBuildError,
+  MedicalInactiveError,
+  MedicalNotFoundError,
+  MedicalPasswordNotSetError,
+  MultipleDoctorsFoundError,
+} from './errors';
+import { DomainEvents } from '@/core/events/domain-events';
+import { NewAccessAccount } from '@/domain/professional/events/new-access-account.event';
 
 describe('Authenticate Medical Use Case', () => {
   let useCase: MedicalAuthenticateUseCase;
@@ -46,7 +50,7 @@ describe('Authenticate Medical Use Case', () => {
     });
 
     expect(result.isLeft()).toBe(true);
-    expect(result.value).toBeInstanceOf(NotFoundException);
+    expect(result.value).toBeInstanceOf(MedicalNotFoundError);
   });
 
   it('should not authenticate if doctor has no password set', async () => {
@@ -68,10 +72,7 @@ describe('Authenticate Medical Use Case', () => {
     });
 
     expect(result.isLeft()).toBe(true);
-    expect(result.value).toBeInstanceOf(NotFoundException);
-    expect((result.value as NotFoundException).message).toMatch(
-      /não possui uma senha/,
-    );
+    expect(result.value).toBeInstanceOf(MedicalPasswordNotSetError);
   });
 
   it('should return internal error if creating the Medical entity fails', async () => {
@@ -95,9 +96,7 @@ describe('Authenticate Medical Use Case', () => {
 
     const createSpy = vi
       .spyOn(Medical, 'create')
-      .mockReturnValueOnce(
-        left(new BadRequestException('Falha na criação da entidade')),
-      );
+      .mockReturnValueOnce(left(new MedicalEntityBuildError()));
 
     const result = await useCase.execute({
       crm: crm.value,
@@ -105,10 +104,7 @@ describe('Authenticate Medical Use Case', () => {
     });
 
     expect(result.isLeft()).toBe(true);
-    expect(result.value).toBeInstanceOf(Error);
-    expect((result.value as Error).message).toMatch(
-      /Falha ao preparar as informações do médico/,
-    );
+    expect(result.value).toBeInstanceOf(MedicalEntityBuildError);
 
     createSpy.mockRestore();
   });
@@ -133,7 +129,7 @@ describe('Authenticate Medical Use Case', () => {
     });
 
     expect(result.isLeft()).toBe(true);
-    expect(result.value).toBeInstanceOf(UnauthorizedException);
+    expect(result.value).toBeInstanceOf(MedicalInactiveError);
   });
 
   it('should not authenticate if multiple doctors share the same CRM', async () => {
@@ -162,7 +158,7 @@ describe('Authenticate Medical Use Case', () => {
     });
 
     expect(result.isLeft()).toBe(true);
-    expect(result.value).toBeInstanceOf(ConflictException);
+    expect(result.value).toBeInstanceOf(MultipleDoctorsFoundError);
   });
 
   it('should authenticate a medical with valid CRM and password', async () => {
@@ -187,10 +183,46 @@ describe('Authenticate Medical Use Case', () => {
 
     expect(result.isRight()).toBe(true);
     if (result.isRight()) {
-      expect(result.value.medical).toMatchObject({
-        crm: crm.value.value,
-      });
+      expect(result.value.medical.crm.value).toBe('123456-CE');
     }
+  });
+
+  it('should dispatch NewAccessAccount event when medical login is successful', async () => {
+    const crm = CRM.create('123456-CE');
+    const password = '123456';
+
+    if (crm.isLeft()) throw new Error('CRM inválido');
+
+    medicalRepository.save({
+      id: 'med-01',
+      fullname: 'Dr. House',
+      cpf: '98765432100',
+      crm: crm.value.value,
+      username: 'dr.house',
+      email: 'house@example.com',
+      password: 'e10adc3949ba59abbe56e057f20f883e',
+      active: true,
+    });
+
+    hasher.compare.mockResolvedValue(true);
+
+    const dispatchSpy = vi.spyOn(DomainEvents, 'dispatch');
+
+    const result = await useCase.execute({
+      crm: crm.value,
+      password,
+    });
+
+    expect(result.isRight()).toBe(true);
+    expect(dispatchSpy).toHaveBeenCalledWith(expect.any(NewAccessAccount));
+
+    const dispatched = dispatchSpy.mock.calls.find(
+      ([event]) => event instanceof NewAccessAccount,
+    )?.[0];
+
+    expect(dispatched).toBeDefined();
+    expect(dispatched).toBeInstanceOf(NewAccessAccount);
+    expect(dispatched?.aggregateId.toString()).toBe('med-01');
   });
 
   it('should not authenticate a medical with valid CRM and icorrect password', async () => {
@@ -214,5 +246,6 @@ describe('Authenticate Medical Use Case', () => {
     });
 
     expect(result.isLeft()).toBe(true);
+    expect(result.value).toBeInstanceOf(InvalidPasswordError);
   });
 });

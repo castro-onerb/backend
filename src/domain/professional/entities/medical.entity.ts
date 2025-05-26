@@ -4,11 +4,12 @@ import { CRM } from 'src/core/object-values/crm';
 import { Authenticable } from 'src/core/entities/authenticable.entity';
 import { Hasher } from 'src/core/cryptography/hasher';
 import { Either, left, right } from '@/core/either';
-import { BadRequestException } from '@nestjs/common';
 import { AggregateRoot } from '@/core/entities/aggregate-root';
 import { NewAccessAccount } from '../events/new-access-account.event';
+import { formatName } from '@/core/utils/format-name';
+import { MedicalEntityBuildError } from '@/app/use-cases/auth/errors';
 
-export type MedicalEntityResponse = Either<BadRequestException, Medical>;
+export type MedicalEntityResponse = Either<MedicalEntityBuildError, Medical>;
 
 export class Medical extends AggregateRoot<MedicalEntityType> {
   private _auth: Authenticable;
@@ -44,7 +45,7 @@ export class Medical extends AggregateRoot<MedicalEntityType> {
     });
 
     if (auth.isLeft()) {
-      return left(auth.value);
+      return left(new MedicalEntityBuildError());
     }
 
     const medical = new Medical(
@@ -62,6 +63,7 @@ export class Medical extends AggregateRoot<MedicalEntityType> {
     this.addDomainEvent(
       new NewAccessAccount({
         aggregateId: this.id,
+        name: formatName(this.props.name).name,
         email: this.props.email,
         ip,
       }),

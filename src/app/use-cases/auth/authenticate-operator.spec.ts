@@ -3,13 +3,18 @@ import { Mocked, vi } from 'vitest';
 import { Hasher } from '@/core/cryptography/hasher';
 import { OperatorAuthenticateUseCase } from './authenticate-operator.use-case';
 import { InMemoryOperatorRepository } from 'test/memory/repositories/clinicas/operator.repository';
-import {
-  UnauthorizedException,
-  InternalServerErrorException,
-  NotFoundException,
-} from '@nestjs/common';
 import { Operator } from '@/domain/professional/entities/operator.entity';
 import { left } from '@/core/either';
+import {
+  MultipleOperatorsFoundError,
+  OperatorEntityBuildError,
+  OperatorInactiveError,
+  OperatorNotFoundError,
+  OperatorPasswordNotSetError,
+} from './errors/operators.errors';
+import { InvalidPasswordError } from './errors';
+import { DomainEvents } from '@/core/events/domain-events';
+import { NewAccessAccount } from '@/domain/professional/events/new-access-account.event';
 
 describe('Authenticate Operator Use Case', () => {
   let useCase: OperatorAuthenticateUseCase;
@@ -37,7 +42,7 @@ describe('Authenticate Operator Use Case', () => {
     const result = await useCase.execute({ username, password });
 
     expect(result.isLeft()).toBe(true);
-    expect(result.value).toBeInstanceOf(NotFoundException);
+    expect(result.value).toBeInstanceOf(OperatorNotFoundError);
   });
 
   it('should not authenticate if multiple operators share the same username', async () => {
@@ -59,10 +64,7 @@ describe('Authenticate Operator Use Case', () => {
     const result = await useCase.execute({ username, password });
 
     expect(result.isLeft()).toBe(true);
-    expect(result.value).toBeInstanceOf(NotFoundException);
-    expect((result.value as NotFoundException).message).toMatch(
-      /mais de um acesso/,
-    );
+    expect(result.value).toBeInstanceOf(MultipleOperatorsFoundError);
   });
 
   it('should not authenticate if operator profile is inactive', async () => {
@@ -78,10 +80,7 @@ describe('Authenticate Operator Use Case', () => {
     const result = await useCase.execute({ username, password });
 
     expect(result.isLeft()).toBe(true);
-    expect(result.value).toBeInstanceOf(UnauthorizedException);
-    expect((result.value as UnauthorizedException).message).toMatch(
-      /desativado/,
-    );
+    expect(result.value).toBeInstanceOf(OperatorInactiveError);
   });
 
   it('should not authenticate if operator has no password set', async () => {
@@ -96,13 +95,10 @@ describe('Authenticate Operator Use Case', () => {
     const result = await useCase.execute({ username, password });
 
     expect(result.isLeft()).toBe(true);
-    expect(result.value).toBeInstanceOf(NotFoundException);
-    expect((result.value as NotFoundException).message).toMatch(
-      /não possui uma senha/,
-    );
+    expect(result.value).toBeInstanceOf(OperatorPasswordNotSetError);
   });
 
-  it('should return internal error if creating the Operator entity fails', async () => {
+  it('should return error if creating the Operator entity fails', async () => {
     const username = 'jon.doe';
     const password = '123456';
 
@@ -118,17 +114,12 @@ describe('Authenticate Operator Use Case', () => {
 
     const createSpy = vi
       .spyOn(Operator, 'create')
-      .mockReturnValueOnce(
-        left(new InternalServerErrorException('Falha na criação da entidade')),
-      );
+      .mockReturnValueOnce(left(new OperatorEntityBuildError()));
 
     const result = await useCase.execute({ username, password });
 
     expect(result.isLeft()).toBe(true);
-    expect(result.value).toBeInstanceOf(Error);
-    expect((result.value as Error).message).toMatch(
-      /Falha ao preparar as informações do operador/,
-    );
+    expect(result.value).toBeInstanceOf(OperatorEntityBuildError);
 
     createSpy.mockRestore();
   });
@@ -152,6 +143,38 @@ describe('Authenticate Operator Use Case', () => {
     }
   });
 
+  it('should dispatch OperatorAccessed event when login is successful', async () => {
+    const username = 'jon.doe';
+    const password = '123456';
+
+    operatorRepository.save({
+      id: 'op-01',
+      username,
+      fullname: 'Jon Doe',
+      cpf: '12345678900',
+      email: 'jon@example.com',
+      password: 'e10adc3949ba59abbe56e057f20f883e',
+      active: true,
+    });
+
+    hasher.compare.mockResolvedValue(true);
+
+    const dispatchSpy = vi.spyOn(DomainEvents, 'dispatch');
+
+    const result = await useCase.execute({ username, password });
+
+    expect(result.isRight()).toBe(true);
+    expect(dispatchSpy).toHaveBeenCalledWith(expect.any(NewAccessAccount));
+
+    const event = dispatchSpy.mock.calls.find(
+      ([e]) => e instanceof NewAccessAccount,
+    )?.[0];
+
+    expect(event).toBeDefined();
+    expect(event).toBeInstanceOf(NewAccessAccount);
+    expect(event?.aggregateId.toString()).toBe('op-01');
+  });
+
   it('should not authenticate an operator with valid username and incorrect password', async () => {
     const username = 'jon.doe';
     const password = '1234';
@@ -166,5 +189,6 @@ describe('Authenticate Operator Use Case', () => {
     const result = await useCase.execute({ username, password });
 
     expect(result.isLeft()).toBe(true);
+    expect(result.value).toBeInstanceOf(InvalidPasswordError);
   });
 });

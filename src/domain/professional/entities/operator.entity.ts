@@ -2,12 +2,13 @@ import { UniqueID } from 'src/core/object-values/unique-id';
 import { Authenticable } from 'src/core/entities/authenticable.entity';
 import { Hasher } from 'src/core/cryptography/hasher';
 import { Either, left, right } from '@/core/either';
-import { BadRequestException } from '@nestjs/common';
 import { OperatorEntityType } from '../@types/operator';
 import { AggregateRoot } from '@/core/entities/aggregate-root';
 import { NewAccessAccount } from '../events/new-access-account.event';
+import { formatName } from '@/core/utils/format-name';
+import { OperatorEntityBuildError } from '@/app/use-cases/auth/errors/operators.errors';
 
-export type OperatorEntityResponse = Either<BadRequestException, Operator>;
+export type OperatorEntityResponse = Either<OperatorEntityBuildError, Operator>;
 
 export class Operator extends AggregateRoot<OperatorEntityType> {
   private _auth: Authenticable;
@@ -36,7 +37,7 @@ export class Operator extends AggregateRoot<OperatorEntityType> {
     });
 
     if (auth.isLeft()) {
-      return left(auth.value);
+      return left(new OperatorEntityBuildError());
     }
 
     const operator = new Operator(
@@ -54,6 +55,7 @@ export class Operator extends AggregateRoot<OperatorEntityType> {
     this.addDomainEvent(
       new NewAccessAccount({
         aggregateId: this.id,
+        name: formatName(this.props.name).name,
         email: this.props.email,
         ip,
       }),

@@ -1,25 +1,23 @@
 import { DomainEvent } from '@/core/events/domain-event';
 import { UniqueID } from '@/core/object-values/unique-id';
 
-interface NewAccessRequest {
-  aggregateId: UniqueID;
-  name: string;
-  email: string;
-  ip?: string;
-}
-
-export class NewAccessAccount implements DomainEvent {
+export class PasswordRecoveryRequested implements DomainEvent {
   ocurredAt: Date;
   aggregateId: UniqueID;
-  name: string;
   email: string;
-  ip?: string;
+  name: string;
+  code: string;
 
-  constructor(props: NewAccessRequest) {
+  constructor(props: {
+    aggregateId: UniqueID;
+    email: string;
+    name: string;
+    code: string;
+  }) {
     this.aggregateId = props.aggregateId;
     this.ocurredAt = new Date();
-    this.name = props.name;
     this.email = props.email;
-    this.ip = props.ip;
+    this.name = props.name;
+    this.code = props.code;
   }
 }
