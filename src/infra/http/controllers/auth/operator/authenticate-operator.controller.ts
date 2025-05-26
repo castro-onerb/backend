@@ -48,10 +48,10 @@ export class OperatorAuthenticateController {
 
     const operatorId = result.value.operator.id;
     const accessToken = this.tokenService.generateAccessToken({
-      sub: operatorId,
+      sub: operatorId.toString(),
     });
     const refreshToken = this.tokenService.generateRefreshToken({
-      sub: operatorId,
+      sub: operatorId.toString(),
     });
 
     res.cookie('refresh_token', refreshToken, {

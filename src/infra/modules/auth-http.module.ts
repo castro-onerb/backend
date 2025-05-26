@@ -4,7 +4,7 @@ import { TokenService } from '@/infra/auth/auth.service';
 import { RecoverPasswordUseCase } from '@/app/use-cases/auth/recover-password.use-case';
 import { PrismaService } from '../database/prisma/prisma.service';
 import { AdaptersModule } from '@/infra/adapters/adapters.module';
-import { RecoveryPasswordController } from '../http/controllers/auth/recovery-password.controller';
+import { RecoveryPasswordController } from '../http/controllers/auth/recover-password.controller';
 import { ResetPasswordUseCase } from '@/app/use-cases/auth/reset-password.use-case';
 import { ResetPasswordController } from '../http/controllers/auth/reset-password.controller';
 import { Md5Hasher } from '../cryptography/md5-hasher';

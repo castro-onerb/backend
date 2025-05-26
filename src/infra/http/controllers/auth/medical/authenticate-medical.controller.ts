@@ -55,10 +55,10 @@ export class MedicalAuthenticateController {
 
     const medicalId = result.value.medical.id;
     const accessToken = this.tokenService.generateAccessToken({
-      sub: medicalId,
+      sub: medicalId.toString(),
     });
     const refreshToken = this.tokenService.generateRefreshToken({
-      sub: medicalId,
+      sub: medicalId.toString(),
     });
 
     res.cookie('refresh_token', refreshToken, {
