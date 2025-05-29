@@ -56,9 +56,13 @@ export class MedicalAuthenticateController {
     const medicalId = result.value.medical.id;
     const accessToken = this.tokenService.generateAccessToken({
       sub: medicalId.toString(),
+      name: result.value.medical.name,
+      role: 'medical',
     });
     const refreshToken = this.tokenService.generateRefreshToken({
       sub: medicalId.toString(),
+      name: result.value.medical.name,
+      role: 'medical',
     });
 
     res.cookie('refresh_token', refreshToken, {
@@ -66,7 +70,7 @@ export class MedicalAuthenticateController {
       secure: false,
       sameSite: 'strict',
       maxAge: 7 * 24 * 60 * 60 * 1000, // 7 dias
-      path: '/auth/refresh-token',
+      // path: '/auth/refresh-token',
     });
 
     return {

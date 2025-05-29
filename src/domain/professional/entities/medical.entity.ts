@@ -21,6 +21,10 @@ export class Medical extends AggregateRoot<MedicalEntityType> {
     return this.props.crm;
   }
 
+  get name(): string {
+    return this.props.name;
+  }
+
   get email(): string {
     return this.props.email;
   }

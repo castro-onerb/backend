@@ -4,6 +4,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { INestApplication } from '@nestjs/common';
 import { AppModule } from '@/infra/app.module';
 import { TokenService } from '@/infra/auth/auth.service';
+import cookieParser from 'cookie-parser';
 
 describe('TokenController (E2E)', () => {
   let app: INestApplication;
@@ -23,6 +24,7 @@ describe('TokenController (E2E)', () => {
       .compile();
 
     app = moduleFixture.createNestApplication();
+    app.use(cookieParser());
     await app.init();
   });
 
@@ -33,12 +35,11 @@ describe('TokenController (E2E)', () => {
   it('should return new access and refresh tokens', async () => {
     const response = await request(app.getHttpServer())
       .post('/auth/refresh-token')
-      .send({ refresh_token: 'valid-refresh-token' })
+      .set('Cookie', [`refresh_token=valid-refresh-token`])
       .expect(201);
 
     expect(response.body).toEqual({
-      accessToken: 'mocked-access-token',
-      refreshToken: 'mocked-refresh-token',
+      access_token: 'mocked-access-token',
     });
 
     const rawCookies = response.headers['set-cookie'];

@@ -7,6 +7,8 @@ import { z } from 'zod';
 
 const tokenPayloadSchema = z.object({
   sub: z.string(),
+  name: z.string().optional(),
+  role: z.enum(['medical', 'operator']),
   iat: z.number(),
   exp: z.number(),
 });

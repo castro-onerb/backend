@@ -4,13 +4,23 @@ import { ConfigService } from '@nestjs/config';
 import { Env } from '@/infra/env/env';
 import { z } from 'zod';
 
-const tokenSchema = z.object({
+const accessTokenSchema = z.object({
   sub: z.string(),
+  name: z.string().optional(),
+  role: z.enum(['medical', 'operator']),
+});
+
+type JwtPayloadAccessToken = z.infer<typeof accessTokenSchema>;
+
+export const refreshTokenSchema = z.object({
+  sub: z.string(),
+  name: z.string().optional(),
+  role: z.enum(['medical', 'operator']),
   iat: z.number(),
   exp: z.number(),
 });
 
-type JwtPayload = z.infer<typeof tokenSchema>;
+type JwtPayloadRefreshoken = z.infer<typeof refreshTokenSchema>;
 
 @Injectable()
 export class TokenService {
@@ -19,8 +29,9 @@ export class TokenService {
     private readonly config: ConfigService<Env, true>,
   ) {}
 
-  generateAccessToken(payload: object) {
-    return this.jwtService.sign(payload, {
+  generateAccessToken(payload: JwtPayloadAccessToken) {
+    const validPayload = accessTokenSchema.parse(payload);
+    return this.jwtService.sign(validPayload, {
       expiresIn: '15m',
     });
   }
@@ -34,7 +45,7 @@ export class TokenService {
     });
   }
 
-  verifyRefreshToken(token: string): JwtPayload {
+  verifyRefreshToken(token: string): JwtPayloadRefreshoken {
     const publicKey = this.config.get('JWT_PUBLIC_KEY', { infer: true });
 
     const payload = this.jwtService.verify<Record<string, unknown>>(token, {
@@ -42,6 +53,6 @@ export class TokenService {
       algorithms: ['RS256'],
     });
 
-    return tokenSchema.parse(payload);
+    return refreshTokenSchema.parse(payload);
   }
 }

@@ -49,17 +49,21 @@ export class OperatorAuthenticateController {
     const operatorId = result.value.operator.id;
     const accessToken = this.tokenService.generateAccessToken({
       sub: operatorId.toString(),
+      name: result.value.operator.name,
+      role: 'operator',
     });
     const refreshToken = this.tokenService.generateRefreshToken({
       sub: operatorId.toString(),
+      name: result.value.operator.name,
+      role: 'operator',
     });
 
     res.cookie('refresh_token', refreshToken, {
       httpOnly: true,
-      secure: true,
+      secure: false,
       sameSite: 'strict',
       maxAge: 7 * 24 * 60 * 60 * 1000, // 7 dias
-      path: '/auth/refresh-token',
+      // path: '/auth/refresh-token',
     });
 
     return {

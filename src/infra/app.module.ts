@@ -10,6 +10,7 @@ import { AuthHttpModule } from './modules/auth-http.module';
 import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
 import { APP_GUARD } from '@nestjs/core';
 import { EventsModule } from './events/events.module';
+import { DatabaseModule } from './database/database.module';
 
 @Module({
   imports: [
@@ -20,6 +21,7 @@ import { EventsModule } from './events/events.module';
     AuthModule,
     AuthHttpModule,
     AdaptersModule,
+    DatabaseModule,
     ThrottlerModule.forRoot({
       throttlers: [
         {

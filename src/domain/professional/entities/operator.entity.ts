@@ -13,6 +13,10 @@ export type OperatorEntityResponse = Either<OperatorEntityBuildError, Operator>;
 export class Operator extends AggregateRoot<OperatorEntityType> {
   private _auth: Authenticable;
 
+  get name(): string {
+    return this.props.name;
+  }
+
   get username(): string {
     return this._auth.username;
   }

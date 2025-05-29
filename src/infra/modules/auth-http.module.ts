@@ -13,6 +13,7 @@ import { InvalidateCodeRecoverController } from '../http/controllers/auth/invali
 import { InvalidateCodeRecoverUseCase } from '@/app/use-cases/auth/invalidate-code-recover.use-case';
 import { DatabaseModule } from '../database/database.module';
 import { Hasher } from '@/core/cryptography/hasher';
+import { AuthProfile } from '../http/controllers/auth/auth-profile.controller';
 
 @Module({
   imports: [AdaptersModule, DatabaseModule],
@@ -22,6 +23,7 @@ import { Hasher } from '@/core/cryptography/hasher';
     TokenController,
     AuthLogoutController,
     InvalidateCodeRecoverController,
+    AuthProfile,
   ],
   providers: [
     PrismaService,
