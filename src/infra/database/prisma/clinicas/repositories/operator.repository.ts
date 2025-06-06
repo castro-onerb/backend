@@ -20,7 +20,7 @@ export class PrismaOperatorRepository implements OperatorRepository {
               ativo as active,
               nome as fullname,
               cpf
-        FROM tb_operador
+        FROM ponto.tb_operador
         WHERE email = ${email}
       `,
       );
@@ -42,7 +42,7 @@ export class PrismaOperatorRepository implements OperatorRepository {
             ativo as active,
             nome as fullname,
             cpf
-      FROM tb_operador
+      FROM ponto.tb_operador
       WHERE ${username} = usuario
     `;
 
@@ -68,7 +68,7 @@ export class PrismaOperatorRepository implements OperatorRepository {
 
       const result = await this.db.$executeRaw(
         Prisma.sql`
-        UPDATE tb_operador
+        UPDATE ponto.tb_operador
         SET senha = ${password}
         WHERE ${whereClause}
       `,

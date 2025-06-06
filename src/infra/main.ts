@@ -15,6 +15,7 @@ async function bootstrap() {
       'http://localhost:5173',
       'http://192.168.2.71:5173',
       'http://192.168.0.100:5173',
+      'http://192.168.2.99:5173',
     ],
     credentials: true,
   });

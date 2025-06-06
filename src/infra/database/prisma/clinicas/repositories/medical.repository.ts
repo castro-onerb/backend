@@ -18,9 +18,9 @@ export class PrismaMedicalRepository implements MedicalRepository {
             ativo as active,
             nome as fullname,
             cpf,
-            concat(conselho, '-', upper(uf_profissional)) as crm
-      FROM tb_operador
-      WHERE ${crm.value} = concat(conselho, '-', upper(uf_profissional))
+            concat(conselho, '-', upper(uf_conselho)) as crm
+      FROM ponto.tb_operador
+      WHERE ${crm.value} = concat(conselho, '-', upper(uf_conselho))
     `;
 
     return result;

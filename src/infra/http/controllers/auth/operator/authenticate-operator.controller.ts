@@ -14,6 +14,7 @@ import {
 import { ThrottlerGuard } from '@nestjs/throttler';
 import { Request, Response } from 'express';
 import { z } from 'zod';
+import { formatName } from '@/core/utils/format-name';
 
 const schemaBodyRequest = z.object({
   username: z.string(),
@@ -49,12 +50,12 @@ export class OperatorAuthenticateController {
     const operatorId = result.value.operator.id;
     const accessToken = this.tokenService.generateAccessToken({
       sub: operatorId.toString(),
-      name: result.value.operator.name,
+      name: formatName(result.value.operator.name).name,
       role: 'operator',
     });
     const refreshToken = this.tokenService.generateRefreshToken({
       sub: operatorId.toString(),
-      name: result.value.operator.name,
+      name: formatName(result.value.operator.name).name,
       role: 'operator',
     });
 

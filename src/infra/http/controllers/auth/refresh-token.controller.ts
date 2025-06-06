@@ -1,3 +1,4 @@
+import { formatName } from '@/core/utils/format-name';
 import { TokenService } from '@/infra/auth/auth.service';
 import {
   Controller,
@@ -32,12 +33,12 @@ export class TokenController {
 
       const newAccessToken = this.tokenService.generateAccessToken({
         sub: payload.sub,
-        name: payload.name,
+        name: formatName(payload.name).name,
         role: payload.role,
       });
       const newRefreshToken = this.tokenService.generateRefreshToken({
         sub: payload.sub,
-        name: payload.name,
+        name: formatName(payload.name).name,
         role: payload.role,
       });
 

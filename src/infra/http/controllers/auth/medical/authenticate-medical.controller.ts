@@ -15,6 +15,7 @@ import {
 import { Request, Response } from 'express';
 import { z } from 'zod';
 import { ThrottlerGuard } from '@nestjs/throttler';
+import { formatName } from '@/core/utils/format-name';
 
 const schemaBodyRequest = z.object({
   crm: z.string(),
@@ -56,12 +57,12 @@ export class MedicalAuthenticateController {
     const medicalId = result.value.medical.id;
     const accessToken = this.tokenService.generateAccessToken({
       sub: medicalId.toString(),
-      name: result.value.medical.name,
+      name: formatName(result.value.medical.name).name,
       role: 'medical',
     });
     const refreshToken = this.tokenService.generateRefreshToken({
       sub: medicalId.toString(),
-      name: result.value.medical.name,
+      name: formatName(result.value.medical.name).name,
       role: 'medical',
     });
 

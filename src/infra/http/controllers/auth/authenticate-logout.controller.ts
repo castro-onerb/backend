@@ -7,7 +7,7 @@ export class AuthLogoutController {
   logout(@Res() res: Response) {
     res.clearCookie('refresh_token', {
       httpOnly: true,
-      secure: true,
+      secure: false,
       sameSite: 'strict',
     });
 
