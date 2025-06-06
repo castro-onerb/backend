@@ -1,14 +1,14 @@
-GET http://localhost:3333/
-Authorization: Bearer eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI1MzUwMyIsImlhdCI6MTc0ODI3MzI3NCwiZXhwIjoxNzQ4Mjc0MTc0fQ.AUOvir5hWrv9uTNWL4aq6ehitKe7IVT7zHbc7q-pNkwurJP0M6eYZa6B9m2769EldYy3WmVFaprP7LaHR8_fo4O9i8rSOWRY_eiJPfV1uv_gawicVMyuhXJDNrTDy7bdDotxqQkTi-gbQ0jFWIVCEuns-YgMinb5hNoSiz8sp9HiPcOeF6-FgGxUSDN3_WTrHMfeKNmsBPIYsn9Vcbb308uLzD-X43InAr8YY3uVFPRULovsSW3zv1oUmsE_NMC3oo__olO_Cb6V2oAM69ChZ3Gvz7kod9iiSEPqrH4vFK9a46DZiMIb3bcLlS0c7Su1F8BnzkGPMV-wgRtkuKtMyA
+GET http://localhost:3333/medical/schedulings
+Authorization: Bearer eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI1MDQ0OSIsIm5hbWUiOiJBbmEgQmVhdHJpeiIsInJvbGUiOiJvcGVyYXRvciIsImlhdCI6MTc0OTIxNTA5MywiZXhwIjoxNzQ5MjE1OTkzfQ.JkjPoYY3le9ZH-MPvQaP-_kktQkrDLAepG3mKK3WOjMNjQl6AllK4TTgyoBR1FgQveiX3mBGfiP_iTlnAmx4pwYqQJ6sxh_Uo-2ySzgm1_1bvEnpyP_m0Hl2G9Y3auUI-r_UJjEkK722wOvQdzaXxgbTbrLWCbD4hoVPJ_Z8fd4_BV4DlyuCPGuFwkHu4nB_6VG9404YYDImHkuO-EpHkYQ6qNAieqg4fTw8el7WOKUMRYGVFFT0OSEBsTX700Gjl7TtlbX2cM0q8rWlX8cb_b-bD1YYV1Cykn2Ex7pZf4wjAgwREtPUEzCfpJVBfkZdsD91H_Ua-lU3QEnywX8jsw
 
 ###
 
-POST http://localhost:3333/auth/login/medical
+POST http://localhost:3333/auth/login/operator
 Content-Type: application/json
 
 {
-  "crm": "000000-CE",
-  "password": "@12Bagaiaro"
+  "username": "ana.beatriz",
+  "password": "12345678"
 }
 
 ###

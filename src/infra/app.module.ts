@@ -1,25 +1,23 @@
 import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { MedicalModule } from './modules/medical.module';
 import { AuthModule } from './auth/auth.module';
 import { EnvModule } from './env/env.module';
-import { OperatorModule } from './modules/operator.module';
 import { AdaptersModule } from './adapters/adapters.module';
-import { AuthHttpModule } from './modules/auth-http.module';
+import { AuthenticateModule } from './http/controllers/auth/authenticate.module';
 import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
 import { APP_GUARD } from '@nestjs/core';
 import { EventsModule } from './events/events.module';
 import { DatabaseModule } from './database/database.module';
+import { HttpModule } from './http/http.module';
 
 @Module({
   imports: [
     EventsModule,
-    MedicalModule,
-    OperatorModule,
     EnvModule,
+    HttpModule,
+    AuthenticateModule,
     AuthModule,
-    AuthHttpModule,
     AdaptersModule,
     DatabaseModule,
     ThrottlerModule.forRoot({

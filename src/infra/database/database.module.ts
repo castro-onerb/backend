@@ -7,6 +7,8 @@ import { OperatorRepository } from '@/app/repositories/operator.repository';
 import { PrismaOperatorRepository } from './prisma/clinicas/repositories/operator.repository';
 import { RecoveryPasswordRepository } from '@/app/repositories/recovery-password.repository';
 import { PrismaRecoveryPasswordRepository } from './prisma/repositories/recovery-password.repository';
+import { MedicalSchedulerRepository } from '@/app/repositories/medical-scheduler.repository';
+import { PrismaMedicalSchedulerRepository } from './prisma/clinicas/repositories/medical-scheduler.repository';
 
 @Global()
 @Module({
@@ -16,6 +18,10 @@ import { PrismaRecoveryPasswordRepository } from './prisma/repositories/recovery
     {
       provide: MedicalRepository,
       useClass: PrismaMedicalRepository,
+    },
+    {
+      provide: MedicalSchedulerRepository,
+      useClass: PrismaMedicalSchedulerRepository,
     },
     {
       provide: OperatorRepository,
@@ -32,6 +38,10 @@ import { PrismaRecoveryPasswordRepository } from './prisma/repositories/recovery
     {
       provide: MedicalRepository,
       useClass: PrismaMedicalRepository,
+    },
+    {
+      provide: MedicalSchedulerRepository,
+      useClass: PrismaMedicalSchedulerRepository,
     },
     {
       provide: OperatorRepository,
