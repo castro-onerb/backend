@@ -11,12 +11,8 @@ async function bootstrap() {
   app.use(cookieParser());
 
   app.enableCors({
-    origin: [
-      'http://localhost:5173',
-      'http://192.168.2.71:5173',
-      'http://192.168.0.100:5173',
-      'http://192.168.2.99:5173',
-    ],
+    origin: ['http://192.168.0.8:5173', 'http://192.168.2.97:5173'],
+    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
     credentials: true,
   });
   app.useGlobalFilters(new PrismaInitExceptionFilter());

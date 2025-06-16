@@ -5,7 +5,8 @@ import { Injectable } from '@nestjs/common';
 export abstract class MedicalSchedulerRepository {
   abstract findByMedicalId(
     id: string,
-    fromDate: Date,
+    start: Date,
+    end: Date,
     limit?: number,
   ): Promise<IMedicalSchedulingProps[] | null>;
 }

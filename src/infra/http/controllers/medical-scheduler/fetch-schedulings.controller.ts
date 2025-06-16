@@ -17,7 +17,7 @@ export class FetchSchedulingsController {
   ) {}
 
   @UseGuards(JwtAuthGuard)
-  @Get('schedulings')
+  @Get('fetch-schedulings')
   async fetchSchedulings(@CurrentUser() user: UserPayload | null) {
     if (!user?.sub) {
       return mapDomainErrorToHttp(
@@ -30,8 +30,6 @@ export class FetchSchedulingsController {
     const schedulings = await this.fetchSchedulingsUseCase.execute({
       id: user?.sub,
     });
-
-    console.log(schedulings);
     return schedulings;
   }
 }
