@@ -17,7 +17,11 @@ describe('TokenController (E2E)', () => {
     })
       .overrideProvider(TokenService)
       .useValue({
-        verifyRefreshToken: vi.fn().mockReturnValue({ sub: mockSub }),
+        verifyRefreshToken: vi.fn().mockReturnValue({
+          sub: mockSub,
+          name: 'Test User',
+          role: 'operator',
+        }),
         generateAccessToken: vi.fn().mockReturnValue('mocked-access-token'),
         generateRefreshToken: vi.fn().mockReturnValue('mocked-refresh-token'),
       })
@@ -75,7 +79,7 @@ describe('TokenController (E2E)', () => {
 
     const response = await request(localApp.getHttpServer())
       .post('/auth/refresh-token')
-      .send({ refresh_token: 'invalid-token' })
+      .set('Cookie', [`refresh_token=invalid-token`])
       .expect(401);
 
     type ErrorResponse = {

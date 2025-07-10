@@ -7,7 +7,7 @@ import { z } from 'zod';
 const accessTokenSchema = z.object({
   sub: z.string(),
   name: z.string(),
-  role: z.enum(['medical', 'operator']),
+  role: z.enum(['medical', 'operator', 'patient']),
 });
 
 type JwtPayloadAccessToken = z.infer<typeof accessTokenSchema>;
@@ -15,7 +15,7 @@ type JwtPayloadAccessToken = z.infer<typeof accessTokenSchema>;
 export const refreshTokenSchema = z.object({
   sub: z.string(),
   name: z.string(),
-  role: z.enum(['medical', 'operator']),
+  role: z.enum(['medical', 'operator', 'patient']),
   iat: z.number(),
   exp: z.number(),
 });

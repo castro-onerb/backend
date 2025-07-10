@@ -44,3 +44,13 @@ Content-Type: application/json
   "code": "UJLHKY",
   "password": "@12Bagaiaro"
 }
+
+###
+
+POST http://localhost:3333/auth/login/patient
+Content-Type: application/json
+
+{
+  "cpf": "04470307360",
+  "password": "cd3cb82f"
+}

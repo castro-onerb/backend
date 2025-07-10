@@ -2,6 +2,7 @@ import { SchedulingProps } from '@/core/@types/scheduling';
 import { UniqueID } from '@/core/object-values/unique-id';
 
 export interface IMedicalSchedulingProps extends SchedulingProps {
+  id: string;
   patientId: UniqueID | null;
   status: string;
   patientName: string;
@@ -16,10 +17,22 @@ export interface IMedicalSchedulingProps extends SchedulingProps {
   laudo: string;
   exame: string;
   birth: Date;
+  paid: boolean;
   active: boolean;
-  // procedure: string;
+  procedure: string;
   confirmed: boolean;
-  // missed: boolean;
   // arrival: Date;
   canceledAt: Date;
+}
+
+export interface IMonthlySchedulingOverview {
+  date: string;
+  count: number;
+  representative: {
+    patientName: string;
+    start: string;
+    end: string;
+    modality: 'in_person' | 'telemedicine' | 'unknown';
+    queueType: 'urgency' | 'special' | 'priority' | 'normal';
+  };
 }

@@ -62,6 +62,7 @@ export class MedicalAuthenticateUseCase {
     if (listMedical.length > 1) {
       return left(new MultipleDoctorsFoundError());
     }
+
     const queryMedical = listMedical[0];
 
     if (!queryMedical.active) {

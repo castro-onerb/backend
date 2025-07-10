@@ -19,7 +19,7 @@ export class PrismaOperatorRepository implements OperatorRepository {
               perfil_id as type,
               ativo as active,
               nome as fullname,
-              cpf
+              cpfz
         FROM ponto.tb_operador
         WHERE email = ${email}
       `,

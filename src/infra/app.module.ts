@@ -10,6 +10,8 @@ import { APP_GUARD } from '@nestjs/core';
 import { EventsModule } from './events/events.module';
 import { DatabaseModule } from './database/database.module';
 import { HttpModule } from './http/http.module';
+import { ConfigModule } from '@nestjs/config';
+import { envSchema } from './env/env';
 
 @Module({
   imports: [
@@ -20,6 +22,10 @@ import { HttpModule } from './http/http.module';
     AuthModule,
     AdaptersModule,
     DatabaseModule,
+    ConfigModule.forRoot({
+      validate: (env) => envSchema.parse(env),
+      isGlobal: true,
+    }),
     ThrottlerModule.forRoot({
       throttlers: [
         {

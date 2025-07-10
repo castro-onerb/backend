@@ -14,7 +14,7 @@ describe('OperatorAuthenticateController (E2E)', () => {
     id: 'operator_mock_id',
     email: 'operator@example.com',
     username: 'mockoperator',
-    fullname: 'Operator Mock',
+    name: 'Operator Mock',
   };
 
   beforeAll(async () => {
