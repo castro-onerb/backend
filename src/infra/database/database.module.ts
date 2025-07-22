@@ -11,6 +11,8 @@ import { MedicalSchedulerRepository } from '@/app/repositories/medical-scheduler
 import { PrismaMedicalSchedulerRepository } from './prisma/clinicas/repositories/medical-scheduler.repository';
 import { PatientRepository } from '@/app/repositories/patient.repository';
 import { PrismaPatientRepository } from './prisma/clinicas/repositories/patient.repository';
+import { PatientExamRepository } from '@/app/repositories/patient-exam.repository';
+import { PrismaPatientExamsRepository } from './prisma/clinicas/repositories/patient-exams.repository';
 
 @Global()
 @Module({
@@ -24,6 +26,10 @@ import { PrismaPatientRepository } from './prisma/clinicas/repositories/patient.
     {
       provide: MedicalSchedulerRepository,
       useClass: PrismaMedicalSchedulerRepository,
+    },
+    {
+      provide: PatientExamRepository,
+      useClass: PrismaPatientExamsRepository,
     },
     {
       provide: OperatorRepository,
@@ -48,6 +54,10 @@ import { PrismaPatientRepository } from './prisma/clinicas/repositories/patient.
     {
       provide: MedicalSchedulerRepository,
       useClass: PrismaMedicalSchedulerRepository,
+    },
+    {
+      provide: PatientExamRepository,
+      useClass: PrismaPatientExamsRepository,
     },
     {
       provide: OperatorRepository,

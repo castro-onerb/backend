@@ -1,8 +1,8 @@
 import { IPatientProps } from '@/domain/patient/@types/patient';
-import { PatientRawResult } from '@/domain/patient/@types/raw.patient';
+import { PatientRaw } from '@/domain/patient/@types/raw.patient';
 
 export class PatientMapper {
-  static toDomain(row: PatientRawResult): IPatientProps {
+  static toDomain(row: PatientRaw): IPatientProps {
     return {
       name: row.fullname,
       cpf: row.cpf,

@@ -4,13 +4,13 @@ import { Either, right } from '@/core/either';
 import { IMonthlySchedulingOverview } from '@/domain/professional/@types/medical-scheduling';
 import { Injectable } from '@nestjs/common';
 
-export interface GetMonthlySchedulingsOverviewByMedicalIdRequest {
+export interface IGetMonthlySchedulingsOverviewByMedicalIdRequest {
   id: string;
   start?: Date;
   end?: Date;
 }
 
-type GetMonthlySchedulingsOverviewByMedicalIdResponse = Either<
+type IGetMonthlySchedulingsOverviewByMedicalIdResponse = Either<
   null,
   { data: IMonthlySchedulingOverview[] | null }
 >;
@@ -25,7 +25,7 @@ export class GetMonthlySchedulingsOverviewByMedicalIdUseCase {
     id,
     start,
     end,
-  }: GetMonthlySchedulingsOverviewByMedicalIdRequest): Promise<GetMonthlySchedulingsOverviewByMedicalIdResponse> {
+  }: IGetMonthlySchedulingsOverviewByMedicalIdRequest): Promise<IGetMonthlySchedulingsOverviewByMedicalIdResponse> {
     const startDate = start
       ? dayjs(start).format('YYYY-MM-DD')
       : dayjs().startOf('month').format('YYYY-MM-DD');

@@ -1,6 +1,6 @@
 import { CRM } from '@/core/object-values/crm';
 import { PrismaClinicasService } from '../prisma-clinicas.service';
-import { MedicalRawResult } from '@/domain/professional/@types/raw.medical';
+import { MedicalRaw } from '@/domain/professional/@types/raw.medical';
 import { MedicalRepository } from '@/app/repositories/medical.repository';
 import { Injectable } from '@nestjs/common';
 
@@ -8,8 +8,8 @@ import { Injectable } from '@nestjs/common';
 export class PrismaMedicalRepository implements MedicalRepository {
   constructor(private db: PrismaClinicasService) {}
 
-  async findByCrm(crm: CRM): Promise<MedicalRawResult[] | null> {
-    const result = await this.db.$queryRaw<MedicalRawResult[]>`
+  async findByCrm(crm: CRM): Promise<MedicalRaw[] | null> {
+    const result = await this.db.$queryRaw<MedicalRaw[]>`
       SELECT operador_id as id,
             usuario as username,
             senha as password,

@@ -1,5 +1,5 @@
 import { PrismaClinicasService } from '../prisma-clinicas.service';
-import { OperatorRawResult } from '@/domain/professional/@types/raw.operator';
+import { OperatorRaw } from '@/domain/professional/@types/raw.operator';
 import { Prisma } from '@prisma/client';
 import { Injectable } from '@nestjs/common';
 import { OperatorRepository } from '@/app/repositories/operator.repository';
@@ -8,9 +8,9 @@ import { OperatorRepository } from '@/app/repositories/operator.repository';
 export class PrismaOperatorRepository implements OperatorRepository {
   constructor(private db: PrismaClinicasService) {}
 
-  async findByEmail(email: string): Promise<OperatorRawResult[] | null> {
+  async findByEmail(email: string): Promise<OperatorRaw[] | null> {
     try {
-      const result = await this.db.$queryRaw<OperatorRawResult[]>(
+      const result = await this.db.$queryRaw<OperatorRaw[]>(
         Prisma.sql`
         SELECT operador_id as id,
               usuario as username,
@@ -32,8 +32,8 @@ export class PrismaOperatorRepository implements OperatorRepository {
     }
   }
 
-  async findByUsername(username: string): Promise<OperatorRawResult[] | null> {
-    const result = await this.db.$queryRaw<OperatorRawResult[]>`
+  async findByUsername(username: string): Promise<OperatorRaw[] | null> {
+    const result = await this.db.$queryRaw<OperatorRaw[]>`
       SELECT operador_id as id,
             usuario as username,
             senha as password,

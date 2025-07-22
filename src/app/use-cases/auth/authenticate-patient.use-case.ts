@@ -1,7 +1,7 @@
 import { PatientRepository } from '@/app/repositories/patient.repository';
 import { Either, left, right } from '@/core/either';
 import { DatabaseUnavailableError } from '@/core/errors/database-unavailable.error';
-import { PatientRawResult } from '@/domain/patient/@types/raw.patient';
+import { PatientRaw } from '@/domain/patient/@types/raw.patient';
 import { Injectable } from '@nestjs/common';
 
 import {
@@ -12,13 +12,14 @@ import {
 } from './errors';
 import { Encrypter } from '@/core/cryptography/encrypter';
 import { Patient } from '@/domain/patient/entities/patient.entity';
+import { UniqueID } from '@/core/object-values/unique-id';
 
 export type PatientAuthenticateUseCaseRequest = {
   cpf: string;
   password: string;
 };
 
-type PatientAuthenticateUseCaseResponse = Either<
+export type PatientAuthenticateUseCaseResponse = Either<
   | DatabaseUnavailableError
   | PatientNotFoundError
   | MultiplePatientsFoundError
@@ -28,7 +29,7 @@ type PatientAuthenticateUseCaseResponse = Either<
 >;
 
 @Injectable()
-export class AuthenticatePatientUseCase {
+export class PatientAuthenticateUseCase {
   constructor(
     private readonly patientRepository: PatientRepository,
     private readonly encrypter: Encrypter,
@@ -38,7 +39,7 @@ export class AuthenticatePatientUseCase {
     cpf,
     password,
   }: PatientAuthenticateUseCaseRequest): Promise<PatientAuthenticateUseCaseResponse> {
-    let listPatient: PatientRawResult[] | null;
+    let listPatient: PatientRaw[] | null;
 
     try {
       listPatient = await this.patientRepository.findByCpf(cpf);
@@ -72,12 +73,15 @@ export class AuthenticatePatientUseCase {
 
     console.log(queryPatient);
 
-    const patient = Patient.create({
-      name: queryPatient.fullname,
-      cpf: queryPatient.cpf,
-      birth: queryPatient.birth,
-      active: queryPatient.active,
-    });
+    const patient = Patient.create(
+      {
+        name: queryPatient.fullname,
+        cpf: queryPatient.cpf,
+        birth: queryPatient.birth,
+        active: queryPatient.active,
+      },
+      new UniqueID(String(queryPatient.id)),
+    );
 
     return right({
       patient,

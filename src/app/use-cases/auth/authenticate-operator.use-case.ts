@@ -4,7 +4,7 @@ import { Operator } from '@/domain/professional/entities/operator.entity';
 import { UniqueID } from '@/core/object-values/unique-id';
 import { DatabaseUnavailableError } from '@/core/errors/database-unavailable.error';
 import { OperatorRepository } from '../../repositories/operator.repository';
-import { OperatorRawResult } from '@/domain/professional/@types/raw.operator';
+import { OperatorRaw } from '@/domain/professional/@types/raw.operator';
 import { DomainEvents } from '@/core/events/domain-events';
 import {
   MultipleOperatorsFoundError,
@@ -21,7 +21,7 @@ export type OperatorAuthenticateUseCaseRequest = {
   password: string;
 };
 
-type OperatorAuthenticateUseCaseResponse = Either<
+export type OperatorAuthenticateUseCaseResponse = Either<
   | MultipleOperatorsFoundError
   | OperatorEntityBuildError
   | OperatorInactiveError
@@ -42,7 +42,7 @@ export class OperatorAuthenticateUseCase {
     username,
     password,
   }: OperatorAuthenticateUseCaseRequest): Promise<OperatorAuthenticateUseCaseResponse> {
-    let listOperator: OperatorRawResult[] | null;
+    let listOperator: OperatorRaw[] | null;
 
     try {
       listOperator = await this.operatorRepository.findByUsername(username);

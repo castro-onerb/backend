@@ -1,4 +1,4 @@
-export type PatientRawResult = {
+export type PatientRaw = {
   id: string;
   fullname: string;
   cpf: string;

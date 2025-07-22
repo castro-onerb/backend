@@ -19,9 +19,10 @@ import { MedicalAuthenticateUseCase } from '@/app/use-cases/auth/authenticate-me
 import { OperatorAuthenticateController } from './operator/authenticate-operator.controller';
 import { OperatorAuthenticateUseCase } from '@/app/use-cases/auth/authenticate-operator.use-case';
 import { PatientAuthenticateController } from './patient/authenticate-patient.controller';
-import { AuthenticatePatientUseCase } from '@/app/use-cases/auth/authenticate-patient.use-case';
+import { PatientAuthenticateUseCase } from '@/app/use-cases/auth/authenticate-patient.use-case';
 import { Encrypter } from '@/core/cryptography/encrypter';
 import { AesEcbCryptographer } from '@/infra/cryptography/aes-ecb-cryptographer';
+import { AuthController } from './login/auth-login.controller';
 
 @Module({
   imports: [AdaptersModule, DatabaseModule],
@@ -35,13 +36,14 @@ import { AesEcbCryptographer } from '@/infra/cryptography/aes-ecb-cryptographer'
     MedicalAuthenticateController,
     OperatorAuthenticateController,
     PatientAuthenticateController,
+    AuthController,
   ],
   providers: [
     PrismaService,
     TokenService,
     MedicalAuthenticateUseCase,
     OperatorAuthenticateUseCase,
-    AuthenticatePatientUseCase,
+    PatientAuthenticateUseCase,
     {
       provide: Hasher,
       useClass: Md5Hasher,

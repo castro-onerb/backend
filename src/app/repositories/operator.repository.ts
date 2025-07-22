@@ -1,10 +1,8 @@
-import { OperatorRawResult } from '@/domain/professional/@types/raw.operator';
+import { OperatorRaw } from '@/domain/professional/@types/raw.operator';
 
 export abstract class OperatorRepository {
-  abstract findByUsername(
-    username: string,
-  ): Promise<OperatorRawResult[] | null>;
-  abstract findByEmail(email: string): Promise<OperatorRawResult[] | null>;
+  abstract findByUsername(username: string): Promise<OperatorRaw[] | null>;
+  abstract findByEmail(email: string): Promise<OperatorRaw[] | null>;
   abstract updatePassword(
     props: {
       username?: string;

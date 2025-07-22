@@ -2,7 +2,7 @@ import { MedicalSchedulerRepository } from '@/app/repositories/medical-scheduler
 import dayjs from '@/core/config/dayjs.config';
 import { Injectable } from '@nestjs/common';
 
-export interface GetDailySchedulingsByMedicalIdRequest {
+export interface IGetDailySchedulingsByMedicalIdRequest {
   id: string;
   date: Date;
 }
@@ -11,7 +11,7 @@ export interface GetDailySchedulingsByMedicalIdRequest {
 export class GetDailySchedulingsByMedicalIdUseCase {
   constructor(private readonly medicalScheduler: MedicalSchedulerRepository) {}
 
-  async execute({ id, date }: GetDailySchedulingsByMedicalIdRequest) {
+  async execute({ id, date }: IGetDailySchedulingsByMedicalIdRequest) {
     const getDate = date ? dayjs(date) : dayjs();
 
     const dailySchedulings =

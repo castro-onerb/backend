@@ -1,5 +1,5 @@
 import { PatientRepository } from '@/app/repositories/patient.repository';
-import { PatientRawResult } from '@/domain/patient/@types/raw.patient';
+import { PatientRaw } from '@/domain/patient/@types/raw.patient';
 import { PrismaClinicasService } from '../prisma-clinicas.service';
 import { Prisma } from '@prisma/client';
 import { Injectable } from '@nestjs/common';
@@ -8,9 +8,9 @@ import { Injectable } from '@nestjs/common';
 export class PrismaPatientRepository implements PatientRepository {
   constructor(private db: PrismaClinicasService) {}
 
-  async findByCpf(cpf: string): Promise<PatientRawResult[] | null> {
+  async findByCpf(cpf: string): Promise<PatientRaw[] | null> {
     try {
-      const result = await this.db.$queryRaw<PatientRawResult[]>(
+      const result = await this.db.$queryRaw<PatientRaw[]>(
         Prisma.sql`
           SELECT paciente_id as id,
                 senha_app as password,

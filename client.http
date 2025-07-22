@@ -1,13 +1,16 @@
+@authtoken = eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI0NjIxMTAiLCJuYW1lIjoiU2hlaWxhIE1hcmlhIiwicm9sZSI6InBhdGllbnQiLCJpYXQiOjE3NTMxMDIxMTAsImV4cCI6MTc1MzcwNjkxMH0.k5Gldo7llhlqU2m_ysccWFT3fl0LPcFJs776uGAIBUiCmv5xtcHYbchRB2JwUMuv8dAgH7Ee-iwgUPZjWaYkI_rTPFJiifqD8_7f-zVpKKN645W36YD9T1F_MA_kJdjdF1zyq020j3mHocRc-3HaIZUtEwm7ydsj6QIPjzWNSytsYfc6SyGGsnzEAk_PB8QWRR2VI8ZTSGiUdHN9dJypt1rlsxCs245SvB46r5Yfw5tR15fNHnIUECpNEwIWfCIWJrvnR-AmjVTRheDHnydsNItzIVlee1GhchDCrTxX6_2reiyQi44x8Q73cNaKPlSrHFbWpTL9esRwEIR0C5O0vg
+
 GET http://localhost:3333/medical/schedulings
-Authorization: Bearer eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI1MDQ0OSIsIm5hbWUiOiJBbmEgQmVhdHJpeiIsInJvbGUiOiJvcGVyYXRvciIsImlhdCI6MTc0OTQ3Nzg1NSwiZXhwIjoxNzQ5NDc4NzU1fQ.WBUeyx-DzQJKlUkHNNgYT9a-HRfd9yEtmkApqwu6Bw7ZUePyl9OKCwUuCLYBS2bqhK5k0Bgjp4ZFjJMjjFLuwwincbWW3RM1QTLX8j8iYf9BiFxLr3QID9fj5A3quv0YDxHGt5vfgB9YHLty3VNwUWaYyN02GmmfkQpufEjR9DH9vw7rb0TB-2Jba9jK6cDfkrZG_0QjCfLerpeHrrP8DYrhoYNhAnkUkEv5bPkrza_8uXxrRCKFy7W25jdL-TELRdyCF2nj6SZO1eBSN4AJjwehRy7t1lgKvrNvS3NaiVdxoK3fD80J8awvRPWkBhCPLhBjbyVMtR1gu1tl5BnYMg
+Authorization: Bearer {{authtoken}}
 
 ###
 
-POST http://localhost:3333/auth/login/operator
+POST http://localhost:3333/auth/login
 Content-Type: application/json
 
 {
-  "username": "ana.beatriz",
+  "type": "operator",
+  "access": "ana.beatriz",
   "password": "12345678"
 }
 
@@ -24,7 +27,7 @@ Content-Type: application/json
 ###
 
 GET http://localhost:3333/
-Authorization: Bearer eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI1ODcwMCIsImlhdCI6MTc0NzIyNTcwOCwiZXhwIjoxNzQ3ODMwNTA4fQ.crI_YJijGLjSTkrIY4tN5iLjUQgzWto-NCiPJhaI8P2R9-zvx4wPdSgRyzkF-OkDAk0scTvqcq-dpQIhohHK7Qaigg1D9GlzEObePCPXldzJNN6KVbqHojDmsEbKxg_ROUITDUrZjsYyiPdr2N-ol5G2mFLisNHH4CuPe2jQAvikmrf91sVZJ79TLwwR_erztsNSlAt5vtz5lSZ-vNzR83RgLALM1XAQVz4i_litoO0-MGYTMvbcWvI3-nlbv69u0iQcS9rKy_vu2IRbB1rHXJ5FuAD8Ry2PXgjtAr_TsSDktdha9FL7tPXATWHVRXQdqv6pMJWEyq7eToONuwsrZQ
+Authorization: Bearer {{authtoken}}
 
 ###
 
@@ -51,6 +54,11 @@ POST http://localhost:3333/auth/login/patient
 Content-Type: application/json
 
 {
-  "cpf": "04470307360",
-  "password": "cd3cb82f"
+  "cpf": "84981725353",
+  "password": "b91890f1"
 }
+
+###
+
+GET http://localhost:3333/patient/exams
+Authorization: Bearer {{authtoken}}

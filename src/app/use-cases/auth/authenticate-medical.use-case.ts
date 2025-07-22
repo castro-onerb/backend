@@ -4,7 +4,7 @@ import { Hasher } from 'src/core/cryptography/hasher';
 import { Either, left, right } from '@/core/either';
 import { CRM } from '@/core/object-values/crm';
 import { UniqueID } from '@/core/object-values/unique-id';
-import { MedicalRawResult } from '@/domain/professional/@types/raw.medical';
+import { MedicalRaw } from '@/domain/professional/@types/raw.medical';
 import { Medical } from '@/domain/professional/entities/medical.entity';
 import {
   InvalidPasswordError,
@@ -23,7 +23,7 @@ export type MedicalAuthenticateUseCaseRequest = {
   password: string;
 };
 
-type MedicalAuthenticateUseCaseResponse = Either<
+export type MedicalAuthenticateUseCaseResponse = Either<
   | DatabaseUnavailableError
   | MedicalNotFoundError
   | MedicalInactiveError
@@ -46,7 +46,7 @@ export class MedicalAuthenticateUseCase {
     crm,
     password,
   }: MedicalAuthenticateUseCaseRequest): Promise<MedicalAuthenticateUseCaseResponse> {
-    let listMedical: MedicalRawResult[] | null;
+    let listMedical: MedicalRaw[] | null;
 
     try {
       listMedical = await this.medicalRepository.findByCrm(crm);

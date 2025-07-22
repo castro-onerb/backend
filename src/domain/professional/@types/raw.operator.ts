@@ -1,4 +1,4 @@
-export type OperatorRawResult = {
+export type OperatorRaw = {
   id: string;
   username: string;
   password: string;

@@ -1,4 +1,4 @@
-export type MedicalRawResult = {
+export type MedicalRaw = {
   id: string;
   username: string;
   password: string;

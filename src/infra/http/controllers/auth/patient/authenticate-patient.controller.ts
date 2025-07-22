@@ -1,4 +1,4 @@
-import { AuthenticatePatientUseCase } from '@/app/use-cases/auth/authenticate-patient.use-case';
+import { PatientAuthenticateUseCase } from '@/app/use-cases/auth/authenticate-patient.use-case';
 import { mapDomainErrorToHttp } from '@/core/errors/map-domain-errors-http';
 import { formatName } from '@/core/utils/format-name';
 import { TokenService } from '@/infra/auth/auth.service';
@@ -23,7 +23,7 @@ const schemaBodyRequest = z.object({
 @Controller('auth')
 export class PatientAuthenticateController {
   constructor(
-    private readonly patientAuthenticateUseCase: AuthenticatePatientUseCase,
+    private readonly patientAuthenticateUseCase: PatientAuthenticateUseCase,
     private readonly tokenService: TokenService,
   ) {}
 
