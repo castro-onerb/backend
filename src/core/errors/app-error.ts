@@ -6,7 +6,6 @@ export class AppError extends Error {
     this.name = this.constructor.name;
     this.code = options.code;
 
-    // Garante que instanceof funcione corretamente
     Object.setPrototypeOf(this, new.target.prototype);
   }
 }

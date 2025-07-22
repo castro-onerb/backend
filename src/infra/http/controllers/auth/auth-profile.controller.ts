@@ -8,6 +8,7 @@ import {
   ApiTags,
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
+import { AuthProfileResponseDto } from './types/auth-profile.dto';
 
 @ApiTags('Auth')
 @Controller('auth')
@@ -16,15 +17,7 @@ export class AuthProfile {
   @ApiBearerAuth()
   @ApiOkResponse({
     description: 'Perfil do usuário autenticado retornado com sucesso.',
-    schema: {
-      example: {
-        sub: '123456',
-        name: 'usuario123',
-        role: 'medical | operator | patient',
-        iat: 1753185565,
-        exp: 1753186465,
-      },
-    },
+    type: AuthProfileResponseDto,
   })
   @ApiUnauthorizedResponse({ description: 'Token inválido ou ausente.' })
   @Get('profile')

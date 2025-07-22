@@ -5,13 +5,9 @@ import { mapDomainErrorToHttp } from '@/core/errors/map-domain-errors-http';
 import { CurrentUser } from '@/infra/auth/current-user.decorator';
 import { JwtAuthGuard } from '@/infra/auth/jwt-auth.guard';
 import { UserPayload } from '@/infra/auth/jwt.strategy';
-import {
-  BadRequestException,
-  Controller,
-  Get,
-  Query,
-  UseGuards,
-} from '@nestjs/common';
+import { Controller, Get, Query, UseGuards } from '@nestjs/common';
+import { MissingAuthenticatedUserError } from '../errors';
+import { InvalidDateError } from '../errors/app.error';
 
 @Controller('medical')
 export class GetDailySchedulingsController {
@@ -26,20 +22,14 @@ export class GetDailySchedulingsController {
     @Query('date') dateQuery?: string,
   ) {
     if (!user?.sub) {
-      return mapDomainErrorToHttp(
-        new BadRequestException(
-          'Não conseguimos acesso ao seu perfil, verifique seu login e tente novamente.',
-        ),
-      );
+      return mapDomainErrorToHttp(new MissingAuthenticatedUserError());
     }
 
     let inDate: Date;
     if (dateQuery) {
       const parsed = dayjsConfig(dateQuery);
       if (!parsed.isValid()) {
-        return mapDomainErrorToHttp(
-          new BadRequestException('A data fornecida é inválida.'),
-        );
+        return mapDomainErrorToHttp(new InvalidDateError());
       }
       inDate = parsed.startOf('day').toDate();
     } else {

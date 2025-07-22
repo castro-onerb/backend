@@ -12,7 +12,7 @@ export class AuthLoginDto {
   @IsEnum(UserType)
   type!: UserType;
 
-  @ApiProperty({ example: '000000UF' })
+  @ApiProperty({ example: '0000-UF' })
   @IsString()
   access!: string;
 

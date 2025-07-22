@@ -7,3 +7,12 @@ export class CpfNotValid extends AppError {
     });
   }
 }
+
+export class CRMNotValid extends AppError {
+  constructor() {
+    super(
+      'Hmm... não conseguimos reconhecer esse CRM. Verifique se está no formato certo.',
+      { code: 'object_values.not_valid' },
+    );
+  }
+}

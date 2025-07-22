@@ -5,6 +5,15 @@ import { ResetPasswordUseCase } from '@/app/use-cases/auth/reset-password.use-ca
 import { Password } from '@/core/object-values/password';
 import { mapDomainErrorToHttp } from '@/core/errors/map-domain-errors-http';
 import { ThrottlerGuard } from '@nestjs/throttler';
+import {
+  ApiBadRequestResponse,
+  ApiBody,
+  ApiOperation,
+  ApiResponse,
+  ApiTags,
+  ApiTooManyRequestsResponse,
+} from '@nestjs/swagger';
+import { ResetPasswordDto } from './types/reset-password.dto';
 
 const schemaBodyRequest = z.object({
   email: z.string().email(),
@@ -14,6 +23,7 @@ const schemaBodyRequest = z.object({
 
 type requestBodyResetPassword = z.infer<typeof schemaBodyRequest>;
 
+@ApiTags('Auth')
 @Controller('auth')
 export class ResetPasswordController {
   constructor(private readonly resetPassword: ResetPasswordUseCase) {}
@@ -21,13 +31,49 @@ export class ResetPasswordController {
   @Post('reset-password')
   @UseGuards(ThrottlerGuard)
   @UsePipes(new ZodValidationPipe(schemaBodyRequest))
+  @ApiOperation({
+    summary: 'Redefinir senha',
+    description:
+      'Redefine a senha de acesso de um usuário a partir do email, código de verificação e nova senha. Limitado para evitar tentativas indevidas.',
+  })
+  @ApiBody({ type: ResetPasswordDto })
+  @ApiResponse({
+    status: 200,
+    description: 'Senha redefinida com sucesso.',
+    schema: {
+      example: {
+        success: true,
+        message: 'Senha redefinida com sucesso.',
+      },
+    },
+  })
+  @ApiBadRequestResponse({
+    description: 'Dados inválidos ou código incorreto.',
+    schema: {
+      example: {
+        statusCode: 400,
+        message: 'Código informado não confere com o email fornecido.',
+        error: 'Bad Request',
+      },
+    },
+  })
+  @ApiTooManyRequestsResponse({
+    description: 'Muitas tentativas em um curto período.',
+    schema: {
+      example: {
+        statusCode: 429,
+        message: 'Você fez muitas tentativas. Tente novamente em instantes.',
+        error: 'Too Many Requests',
+      },
+    },
+  })
   async reset(@Body() body: requestBodyResetPassword) {
     const { email, code, password } = body;
 
     const passwordObj = Password.create(password);
 
     if (passwordObj.isLeft()) {
-      return mapDomainErrorToHttp(passwordObj.value);
+      throw mapDomainErrorToHttp(passwordObj.value);
     }
 
     const result = await this.resetPassword.execute({
@@ -37,7 +83,12 @@ export class ResetPasswordController {
     });
 
     if (result.isLeft()) {
-      return mapDomainErrorToHttp(result.value);
+      throw mapDomainErrorToHttp(result.value);
     }
+
+    return {
+      success: true,
+      message: 'Senha redefinida com sucesso.',
+    };
   }
 }

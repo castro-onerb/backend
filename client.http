@@ -1,4 +1,4 @@
-@authtoken = eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI0NjIxMTAiLCJuYW1lIjoiU2hlaWxhIE1hcmlhIiwicm9sZSI6InBhdGllbnQiLCJpYXQiOjE3NTMxMDIxMTAsImV4cCI6MTc1MzcwNjkxMH0.k5Gldo7llhlqU2m_ysccWFT3fl0LPcFJs776uGAIBUiCmv5xtcHYbchRB2JwUMuv8dAgH7Ee-iwgUPZjWaYkI_rTPFJiifqD8_7f-zVpKKN645W36YD9T1F_MA_kJdjdF1zyq020j3mHocRc-3HaIZUtEwm7ydsj6QIPjzWNSytsYfc6SyGGsnzEAk_PB8QWRR2VI8ZTSGiUdHN9dJypt1rlsxCs245SvB46r5Yfw5tR15fNHnIUECpNEwIWfCIWJrvnR-AmjVTRheDHnydsNItzIVlee1GhchDCrTxX6_2reiyQi44x8Q73cNaKPlSrHFbWpTL9esRwEIR0C5O0vg
+@authtoken = eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI1MDQ0OSIsIm5hbWUiOiJBbmEgQmVhdHJpeiIsInJvbGUiOiJvcGVyYXRvciIsImlhdCI6MTc1MzE4NjI1MSwiZXhwIjoxNzUzNzkxMDUxfQ.hF4z1smg4jFofT1NwzaLLgRhQS7D4yzysRfPgU-v0ddiKLuNBW57DfBn4f7xrT5bespGEEiV0TNvKeEBHKJytOCQHHwS9nW1lBadvrsh6PCWGgbqxD9HFDAfXroeGa35WvE-PpLZFdi28gaLl5ZesQWE_JR475cx51cxHQ9Brclr4v1pGe74_nzLip4bA1Lyrz2oNUJEg9ow71ZfHXtsRgVOeijKvKK3nKht2alAmsep9SLGz_RoTNQ2hbPzPI8U8AHFqFmV1UdcrbHlvIekpF8gUZnpJ2FVEVQzysGoHfDDf0YwZTOn6FCrKHbW0I142ebQX99nf0r9ER43L4KKlQ
 
 GET http://localhost:3333/medical/schedulings
 Authorization: Bearer {{authtoken}}
@@ -12,16 +12,6 @@ Content-Type: application/json
   "type": "operator",
   "access": "ana.beatriz",
   "password": "12345678"
-}
-
-###
-
-POST http://localhost:3333/auth/login/operator
-Content-Type: application/json
-
-{
-  "username": "breno.castro",
-  "password": "@12Bagaiaro"
 }
 
 ###

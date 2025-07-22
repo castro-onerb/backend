@@ -3,12 +3,8 @@ import { mapDomainErrorToHttp } from '@/core/errors/map-domain-errors-http';
 import { CurrentUser } from '@/infra/auth/current-user.decorator';
 import { JwtAuthGuard } from '@/infra/auth/jwt-auth.guard';
 import { UserPayload } from '@/infra/auth/jwt.strategy';
-import {
-  BadRequestException,
-  Controller,
-  Get,
-  UseGuards,
-} from '@nestjs/common';
+import { Controller, Get, UseGuards } from '@nestjs/common';
+import { MissingAuthenticatedUserError } from '../errors';
 
 @Controller('patient')
 export class FetchExamsByPatientController {
@@ -20,11 +16,7 @@ export class FetchExamsByPatientController {
   @Get('exams')
   async fetchExams(@CurrentUser() user: UserPayload | null) {
     if (!user?.sub) {
-      return mapDomainErrorToHttp(
-        new BadRequestException(
-          'Não conseguimos acesso ao seu perfil, verifique seu login e tente novamente.',
-        ),
-      );
+      return mapDomainErrorToHttp(new MissingAuthenticatedUserError());
     }
 
     const exams = await this.fetchExamsByPatientUseCase.execute({

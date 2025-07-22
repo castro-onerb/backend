@@ -4,13 +4,9 @@ import { mapDomainErrorToHttp } from '@/core/errors/map-domain-errors-http';
 import { CurrentUser } from '@/infra/auth/current-user.decorator';
 import { JwtAuthGuard } from '@/infra/auth/jwt-auth.guard';
 import { UserPayload } from '@/infra/auth/jwt.strategy';
-import {
-  BadRequestException,
-  Controller,
-  Get,
-  Query,
-  UseGuards,
-} from '@nestjs/common';
+import { Controller, Get, Query, UseGuards } from '@nestjs/common';
+import { MissingAuthenticatedUserError } from '../errors';
+import { InvalidDateError } from '../errors/app.error';
 
 @Controller('medical')
 export class GetMonthlySchedulingsOverviewByMedicalIdController {
@@ -26,11 +22,7 @@ export class GetMonthlySchedulingsOverviewByMedicalIdController {
     @Query('end') endQuery?: string,
   ) {
     if (!user?.sub) {
-      return mapDomainErrorToHttp(
-        new BadRequestException(
-          'Não conseguimos acesso ao seu perfil, verifique seu login e tente novamente.',
-        ),
-      );
+      return mapDomainErrorToHttp(new MissingAuthenticatedUserError());
     }
 
     let startDate: Date | undefined;
@@ -39,9 +31,7 @@ export class GetMonthlySchedulingsOverviewByMedicalIdController {
     if (startQuery) {
       const parsed = dayjs(startQuery);
       if (!parsed.isValid()) {
-        return mapDomainErrorToHttp(
-          new BadRequestException('A data de início fornecida é inválida.'),
-        );
+        return mapDomainErrorToHttp(new InvalidDateError());
       }
       startDate = parsed.startOf('day').toDate();
     }
@@ -49,9 +39,7 @@ export class GetMonthlySchedulingsOverviewByMedicalIdController {
     if (endQuery) {
       const parsed = dayjs(endQuery);
       if (!parsed.isValid()) {
-        return mapDomainErrorToHttp(
-          new BadRequestException('A data de fim fornecida é inválida.'),
-        );
+        return mapDomainErrorToHttp(new InvalidDateError());
       }
       endDate = parsed.endOf('day').toDate();
     }

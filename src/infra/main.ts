@@ -5,6 +5,7 @@ import { Env } from './env/env';
 import { PrismaInitExceptionFilter } from './database/prisma/clinicas/prisma-filter.service';
 import cookieParser from 'cookie-parser';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
+import { ThrottlerExceptionFilter } from './http/controllers/errors/app.error';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -29,6 +30,7 @@ async function bootstrap() {
     credentials: true,
   });
   app.useGlobalFilters(new PrismaInitExceptionFilter());
+  app.useGlobalFilters(new ThrottlerExceptionFilter());
 
   const config = app.get<ConfigService<Env, true>>(ConfigService);
   const port = config.get('PORT', { infer: true });

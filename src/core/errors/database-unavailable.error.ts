@@ -1,7 +1,9 @@
-export class DatabaseUnavailableError extends Error {
-  constructor(message = 'Banco de dados indisponível no momento.') {
-    super(message);
-    this.message = message;
-    this.name = 'DatabaseUnavailableError';
+import { AppError } from './app-error';
+
+export class DatabaseUnavailableError extends AppError {
+  constructor() {
+    super('Banco de dados indisponível no momento.', {
+      code: 'database.unavailable',
+    });
   }
 }
