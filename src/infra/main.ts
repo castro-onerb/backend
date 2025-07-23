@@ -1,3 +1,7 @@
+import { ExpressAdapter } from '@nestjs/platform-express';
+import { Express } from 'express';
+import type { RequestHandler } from 'express';
+import redoc from 'redoc-express';
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { ConfigService } from '@nestjs/config';
@@ -9,7 +13,6 @@ import { ThrottlerExceptionFilter } from './http/controllers/errors/app.error';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
-
   app.use(cookieParser());
 
   const configSwagger = new DocumentBuilder()
@@ -22,13 +25,35 @@ async function bootstrap() {
     .build();
 
   const document = SwaggerModule.createDocument(app, configSwagger);
-  SwaggerModule.setup('docs', app, document);
+
+  const httpAdapter = app.getHttpAdapter();
+
+  if (!(httpAdapter instanceof ExpressAdapter)) {
+    throw new Error('This app is not using the Express adapter!');
+  }
+
+  const expressApp = app.getHttpAdapter().getInstance() as Express;
+
+  expressApp.get(
+    '/docs',
+    redoc({
+      title: 'API Prontuário',
+      specUrl: '/swagger-json',
+    }),
+  ) as RequestHandler;
+
+  expressApp.get('/swagger-json', (_req, res) => {
+    res.json(document);
+  });
+
+  SwaggerModule.setup('swagger', app, document);
 
   app.enableCors({
     origin: ['http://172.26.16.1:5173', 'http://192.168.2.158:5173'],
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
     credentials: true,
   });
+
   app.useGlobalFilters(new PrismaInitExceptionFilter());
   app.useGlobalFilters(new ThrottlerExceptionFilter());
 

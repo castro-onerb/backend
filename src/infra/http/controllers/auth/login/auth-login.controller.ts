@@ -38,7 +38,7 @@ export class AuthController {
   @HttpCode(HttpStatus.OK)
   @ApiBody({ type: AuthLoginDto })
   @ApiOperation({
-    summary: 'Endpoint responsável por viabilizar um login.',
+    summary: 'Login.',
     description: 'Limitado a 3 requisições por minuto por IP.',
   })
   @ApiResponse({
@@ -158,7 +158,7 @@ export class AuthController {
     res.cookie('refresh_token', refreshToken, {
       httpOnly: true,
       secure: false,
-      sameSite: 'strict',
+      // sameSite: 'strict',
       maxAge: 7 * 24 * 60 * 60 * 1000,
     });
 

@@ -27,7 +27,7 @@ export class GetDailySchedulingsController {
   ) {}
 
   @UseGuards(JwtAuthGuard)
-  @Get('schedulings/daily')
+  @Get('me/schedulings/daily')
   @UseGuards(JwtAuthGuard)
   @Get('schedulings/daily')
   @ApiBearerAuth()

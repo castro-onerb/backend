@@ -7,7 +7,7 @@ import { UserPayload } from '@/infra/auth/jwt.strategy';
 import { Controller, Get, Query, UseGuards } from '@nestjs/common';
 import { MissingAuthenticatedUserError } from '../errors';
 import { InvalidDateError } from '../errors/app.error';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiOperation, ApiTags } from '@nestjs/swagger';
 
 @ApiTags('Schedulers')
 @Controller('medical')
@@ -16,8 +16,13 @@ export class GetMonthlySchedulingsOverviewByMedicalIdController {
     private readonly getMonthlySchedulingsOverviewByMedicalId: GetMonthlySchedulingsOverviewByMedicalIdUseCase,
   ) {}
 
+  @ApiOperation({
+    summary: 'Resumo geral dos agendamentos por mês',
+    description:
+      'Retorna um resumo geral básico dos agendamentos do mês, referente a quantidade.',
+  })
   @UseGuards(JwtAuthGuard)
-  @Get('schedulings/overview/monthly')
+  @Get('me/schedulings/overview/monthly')
   async getdailySchedulings(
     @CurrentUser() user: UserPayload | null,
     @Query('start') startQuery?: string,

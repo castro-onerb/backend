@@ -1,13 +1,18 @@
 import { Controller, Post, Res } from '@nestjs/common';
-import { ApiOkResponse, ApiTags } from '@nestjs/swagger';
+import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { Response } from 'express';
 
 @ApiTags('Auth')
 @Controller('auth')
 export class AuthLogoutController {
-  @Post('logout')
+  @Post('me/logout')
+  @ApiOperation({
+    summary: 'Encerra sessão do usuário',
+    description:
+      'O endpoint captura os tokens e limpa-os do ambiente do usuário.',
+  })
   @ApiOkResponse({
-    description: 'Endpoint responsável por finalizar uma sessão',
+    description: 'Sessão do usuário finalizada',
     schema: {
       example: {
         message: 'Logout feito com sucesso.',

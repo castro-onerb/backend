@@ -10,7 +10,7 @@ Content-Type: application/json
 
 {
   "type": "medical",
-  "access": "7845-CE",
+  "access": "784-CE",
   "password": "123"
 }
 
@@ -53,3 +53,7 @@ Content-Type: application/json
 
 GET http://localhost:3333/patient/me/exams
 Authorization: Bearer {{authtoken}}
+
+###
+
+GET http://localhost:3333/health

@@ -14,7 +14,6 @@ import { InvalidateCodeRecoverUseCase } from '@/app/use-cases/auth/invalidate-co
 import { DatabaseModule } from '../../../database/database.module';
 import { Hasher } from '@/core/cryptography/hasher';
 import { AuthProfile } from './auth-profile.controller';
-import { MedicalAuthenticateController } from './medical/authenticate-medical.controller';
 import { MedicalAuthenticateUseCase } from '@/app/use-cases/auth/authenticate-medical.use-case';
 import { OperatorAuthenticateUseCase } from '@/app/use-cases/auth/authenticate-operator.use-case';
 import { PatientAuthenticateUseCase } from '@/app/use-cases/auth/authenticate-patient.use-case';
@@ -31,7 +30,6 @@ import { AuthController } from './login/auth-login.controller';
     AuthLogoutController,
     InvalidateCodeRecoverController,
     AuthProfile,
-    MedicalAuthenticateController,
     AuthController,
   ],
   providers: [

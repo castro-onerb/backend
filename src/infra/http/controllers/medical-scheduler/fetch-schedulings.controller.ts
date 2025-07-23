@@ -24,7 +24,7 @@ export class FetchSchedulingsController {
   @Get('me/schedulings')
   @ApiBearerAuth()
   @ApiOperation({
-    summary: 'Listar agendamentos do médico autenticado',
+    summary: 'Listar agendamentos do médico',
     description:
       'Retorna todos os agendamentos vinculados ao médico autenticado através do token JWT.',
   })

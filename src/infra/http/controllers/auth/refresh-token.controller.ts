@@ -25,7 +25,7 @@ const cookieSchema = z.object({
 export class TokenController {
   constructor(private readonly tokenService: TokenService) {}
 
-  @Post('refresh-token')
+  @Post('me/refresh-token')
   @ApiOperation({
     summary: 'Renovar access token',
     description:

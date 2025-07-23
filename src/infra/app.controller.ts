@@ -1,7 +1,13 @@
 import { Controller, Get, HttpException, HttpStatus } from '@nestjs/common';
 import { PrismaService } from '@/infra/database/prisma/prisma.service';
 import { PrismaClinicasService } from '@/infra/database/prisma/clinicas/prisma-clinicas.service';
-import { ApiOkResponse, ApiTags } from '@nestjs/swagger';
+import {
+  ApiOkResponse,
+  ApiOperation,
+  ApiResponse,
+  ApiTags,
+} from '@nestjs/swagger';
+import { Throttle } from '@nestjs/throttler';
 
 @ApiTags('App')
 @Controller('health')
@@ -12,8 +18,11 @@ export class AppController {
   ) {}
 
   @Get()
-  @ApiOkResponse({
+  @ApiOperation({
+    summary: 'Saúde da aplicação.',
     description: 'Retorna o status de disponibilidade da aplicação',
+  })
+  @ApiOkResponse({
     schema: {
       example: {
         success: true,
@@ -22,6 +31,10 @@ export class AppController {
       },
     },
   })
+  @ApiResponse({
+    status: 503,
+  })
+  @Throttle({ default: { ttl: 60, limit: 0 } })
   async check(): Promise<{
     success: boolean;
     uptime: number;
