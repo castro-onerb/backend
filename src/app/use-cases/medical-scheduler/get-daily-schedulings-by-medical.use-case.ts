@@ -1,5 +1,7 @@
 import { MedicalSchedulerRepository } from '@/app/repositories/medical-scheduler.repository';
 import dayjs from '@/core/config/dayjs.config';
+import { Either, right } from '@/core/either';
+import { IMedicalSchedulingProps } from '@/domain/professional/@types/medical-scheduling';
 import { Injectable } from '@nestjs/common';
 
 export interface IGetDailySchedulingsByMedicalIdRequest {
@@ -7,11 +9,19 @@ export interface IGetDailySchedulingsByMedicalIdRequest {
   date: Date;
 }
 
+type IGetDailySchedulingsByMedicalIdResponse = Either<
+  null,
+  { schedulings: IMedicalSchedulingProps[] }
+>;
+
 @Injectable()
 export class GetDailySchedulingsByMedicalIdUseCase {
   constructor(private readonly medicalScheduler: MedicalSchedulerRepository) {}
 
-  async execute({ id, date }: IGetDailySchedulingsByMedicalIdRequest) {
+  async execute({
+    id,
+    date,
+  }: IGetDailySchedulingsByMedicalIdRequest): Promise<IGetDailySchedulingsByMedicalIdResponse> {
     const getDate = date ? dayjs(date) : dayjs();
 
     const dailySchedulings =
@@ -20,6 +30,8 @@ export class GetDailySchedulingsByMedicalIdUseCase {
         getDate.toDate(),
       );
 
-    return dailySchedulings;
+    return right({
+      schedulings: dailySchedulings ?? [],
+    });
   }
 }

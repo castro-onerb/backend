@@ -7,7 +7,9 @@ import { UserPayload } from '@/infra/auth/jwt.strategy';
 import { Controller, Get, Query, UseGuards } from '@nestjs/common';
 import { MissingAuthenticatedUserError } from '../errors';
 import { InvalidDateError } from '../errors/app.error';
+import { ApiTags } from '@nestjs/swagger';
 
+@ApiTags('Schedulers')
 @Controller('medical')
 export class GetMonthlySchedulingsOverviewByMedicalIdController {
   constructor(
@@ -15,7 +17,7 @@ export class GetMonthlySchedulingsOverviewByMedicalIdController {
   ) {}
 
   @UseGuards(JwtAuthGuard)
-  @Get('monthly-overview-schedulings')
+  @Get('schedulings/overview/monthly')
   async getdailySchedulings(
     @CurrentUser() user: UserPayload | null,
     @Query('start') startQuery?: string,

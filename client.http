@@ -1,4 +1,4 @@
-@authtoken = eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI1MDQ0OSIsIm5hbWUiOiJBbmEgQmVhdHJpeiIsInJvbGUiOiJvcGVyYXRvciIsImlhdCI6MTc1MzE4NjI1MSwiZXhwIjoxNzUzNzkxMDUxfQ.hF4z1smg4jFofT1NwzaLLgRhQS7D4yzysRfPgU-v0ddiKLuNBW57DfBn4f7xrT5bespGEEiV0TNvKeEBHKJytOCQHHwS9nW1lBadvrsh6PCWGgbqxD9HFDAfXroeGa35WvE-PpLZFdi28gaLl5ZesQWE_JR475cx51cxHQ9Brclr4v1pGe74_nzLip4bA1Lyrz2oNUJEg9ow71ZfHXtsRgVOeijKvKK3nKht2alAmsep9SLGz_RoTNQ2hbPzPI8U8AHFqFmV1UdcrbHlvIekpF8gUZnpJ2FVEVQzysGoHfDDf0YwZTOn6FCrKHbW0I142ebQX99nf0r9ER43L4KKlQ
+@authtoken = eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI0NjIxMTAiLCJuYW1lIjoiU2hlaWxhIE1hcmlhIiwicm9sZSI6InBhdGllbnQiLCJpYXQiOjE3NTMyMTA5ODUsImV4cCI6MTc1MzgxNTc4NX0.lzTCcMcET05NhPbtyHEnENdGDC7KrWno-6U3JfbtYP6p5IBaCnnMzy2rG0mhuP4UtKm7JbgmS4Cval-lbh010apVaX68ItXEbY9bgw-0q9EkzZzK2MhvWqIAXPV-yvYr_SSsm_x-pMr6A0-EGq4SXH-nfRf8FrCR0xmBxNFExEJiHHnmyQzmbRFUA8xYGSSPK8mD4dLzpHetMA24Cg1MTHSkTfFzHJCOb-_YpdLpbctU13-O3TyOAF72GNWMoT5oIbpcLTMem6ySN1DajususJ9e8ASBSYTUatBKP8FPrs5NkLyNfXJ0xTToB34vaBRGKUg8KH85NGEFpSPm9j2J9Q
 
 GET http://localhost:3333/medical/schedulings
 Authorization: Bearer {{authtoken}}
@@ -9,9 +9,9 @@ POST http://localhost:3333/auth/login
 Content-Type: application/json
 
 {
-  "type": "operator",
-  "access": "ana.beatriz",
-  "password": "12345678"
+  "type": "medical",
+  "access": "7845-CE",
+  "password": "123"
 }
 
 ###
@@ -40,15 +40,16 @@ Content-Type: application/json
 
 ###
 
-POST http://localhost:3333/auth/login/patient
+POST http://localhost:3333/auth/login
 Content-Type: application/json
 
 {
-  "cpf": "84981725353",
+  "type": "patient",
+  "access": "84981725353",
   "password": "b91890f1"
 }
 
 ###
 
-GET http://localhost:3333/patient/exams
+GET http://localhost:3333/patient/me/exams
 Authorization: Bearer {{authtoken}}
