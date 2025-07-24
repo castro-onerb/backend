@@ -128,4 +128,4 @@ export class AssessmentResponseDto {
     type: String,
   })
   symptoms!: string[] | null;
-} 
+}

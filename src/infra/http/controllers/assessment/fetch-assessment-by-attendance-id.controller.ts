@@ -6,10 +6,8 @@ import { UserPayload } from '@/infra/auth/jwt.strategy';
 import {
   Controller,
   Get,
-  HttpStatus,
   Param,
   UseGuards,
-  NotFoundException,
   UnauthorizedException,
 } from '@nestjs/common';
 import {
@@ -36,7 +34,8 @@ export class FetchAssessmentByAttendanceIdController {
   @ApiBearerAuth()
   @ApiOperation({
     summary: 'Buscar dados de triagem por ID do atendimento',
-    description: 'Retorna os dados completos de triagem vinculados a um atendimento específico. Acessível apenas para médicos, operadores ou para o próprio paciente.',
+    description:
+      'Retorna os dados completos de triagem vinculados a um atendimento específico. Acessível apenas para médicos, operadores ou para o próprio paciente.',
   })
   @ApiParam({
     name: 'attendance_id',
@@ -79,7 +78,7 @@ export class FetchAssessmentByAttendanceIdController {
     const result = await this.fetchAssessmentUseCase.execute({
       attendanceId,
       currentUserId: user.sub,
-      currentUserRole: user.role as 'medical' | 'operator' | 'patient',
+      currentUserRole: user.role,
     });
 
     if (result.isLeft()) {
@@ -87,7 +86,7 @@ export class FetchAssessmentByAttendanceIdController {
     }
 
     const { assessment } = result.value;
-    
+
     return this.mapToResponse(assessment);
   }
 
@@ -113,4 +112,4 @@ export class FetchAssessmentByAttendanceIdController {
       symptoms: assessment.symptoms || null,
     };
   }
-} 
+}

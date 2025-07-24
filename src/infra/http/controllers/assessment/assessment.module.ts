@@ -8,4 +8,4 @@ import { DatabaseModule } from '@/infra/database/database.module';
   controllers: [FetchAssessmentByAttendanceIdController],
   providers: [FetchAssessmentByAttendanceIdUseCase],
 })
-export class AssessmentModule {} 
+export class AssessmentModule {}

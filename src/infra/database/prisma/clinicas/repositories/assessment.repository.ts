@@ -9,7 +9,9 @@ import { PrismaClinicasService } from '../prisma-clinicas.service';
 export class PrismaAssessmentRepository implements AssessmentRepository {
   constructor(private readonly db: PrismaClinicasService) {}
 
-  async findByAttendanceId(attendanceId: string): Promise<IAssessmentProps | null> {
+  async findByAttendanceId(
+    attendanceId: string,
+  ): Promise<IAssessmentProps | null> {
     try {
       // Busca pelos dados da guia de ambulatório e comorbidades
       const result = await this.db.$queryRaw<AssessmentRaw[]>`
@@ -37,11 +39,11 @@ export class PrismaAssessmentRepository implements AssessmentRepository {
         WHERE ag.ambulatorio_guia_id = ${Number(attendanceId)}
         ORDER BY ag.ambulatorio_guia_id DESC
       `;
-      console.log('resultado do banco',result);
+      console.log('resultado do banco', result);
       return AssessmentMapper.toDomain(result);
     } catch (error) {
       console.error('Erro ao buscar triagem por attendance_id:', error);
       throw new Error('Erro ao buscar dados de triagem.');
     }
   }
-} 
+}
