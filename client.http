@@ -1,4 +1,4 @@
-@authtoken = eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI0NjIxMTAiLCJuYW1lIjoiU2hlaWxhIE1hcmlhIiwicm9sZSI6InBhdGllbnQiLCJpYXQiOjE3NTMyMTA5ODUsImV4cCI6MTc1MzgxNTc4NX0.lzTCcMcET05NhPbtyHEnENdGDC7KrWno-6U3JfbtYP6p5IBaCnnMzy2rG0mhuP4UtKm7JbgmS4Cval-lbh010apVaX68ItXEbY9bgw-0q9EkzZzK2MhvWqIAXPV-yvYr_SSsm_x-pMr6A0-EGq4SXH-nfRf8FrCR0xmBxNFExEJiHHnmyQzmbRFUA8xYGSSPK8mD4dLzpHetMA24Cg1MTHSkTfFzHJCOb-_YpdLpbctU13-O3TyOAF72GNWMoT5oIbpcLTMem6ySN1DajususJ9e8ASBSYTUatBKP8FPrs5NkLyNfXJ0xTToB34vaBRGKUg8KH85NGEFpSPm9j2J9Q
+@authtoken = eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI0NjIxMTAiLCJuYW1lIjoiU2hlaWxhIE1hcmlhIiwicm9sZSI6InBhdGllbnQiLCJpYXQiOjE3NTM0NDE5NzAsImV4cCI6MTc1NDA0Njc3MH0.e5Tfb264UH-zGsrA6u2XSqjBBN_NwVvLJ8CHnq6LSvU7MANfIWJUnQwIstt8LokI4T2O5qIQ152ughgddgQ-1YGn_ITU-YNoTeyaOAC5p5WeFKPxWpuFHOmxJTUHHyfeJAOiFLX0VrdggRF5ky-vHtP3dP3WP_WC4AvALvl_H3IWc7BEVZdhDzXHhRAlxMVJqLp-gi5WKybJQGOuzsj5C5VG5f1sQH7UnocYYz4_a1wjR070EW0YD0xvbC1VbH19n-7hFeR_uSLQx1LQH6uAZKVmbyHVqMHVpHiBv9JX-RIeRBf8dq7m5CpKIqF8djU128S2tIcTixPv3zqbO-Z6JA
 
 GET http://localhost:3333/medical/schedulings
 Authorization: Bearer {{authtoken}}
@@ -10,14 +10,9 @@ Content-Type: application/json
 
 {
   "type": "medical",
-  "access": "784-CE",
+  "access": "7845-CE",
   "password": "123"
 }
-
-###
-
-GET http://localhost:3333/
-Authorization: Bearer {{authtoken}}
 
 ###
 
@@ -57,3 +52,8 @@ Authorization: Bearer {{authtoken}}
 ###
 
 GET http://localhost:3333/health
+
+###
+
+GET http://localhost:3333/assessment/1089155
+Authorization: Bearer {{authtoken}}

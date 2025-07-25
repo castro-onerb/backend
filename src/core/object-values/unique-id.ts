@@ -4,7 +4,7 @@ export class UniqueID {
   private value: string;
 
   toString(): string {
-    return this.value;
+    return String(this.value);
   }
 
   toValue() {
@@ -16,6 +16,6 @@ export class UniqueID {
   }
 
   equals(id: UniqueID) {
-    return this.toValue() === id.toValue();
+    return this.toString() === id.toString();
   }
 }
