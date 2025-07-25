@@ -14,4 +14,4 @@ export type AssessmentRaw = {
   precisa_atestado?: boolean;
   nome_comorbidade?: string;
   nome_sintoma?: string;
-}; 
+};

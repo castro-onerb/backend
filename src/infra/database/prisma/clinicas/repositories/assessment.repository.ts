@@ -13,7 +13,6 @@ export class PrismaAssessmentRepository implements AssessmentRepository {
     attendanceId: string,
   ): Promise<IAssessmentProps | null> {
     try {
-      // Busca pelos dados da guia de ambulatório e comorbidades
       const result = await this.db.$queryRaw<AssessmentRaw[]>`
         SELECT 
           ag.ambulatorio_guia_id,
@@ -31,18 +30,17 @@ export class PrismaAssessmentRepository implements AssessmentRepository {
           ag.precisa_atestado,
           tc.nome AS nome_comorbidade,
           ts.nome AS nome_sintoma
-        FROM ponto.tb_ambulatorio_guia ag
+        FROM ponto.tb_agenda_exames ae
+        LEFT JOIN ponto.tb_ambulatorio_guia ag ON ae.guia_id = ag.ambulatorio_guia_id
         LEFT JOIN ponto.tb_guia_comorbidade tgc ON ag.ambulatorio_guia_id = tgc.guia_id
         LEFT JOIN ponto.tb_comorbidades tc ON tgc.comorbidade_id = tc.comorbidades_id
         LEFT JOIN ponto.tb_guia_sintomas tgs ON ag.ambulatorio_guia_id = tgs.guia_id
         LEFT JOIN ponto.tb_sintomas ts ON tgs.sintoma_id = ts.sintomas_id
-        WHERE ag.ambulatorio_guia_id = ${Number(attendanceId)}
+        WHERE ae.agenda_exames_id = ${Number(attendanceId)}
         ORDER BY ag.ambulatorio_guia_id DESC
       `;
-      console.log('resultado do banco', result);
       return AssessmentMapper.toDomain(result);
-    } catch (error) {
-      console.error('Erro ao buscar triagem por attendance_id:', error);
+    } catch {
       throw new Error('Erro ao buscar dados de triagem.');
     }
   }

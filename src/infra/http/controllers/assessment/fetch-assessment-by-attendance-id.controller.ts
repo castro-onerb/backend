@@ -70,7 +70,7 @@ export class FetchAssessmentByAttendanceIdController {
   async fetchAssessment(
     @Param('attendance_id') attendanceId: string,
     @CurrentUser() user: UserPayload | null,
-  ): Promise<AssessmentResponseDto> {
+  ): Promise<{ assessment: AssessmentResponseDto }> {
     if (!user?.sub || !user?.role) {
       throw new UnauthorizedException('Usuário não autenticado.');
     }
@@ -90,26 +90,30 @@ export class FetchAssessmentByAttendanceIdController {
     return this.mapToResponse(assessment);
   }
 
-  private mapToResponse(assessment: IAssessmentProps): AssessmentResponseDto {
+  private mapToResponse(assessment: IAssessmentProps): {
+    assessment: AssessmentResponseDto;
+  } {
     return {
-      attendance_id: assessment.attendanceId,
-      patient_id: assessment.patientId,
-      weight: assessment.weight || null,
-      height: assessment.height || null,
-      blood_pressure: assessment.bloodPressure || null,
-      heart_rate: assessment.heartRate || null,
-      respiratory_rate: assessment.respiratoryRate || null,
-      temperature: assessment.temperature || null,
-      oxygen_saturation: assessment.oxygenSaturation || null,
-      glycemia: assessment.glycemia || null,
-      pressure_pattern: assessment.pressurePattern || null,
-      chief_complaint: assessment.chiefComplaint || null,
-      pain_score: assessment.painScore || null,
-      pain_location: assessment.painLocation || null,
-      pain_type: assessment.painType || null,
-      pain_factors: assessment.painFactors || null,
-      comorbidities: assessment.comorbidities || null,
-      symptoms: assessment.symptoms || null,
+      assessment: {
+        attendance_id: assessment.attendanceId,
+        patient_id: assessment.patientId,
+        weight: assessment.weight || null,
+        height: assessment.height || null,
+        blood_pressure: assessment.bloodPressure || null,
+        heart_rate: assessment.heartRate || null,
+        respiratory_rate: assessment.respiratoryRate || null,
+        temperature: assessment.temperature || null,
+        oxygen_saturation: assessment.oxygenSaturation || null,
+        glycemia: assessment.glycemia || null,
+        pressure_pattern: assessment.pressurePattern || null,
+        chief_complaint: assessment.chiefComplaint || null,
+        pain_score: assessment.painScore || null,
+        pain_location: assessment.painLocation || null,
+        pain_type: assessment.painType || null,
+        pain_factors: assessment.painFactors || null,
+        comorbidities: assessment.comorbidities || null,
+        symptoms: assessment.symptoms || null,
+      },
     };
   }
 }

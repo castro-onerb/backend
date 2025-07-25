@@ -1,4 +1,4 @@
-@authtoken = eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI0NjIxMTAiLCJuYW1lIjoiU2hlaWxhIE1hcmlhIiwicm9sZSI6InBhdGllbnQiLCJpYXQiOjE3NTMzMTU5MjUsImV4cCI6MTc1MzkyMDcyNX0.aAlz_ZNiAcKFXDrZP5-N_HjaYREF2tktPgy0ll8FaSZIWYIY2PzwaE41Tq2YzF_sS-wtRE782vnr5Gjy99FIb4Eun9vwHK2ea8FNaJGYgLPztsnCoeQ3H3O8fkB79RZMxuRYLKaOmUM3TLqHe6kH5lUYrePfx5uAa1fX0yQLbk9OEyQzDcaQ2OdGETByhUgbLGx0YUn1j2Bvh7bqCLiAVl857-qJGfvlF1-gvMcXglNDX4dF6VkOHkJx31nf8ug6oAo3-1YPKBcm02xPItmwvWrVLHFF4yQztehFlQakOec4elMmfIT3kujgr9gCkaMVcuT_4mltg0QAHMMxBdakSw
+@authtoken = eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI0NjIxMTAiLCJuYW1lIjoiU2hlaWxhIE1hcmlhIiwicm9sZSI6InBhdGllbnQiLCJpYXQiOjE3NTM0NDE5NzAsImV4cCI6MTc1NDA0Njc3MH0.e5Tfb264UH-zGsrA6u2XSqjBBN_NwVvLJ8CHnq6LSvU7MANfIWJUnQwIstt8LokI4T2O5qIQ152ughgddgQ-1YGn_ITU-YNoTeyaOAC5p5WeFKPxWpuFHOmxJTUHHyfeJAOiFLX0VrdggRF5ky-vHtP3dP3WP_WC4AvALvl_H3IWc7BEVZdhDzXHhRAlxMVJqLp-gi5WKybJQGOuzsj5C5VG5f1sQH7UnocYYz4_a1wjR070EW0YD0xvbC1VbH19n-7hFeR_uSLQx1LQH6uAZKVmbyHVqMHVpHiBv9JX-RIeRBf8dq7m5CpKIqF8djU128S2tIcTixPv3zqbO-Z6JA
 
 GET http://localhost:3333/medical/schedulings
 Authorization: Bearer {{authtoken}}
@@ -40,11 +40,12 @@ Content-Type: application/json
 
 ###
 
-POST http://localhost:3333/auth/login/patient
+POST http://localhost:3333/auth/login
 Content-Type: application/json
 
 {
-  "cpf": "84981725353",
+  "type": "patient",
+  "access": "84981725353",
   "password": "b91890f1"
 }
 

@@ -17,4 +17,4 @@ export interface IAssessmentProps {
   painFactors?: string;
   comorbidities?: string[];
   symptoms?: string[];
-} 
+}

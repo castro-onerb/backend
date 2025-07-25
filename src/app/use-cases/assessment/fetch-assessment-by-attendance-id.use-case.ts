@@ -7,6 +7,7 @@ import {
   AssessmentNotFoundError,
   UnauthorizedAssessmentAccessError,
 } from './errors';
+import { UniqueID } from '@/core/object-values/unique-id';
 
 export interface FetchAssessmentByAttendanceIdUseCaseRequest {
   attendanceId: string;
@@ -41,9 +42,9 @@ export class FetchAssessmentByAttendanceIdUseCase {
       }
 
       const isAuthorized = await this.validateUserAccess(
-        currentUserId,
+        new UniqueID(currentUserId),
         currentUserRole,
-        assessment.patientId,
+        new UniqueID(assessment.patientId),
       );
 
       if (!isAuthorized) {
@@ -59,16 +60,16 @@ export class FetchAssessmentByAttendanceIdUseCase {
   }
 
   private async validateUserAccess(
-    currentUserId: string,
+    currentUserId: UniqueID,
     currentUserRole: 'medical' | 'operator' | 'patient',
-    assessmentPatientId: string,
+    assessmentPatientId: UniqueID,
   ): Promise<boolean> {
     if (currentUserRole === 'medical') {
       return Promise.resolve(true);
     }
 
     if (currentUserRole === 'patient') {
-      return currentUserId === assessmentPatientId;
+      return currentUserId.equals(assessmentPatientId);
     }
 
     return Promise.resolve(false);
