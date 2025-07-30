@@ -46,7 +46,7 @@ Content-Type: application/json
 
 ###
 
-GET http://localhost:3333/patient/me/exams
+GET http://localhost:3333/patient/me/exams?page=1
 Authorization: Bearer {{authtoken}}
 
 ###

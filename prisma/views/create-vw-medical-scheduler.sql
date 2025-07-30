@@ -23,11 +23,9 @@ SELECT
   END AS prioridade,
   -- tipo_atendimento
   CASE
-    WHEN (ae.pronto_atendimento IS NULL OR ae.pronto_atendimento = false)
-      AND (ae.agenda_especialidade IS NULL OR ae.agenda_especialidade = false)
+    WHEN (ae.forma_atendimento LIKE 'presencial%')
       THEN 'in_person'
-    WHEN (ae.pronto_atendimento IS NOT NULL AND ae.pronto_atendimento <> false)
-      OR (ae.agenda_especialidade IS NOT NULL AND ae.agenda_especialidade <> false)
+    WHEN (ae.forma_atendimento LIKE 'telemedicina%')
       THEN 'telemedicine'
     ELSE 'unknown'
   END AS tipo_atendimento,

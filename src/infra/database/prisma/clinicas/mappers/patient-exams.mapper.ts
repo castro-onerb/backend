@@ -8,6 +8,7 @@ export class PatientExamsMapper {
       ticket: String(row.id),
       patientId: String(row.patient_id),
       examId: String(row.exam_id),
+      professionalName: row.professional_name,
       procedure: row.procedure,
       observations: row.observations ?? undefined,
       performedDate: dayjs(row.performed_date).toDate(),
@@ -15,7 +16,7 @@ export class PatientExamsMapper {
       group: row.group,
       paid: Boolean(row.paid),
       status: row.status,
-      estimated_date: dayjs(row.estimated_date).toDate(),
+      estimatedDate: dayjs(row.estimated_date).toDate(),
       updatedAt: dayjs(row.updated_at).toDate(),
       createdAt: dayjs(row.created_at).toDate(),
     };

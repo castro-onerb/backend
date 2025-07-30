@@ -1,16 +1,24 @@
 import { ExecutionContext, Injectable } from '@nestjs/common';
-import { ThrottlerGuard } from '@nestjs/throttler';
-import { Request } from 'express';
+import {
+  ThrottlerGuard,
+  ThrottlerModuleOptions,
+  ThrottlerStorageService,
+} from '@nestjs/throttler';
+import { Reflector } from '@nestjs/core';
+import { GqlExecutionContext } from '@nestjs/graphql';
 
 @Injectable()
-export class CustomThrottlerGuard extends ThrottlerGuard {
-  async canActivate(context: ExecutionContext): Promise<boolean> {
-    const req = context.switchToHttp().getRequest<Request>();
+export class GqlThrottlerGuard extends ThrottlerGuard {
+  constructor(
+    protected readonly options: ThrottlerModuleOptions,
+    protected readonly storageService: ThrottlerStorageService,
+    protected readonly reflector: Reflector,
+  ) {
+    super(options, storageService, reflector);
+  }
 
-    if (req.method === 'GET' && req.path === '/health') {
-      return true;
-    }
-
-    return super.canActivate(context);
+  getRequest(context: ExecutionContext) {
+    const ctx = GqlExecutionContext.create(context);
+    return ctx.getContext().req;
   }
 }

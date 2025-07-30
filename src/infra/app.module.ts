@@ -5,14 +5,16 @@ import { AuthModule } from './auth/auth.module';
 import { EnvModule } from './env/env.module';
 import { AdaptersModule } from './adapters/adapters.module';
 import { AuthenticateModule } from './http/controllers/auth/authenticate.module';
-import { seconds, ThrottlerModule } from '@nestjs/throttler';
-import { APP_GUARD } from '@nestjs/core';
+import {
+  seconds,
+  ThrottlerModule,
+  ThrottlerStorageService,
+} from '@nestjs/throttler';
 import { EventsModule } from './events/events.module';
 import { DatabaseModule } from './database/database.module';
 import { HttpModule } from './http/http.module';
 import { ConfigModule } from '@nestjs/config';
 import { envSchema } from './env/env';
-import { CustomThrottlerGuard } from './guards/custom-throttler.guard';
 
 @Module({
   imports: [
@@ -27,21 +29,18 @@ import { CustomThrottlerGuard } from './guards/custom-throttler.guard';
       validate: (env) => envSchema.parse(env),
       isGlobal: true,
     }),
-    ThrottlerModule.forRoot({
-      throttlers: [
-        { name: 'default', ttl: seconds(60), limit: 5 },
-        { name: 'login', ttl: seconds(60), limit: 3 },
-        { name: 'app', ttl: seconds(60), limit: 30 },
-      ],
+    ThrottlerModule.forRootAsync({
+      useFactory: () => ({
+        throttlers: [
+          {
+            ttl: seconds(60),
+            limit: 10,
+          },
+        ],
+      }),
     }),
   ],
   controllers: [AppController],
-  providers: [
-    AppService,
-    {
-      provide: APP_GUARD,
-      useClass: CustomThrottlerGuard,
-    },
-  ],
+  providers: [AppService, ThrottlerStorageService],
 })
 export class AppModule {}

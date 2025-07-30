@@ -2,6 +2,7 @@ export interface IPatientExamProps {
   ticket: string;
   patientId: string;
   examId: string;
+  professionalName: string;
   procedure: string;
   scheduledDate: Date;
   performedDate: Date;
@@ -9,7 +10,7 @@ export interface IPatientExamProps {
   group: string;
   paid: boolean;
   status: string;
-  estimated_date: Date;
+  estimatedDate: Date;
   createdAt: Date;
   updatedAt?: Date;
 }

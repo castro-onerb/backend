@@ -49,7 +49,11 @@ async function bootstrap() {
   SwaggerModule.setup('swagger', app, document);
 
   app.enableCors({
-    origin: ['http://172.26.16.1:5173', 'http://192.168.2.158:5173'],
+    origin: [
+      'http://172.26.16.1:5173',
+      'http://192.168.0.6:5173',
+      'http://192.168.2.89:5173',
+    ],
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
     credentials: true,
   });

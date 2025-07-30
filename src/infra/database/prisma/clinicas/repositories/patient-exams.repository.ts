@@ -32,7 +32,8 @@ export class PrismaPatientExamsRepository implements PatientExamRepository {
         ex.situacao AS status,
         ex.data_cadastro AS performed_date,
         ae.faturado AS paid,
-        ex.data_cadastro + INTERVAL '1 day' * COALESCE(pt.tempo_resultado::int, pt.entrega::int, pt.dia_previsao::int) AS estimated_date
+        ex.data_cadastro + INTERVAL '1 day' * COALESCE(pt.tempo_resultado::int, pt.entrega::int, pt.dia_previsao::int) AS estimated_date,
+        op.nome AS professional_name
       FROM ponto.tb_agenda_exames ae
       INNER JOIN ponto.tb_procedimento_convenio pc
         ON pc.procedimento_convenio_id = ae.procedimento_tuss_id
@@ -43,6 +44,8 @@ export class PrismaPatientExamsRepository implements PatientExamRepository {
       INNER JOIN ponto.tb_exames ex
         ON ex.agenda_exames_id = ae.agenda_exames_id
         AND ex.situacao = 'FINALIZADO'
+      LEFT JOIN ponto.tb_operador op
+        ON op.operador_id = COALESCE(ae.operador_realizacao)
       WHERE ae.paciente_id = ${Number(patientId)}
         AND ae.tipo = 'EXAME'
       ORDER BY ae.data DESC

@@ -2,6 +2,7 @@ export type PatientExamRaw = {
   id: string;
   patient_id: string;
   exam_id: string;
+  professional_name: string;
   procedure: string;
   scheduled_date: Date;
   performed_date: Date | null;
