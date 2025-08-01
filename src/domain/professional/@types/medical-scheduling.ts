@@ -2,20 +2,20 @@ import { SchedulingProps } from '@/core/@types/scheduling';
 import { UniqueID } from '@/core/object-values/unique-id';
 
 export interface IMedicalSchedulingProps extends SchedulingProps {
-  id: string;
-  patientId: UniqueID | null;
+  id: UniqueID;
+  patientId: UniqueID;
   status: string;
   patientName: string;
   gender: {
-    key: 'M' | 'F';
+    key: 'male' | 'female';
     label: 'Masculino' | 'Feminino' | 'Outro';
   };
-  queueType: 'urgency' | 'special' | 'priority' | 'normal';
+  queueType: 'urgent' | 'special' | 'priority' | 'normal';
   modality: 'in_person' | 'telemedicine' | 'unknown';
   // agreement: string;
   dateAtendance: Date;
-  laudo: string;
-  exame: string;
+  medical_report: string;
+  exam: string;
   birth: Date;
   paid: boolean;
   active: boolean;
@@ -26,13 +26,20 @@ export interface IMedicalSchedulingProps extends SchedulingProps {
 }
 
 export interface IMonthlySchedulingOverview {
-  date: string;
+  date: Date;
   count: number;
   representative: {
     patientName: string;
-    start: string;
-    end: string;
+    start: Date;
+    end: Date;
     modality: 'in_person' | 'telemedicine' | 'unknown';
-    queueType: 'urgency' | 'special' | 'priority' | 'normal';
+    queueType: 'urgent' | 'special' | 'priority' | 'normal';
+    procedure: string;
+    birth: Date | null;
+    paid: boolean;
+    confirmed: boolean;
+    canceledAt: Date | null;
+    realizedAt: Date | null;
+    status: string;
   };
 }

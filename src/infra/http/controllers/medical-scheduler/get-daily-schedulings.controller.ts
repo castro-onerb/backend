@@ -18,6 +18,7 @@ import {
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
 import { MedicalSchedulingListResponseDto } from './types/medical-scheduling.response.dto';
+import { GetDailySchedulingsPresenter } from './presenters/get-daily-schedulings.presenter';
 
 @ApiTags('Schedulers')
 @Controller('medical')
@@ -78,7 +79,9 @@ export class GetDailySchedulingsController {
 
     if (schedulings.isRight()) {
       return {
-        schedulings: schedulings.value.schedulings,
+        data: GetDailySchedulingsPresenter.toHTTP(
+          schedulings.value.schedulings,
+        ),
       };
     }
   }

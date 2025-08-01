@@ -8,6 +8,7 @@ import { Controller, Get, Query, UseGuards } from '@nestjs/common';
 import { MissingAuthenticatedUserError } from '../errors';
 import { InvalidDateError } from '../errors/app.error';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
+import { GetMonthlySchedulingsPresenter } from './presenters/get-monthly-schedulings-overview-by-medical.presenter';
 
 @ApiTags('Schedulers')
 @Controller('medical')
@@ -58,7 +59,9 @@ export class GetMonthlySchedulingsOverviewByMedicalIdController {
     });
 
     if (result.isRight()) {
-      return result.value;
+      return {
+        data: GetMonthlySchedulingsPresenter.toHTTP(result.value.data),
+      };
     }
   }
 }

@@ -7,23 +7,23 @@ import { RawMedicalSchedulingRow } from '../types/medical-scheduler';
 export class MedicalSchedulerMapper {
   static toDomain(row: RawMedicalSchedulingRow): IMedicalSchedulingProps {
     return {
-      id: row.id,
-      patientId: row.paciente_id ? new UniqueID(row.paciente_id) : null,
+      id: new UniqueID(row.id),
+      patientId: new UniqueID(row.paciente_id),
       patientName: row.paciente_nome
         ? formatName(row.paciente_nome).name_full
         : '',
       gender: {
         key: row.sexo,
         label:
-          row.sexo === 'M'
+          row.sexo === 'male'
             ? 'Masculino'
-            : row.sexo === 'F'
+            : row.sexo === 'female'
               ? 'Feminino'
               : 'Outro',
       },
       birth: row.nascimento,
-      exame: row.situacaoexame,
-      laudo: row.situacaolaudo,
+      exam: row.situacaoexame,
+      medical_report: row.situacaolaudo,
       queueType: row.prioridade,
       modality: row.tipo_atendimento,
       status: row.situacao,

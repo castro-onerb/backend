@@ -14,9 +14,10 @@ SELECT
   ae.ativo,
   ae.telefonema AS confirmado,
   ae.data_cancelamento,
+  ae.data_realizacao AS data_realizado,
   -- prioridade
   CASE
-    WHEN COALESCE(ae.ordenador, '1') = '3' THEN 'urgency'
+    WHEN COALESCE(ae.ordenador, '1') = '3' THEN 'urgent'
     WHEN date_part('year', age(current_date, pc.nascimento)) >= 80 THEN 'special'
     WHEN COALESCE(ae.ordenador, '1') = '2' THEN 'priority'
     ELSE 'normal'
@@ -31,11 +32,16 @@ SELECT
   END AS tipo_atendimento,
   -- dados do paciente
   pc.nome AS paciente_nome,
-  pc.sexo,
+  CASE
+    WHEN upper(pc.sexo) = 'M' THEN 'male'
+    WHEN upper(pc.sexo) = 'F' THEN 'female'
+    ELSE 'other'
+  END as sexo,
   pc.nascimento,
   -- situação
   CASE
     WHEN ae.situacao = 'OK'
+      AND (ae.data_realizacao IS NOT NULL)
       AND (ae.cancelada IS NULL OR ae.cancelada IS FALSE)
       AND (ae.faltou_manual IS NULL OR ae.faltou_manual IS FALSE)
       AND (al.situacao = 'FINALIZADO')
@@ -62,8 +68,8 @@ SELECT
       AND (ex.situacao = 'EXECUTANDO')
     THEN 'in_attendance'
     WHEN ae.situacao = 'OK'
-      AND (al.situacao IS NULL OR al.situacao = '')
-      AND (ex.situacao IS NULL OR ex.situacao = '')
+      AND (al.situacao IS NULL OR al.situacao = '' OR al.situacao = 'AGUARDANDO')
+      AND (ex.situacao IS NULL OR ex.situacao = '' OR ex.situacao = 'AGUARDANDO')
       AND (ae.cancelada IS NULL OR ae.cancelada IS FALSE)
     THEN 'appoimented'
     ELSE 'free'

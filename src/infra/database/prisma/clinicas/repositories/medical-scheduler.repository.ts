@@ -11,6 +11,7 @@ import {
   RawMedicalSchedulingRow,
   RawMonthlySchedulingOverviewRow,
 } from '../types/medical-scheduler';
+import { mergeDateAndTime } from '@/core/utils/merge-date-time';
 
 @Injectable()
 export class PrismaMedicalSchedulerRepository
@@ -96,28 +97,51 @@ export class PrismaMedicalSchedulerRepository
       fim,
       paciente_nome,
       prioridade,
-      tipo_atendimento
+      tipo_atendimento,
+      procedimento,
+      pago,
+      data_cancelamento,
+      confirmado,
+      data_realizado,
+      situacao
     FROM ranked
     WHERE rn = 1
     ORDER BY data_atendimento ASC;
   `;
 
     return result.map((row) => ({
-      date: dayjs(row.data_atendimento).format('YYYY-MM-DD'),
+      date: dayjs(
+        dayjs(row.data_atendimento).tz().format('YYYY-MM-DD'),
+      ).toDate(),
       count: Number(row.total_agendamentos),
       representative: {
         patientName: row.paciente_nome,
-        start: row.inicio,
-        end: row.fim,
+        start: mergeDateAndTime(row.data_atendimento, row.inicio),
+        end: mergeDateAndTime(row.data_atendimento, row.fim),
         modality: row.tipo_atendimento as
           | 'in_person'
           | 'telemedicine'
           | 'unknown',
         queueType: row.prioridade as
-          | 'urgency'
+          | 'urgent'
           | 'special'
           | 'priority'
           | 'normal',
+        procedure: row.procedimento,
+        birth: dayjs(row.nascimento).isValid()
+          ? dayjs(dayjs(row.nascimento).tz().format('YYYY-MM-DD')).toDate()
+          : null,
+        canceledAt: dayjs(row.data_cancelamento).isValid()
+          ? dayjs(
+              dayjs(row.data_cancelamento).tz().format('YYYY-MM-DD'),
+            ).toDate()
+          : null,
+        realizedAt: dayjs(row.data_realizado).isValid()
+          ? dayjs(dayjs(row.data_realizado).tz().format('YYYY-MM-DD')).toDate()
+          : null,
+        paid: row.pago,
+        confirmed: row.confirmado ?? false,
+        status: row.situacao,
       },
     }));
   }

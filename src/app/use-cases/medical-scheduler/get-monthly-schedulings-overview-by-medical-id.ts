@@ -12,7 +12,7 @@ export interface IGetMonthlySchedulingsOverviewByMedicalIdRequest {
 
 type IGetMonthlySchedulingsOverviewByMedicalIdResponse = Either<
   null,
-  { data: IMonthlySchedulingOverview[] | null }
+  { data: IMonthlySchedulingOverview[] }
 >;
 
 @Injectable()

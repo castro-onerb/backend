@@ -10,8 +10,8 @@ export interface RawMedicalSchedulingRow {
   situacaoexame: string;
   situacaolaudo: string;
   paciente_nome: string;
-  sexo: 'M' | 'F';
-  prioridade: 'urgency' | 'special' | 'priority' | 'normal';
+  sexo: 'male' | 'female';
+  prioridade: 'urgent' | 'special' | 'priority' | 'normal';
   tipo_atendimento: 'in_person' | 'telemedicine' | 'unknown';
   nascimento: Date;
   origin: null | 'INTEGRADO' | 'B2B';
@@ -28,4 +28,11 @@ export interface RawMonthlySchedulingOverviewRow {
   paciente_nome: string;
   prioridade: string;
   tipo_atendimento: string;
+  procedimento: string;
+  pago: boolean;
+  data_cancelamento: Date | null;
+  data_realizado: Date | null;
+  confirmado: boolean;
+  nascimento: Date;
+  situacao: string;
 }
