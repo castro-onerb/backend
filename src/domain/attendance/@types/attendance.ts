@@ -6,12 +6,12 @@ export type AttendanceEntityProps = {
   startedAt?: Date;
   finishedAt?: Date;
   status:
-    | 'stand_by'
-    | 'in_progress'
+    | 'free'
+    | 'in_attendance'
+    | 'appoimented'
     | 'finished'
     | 'cancelled'
-    | 'blocked'
-    | 'missed';
+    | 'blocked';
   summary?: string;
   attachments?: string[];
   prescriptionsIds?: string[];

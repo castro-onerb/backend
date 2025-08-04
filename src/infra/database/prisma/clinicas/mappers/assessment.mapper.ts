@@ -8,15 +8,15 @@ export class AssessmentMapper {
     }
 
     const firstRow = rows[0];
-    
+
     // Agrupa comorbidades e sintomas únicos
     const comorbidities = rows
-      .map(row => row.nome_comorbidade)
+      .map((row) => row.nome_comorbidade)
       .filter((value): value is string => value !== null && value !== undefined)
       .filter((value, index, self) => self.indexOf(value) === index);
-    
+
     const symptoms = rows
-      .map(row => row.nome_sintoma)
+      .map((row) => row.nome_sintoma)
       .filter((value): value is string => value !== null && value !== undefined)
       .filter((value, index, self) => self.indexOf(value) === index);
 
@@ -49,4 +49,4 @@ export class AssessmentMapper {
       symptoms: symptoms.length > 0 ? symptoms : undefined,
     };
   }
-} 
+}

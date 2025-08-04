@@ -72,17 +72,17 @@ export class Attendance extends AggregateRoot<AttendanceEntityProps> {
   // ========== Métodos de Domínio ==========
 
   start() {
-    if (this.props.status !== 'stand_by') {
+    if (this.props.status !== 'free') {
       throw new AttendanceInvalidStartError();
     }
 
     this.props.startedAt = new Date();
-    this.props.status = 'in_progress';
+    this.props.status = 'in_attendance';
     this.touch();
   }
 
   finish() {
-    if (this.props.status !== 'in_progress') {
+    if (this.props.status !== 'in_attendance') {
       throw new AttendanceInvalidFinishError();
     }
 

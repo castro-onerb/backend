@@ -5,12 +5,12 @@ export type AttendanceRaw = {
   started_at?: string;
   finished_at?: string;
   status:
-    | 'stand_by'
-    | 'in_progress'
+    | 'free'
+    | 'in_attendance'
+    | 'appoimented'
     | 'finished'
     | 'cancelled'
-    | 'blocked'
-    | 'missed';
+    | 'blocked';
   modality: 'in_person' | 'telemedicine' | 'unknown';
   created_at: string;
   updated_at: string;
