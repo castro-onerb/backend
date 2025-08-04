@@ -40,7 +40,10 @@ describe('ResetPasswordController (E2E)', () => {
       })
       .expect(201);
 
-    expect(response.body).toEqual({});
+    expect(response.body).toEqual({
+      message: 'Senha redefinida com sucesso.',
+      success: true,
+    });
   });
 
   it('should return 400 if body is invalid (fails zod)', async () => {

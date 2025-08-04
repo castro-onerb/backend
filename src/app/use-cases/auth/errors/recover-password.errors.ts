@@ -82,3 +82,11 @@ export class RecoverPasswordCodeExpiredError extends AppError {
     });
   }
 }
+
+export class RecoverPasswordUnauthorizedError extends AppError {
+  constructor() {
+    super('Não conseguimos autorização para realizar esta ação.', {
+      code: 'recovery_password.unauthorized',
+    });
+  }
+}

@@ -79,8 +79,7 @@ export class TokenController {
       return {
         access_token: newAccessToken,
       };
-    } catch (err) {
-      console.log(err);
+    } catch {
       throw new UnauthorizedException(
         'Não conseguimos renovar o token de autenticação.',
       );

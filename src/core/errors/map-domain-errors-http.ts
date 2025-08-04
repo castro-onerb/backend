@@ -4,6 +4,7 @@ import {
   ForbiddenException,
   InternalServerErrorException,
   NotFoundException,
+  UnauthorizedException,
 } from '@nestjs/common';
 import { AppError } from './app-error';
 
@@ -28,6 +29,9 @@ export function mapDomainErrorToHttp(error: AppError) {
     case 'recovery_password.cooldown_redefinition':
     case 'recovery_password.code_expired':
       return new ForbiddenException(error.message);
+
+    case 'recovery_password.unauthorized':
+      return new UnauthorizedException(error.message);
 
     case 'medical.invalid_crm_format':
     case 'recovery_password.missing_identifier':

@@ -1,17 +1,11 @@
 import { describe, it, beforeAll, afterAll, expect, vi } from 'vitest';
 import request from 'supertest';
 import { Test, TestingModule } from '@nestjs/testing';
-import { INestApplication } from '@nestjs/common';
+import { INestApplication, ValidationPipe } from '@nestjs/common';
 import { AppModule } from '@/infra/app.module';
 import { InvalidateCodeRecoverUseCase } from '@/app/use-cases/auth/invalidate-code-recover.use-case';
 import { left, right } from '@/core/either';
-import { AppError } from '@/core/errors/app-error';
-
-class FakeRecoverError extends AppError {
-  constructor() {
-    super('Código inválido', { code: 'recover.fake_error' });
-  }
-}
+import { RecoverPasswordCodeNotFoundError } from '@/app/use-cases/auth/errors';
 
 describe('InvalidateCodeRecoverController (E2E)', () => {
   let app: INestApplication;
@@ -29,6 +23,15 @@ describe('InvalidateCodeRecoverController (E2E)', () => {
       .compile();
 
     app = moduleFixture.createNestApplication();
+
+    app.useGlobalPipes(
+      new ValidationPipe({
+        whitelist: true,
+        forbidNonWhitelisted: true,
+        transform: true,
+      }),
+    );
+
     await app.init();
   });
 
@@ -38,8 +41,8 @@ describe('InvalidateCodeRecoverController (E2E)', () => {
 
   it('should invalidate codes and return success message for valid email', async () => {
     const response = await request(app.getHttpServer())
-      .get('/auth/invalidate-codes')
-      .query({ email: validEmail })
+      .post('/auth/invalidate-codes')
+      .send({ email: validEmail })
       .expect(200);
 
     expect(response.body).toEqual({
@@ -47,34 +50,31 @@ describe('InvalidateCodeRecoverController (E2E)', () => {
     });
   });
 
-  it('should return 400 for invalid email query param', async () => {
+  it('should return 400 for invalid email format', async () => {
     const response = await request(app.getHttpServer())
-      .get('/auth/invalidate-codes')
-      .query({ email: 'invalid-email' })
+      .post('/auth/invalidate-codes')
+      .send({ email: 'invalid-email' })
       .expect(400);
 
-    type ErrorResponse = { statusCode: number; message: string[] };
-
-    const body = response.body as ErrorResponse;
-
     expect(response.body).toHaveProperty('message');
-    expect(body.statusCode).toEqual(400);
+    expect((response.body as { statusCode: number }).statusCode).toEqual(400);
   });
 
-  it('should return 401 if use case returns Error instance', async () => {
+  it('should return 401 if use case returns an Error instance', async () => {
     const useCase = app.get(InvalidateCodeRecoverUseCase);
     vi.spyOn(useCase, 'execute').mockResolvedValueOnce(
-      left(new FakeRecoverError()),
+      left(new RecoverPasswordCodeNotFoundError()),
     );
 
     const response = await request(app.getHttpServer())
-      .get('/auth/invalidate-codes')
-      .query({ email: validEmail })
-      .expect(401);
+      .post('/auth/invalidate-codes')
+      .send({ email: validEmail })
+      .expect(404);
 
     expect(response.body).toEqual({
-      statusCode: 401,
-      message: 'Código inválido',
+      statusCode: 404,
+      error: 'Not Found',
+      message: 'Não conseguimos identificar o código fornecido.',
     });
   });
 });

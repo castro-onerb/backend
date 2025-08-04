@@ -22,7 +22,7 @@ describe('AuthLogoutController (E2E)', () => {
 
   it('should clear the refresh_token cookie and return a success message', async () => {
     const response = await request(app.getHttpServer())
-      .post('/auth/logout')
+      .post('/auth/me/logout')
       .expect(200);
 
     expect(response.body).toEqual({

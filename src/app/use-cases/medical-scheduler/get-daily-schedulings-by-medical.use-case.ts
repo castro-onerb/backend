@@ -6,7 +6,7 @@ import { Injectable } from '@nestjs/common';
 
 export interface IGetDailySchedulingsByMedicalIdRequest {
   id: string;
-  date: Date;
+  date?: Date;
 }
 
 type IGetDailySchedulingsByMedicalIdResponse = Either<

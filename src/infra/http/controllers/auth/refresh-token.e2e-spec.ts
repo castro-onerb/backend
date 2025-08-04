@@ -1,7 +1,7 @@
 import { describe, it, beforeAll, afterAll, expect, vi } from 'vitest';
 import request from 'supertest';
 import { Test, TestingModule } from '@nestjs/testing';
-import { INestApplication } from '@nestjs/common';
+import { INestApplication, ValidationPipe } from '@nestjs/common';
 import { AppModule } from '@/infra/app.module';
 import { TokenService } from '@/infra/auth/auth.service';
 import cookieParser from 'cookie-parser';
@@ -28,6 +28,15 @@ describe('TokenController (E2E)', () => {
       .compile();
 
     app = moduleFixture.createNestApplication();
+
+    app.useGlobalPipes(
+      new ValidationPipe({
+        whitelist: true,
+        forbidNonWhitelisted: true,
+        transform: true,
+      }),
+    );
+
     app.use(cookieParser());
     await app.init();
   });
@@ -38,7 +47,7 @@ describe('TokenController (E2E)', () => {
 
   it('should return new access and refresh tokens', async () => {
     const response = await request(app.getHttpServer())
-      .post('/auth/refresh-token')
+      .post('/auth/me/refresh-token')
       .set('Cookie', [`refresh_token=valid-refresh-token`])
       .expect(201);
 
@@ -78,7 +87,7 @@ describe('TokenController (E2E)', () => {
     await localApp.init();
 
     const response = await request(localApp.getHttpServer())
-      .post('/auth/refresh-token')
+      .post('/auth/me/refresh-token')
       .set('Cookie', [`refresh_token=invalid-token`])
       .expect(401);
 

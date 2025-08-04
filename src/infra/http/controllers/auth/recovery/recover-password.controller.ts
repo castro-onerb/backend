@@ -1,7 +1,5 @@
 import { RecoverPasswordUseCase } from '@/app/use-cases/auth/recover-password.use-case';
-import { Body, Controller, Post, UsePipes } from '@nestjs/common';
-import { ZodValidationPipe } from '../../../pipes/zod-validation.pipe';
-import { z } from 'zod';
+import { Body, Controller, Post } from '@nestjs/common';
 import { mapDomainErrorToHttp } from '@/core/errors/map-domain-errors-http';
 import {
   ApiBody,
@@ -12,12 +10,7 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 import { seconds, Throttle } from '@nestjs/throttler';
-
-const schemaBodyRequest = z.object({
-  email: z.string().email(),
-});
-
-type requestBodyRecoveryPassword = z.infer<typeof schemaBodyRequest>;
+import { RecoverPasswordDto } from './types/recover-password.dto';
 
 @ApiTags('Auth')
 @Controller('auth')
@@ -26,7 +19,6 @@ export class RecoveryPasswordController {
 
   @Throttle({ recovery: { limit: 3, ttl: seconds(60) } })
   @Post('recover-password')
-  @UsePipes(new ZodValidationPipe(schemaBodyRequest))
   @ApiBody({ schema: { example: { email: 'usuario@dominio.com' } } })
   @ApiOperation({
     summary: 'Solicitar código de recuperação de senha',
@@ -63,7 +55,7 @@ export class RecoveryPasswordController {
       },
     },
   })
-  async recovery(@Body() body: requestBodyRecoveryPassword) {
+  async recovery(@Body() body: RecoverPasswordDto) {
     const { email } = body;
     const result = await this.recoveryPassword.execute({ email });
 

@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { CRM } from './crm';
-import { BadRequestException } from '@nestjs/common';
+import { CRMNotValid } from '../errors';
 
 describe('CRM Object Value', () => {
   it('should create a valid CRM', () => {
@@ -16,7 +16,7 @@ describe('CRM Object Value', () => {
     const result = CRM.create('123456SP'); // faltando hífen
 
     expect(result.isLeft()).toBe(true);
-    expect(result.value).toBeInstanceOf(BadRequestException);
+    expect(result.value).toBeInstanceOf(CRMNotValid);
   });
 
   it('should validate CRM format correctly', () => {
