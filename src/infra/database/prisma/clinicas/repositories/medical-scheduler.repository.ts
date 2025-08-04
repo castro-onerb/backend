@@ -103,6 +103,7 @@ export class PrismaMedicalSchedulerRepository
       data_cancelamento,
       confirmado,
       data_realizado,
+      nascimento,
       situacao
     FROM ranked
     WHERE rn = 1

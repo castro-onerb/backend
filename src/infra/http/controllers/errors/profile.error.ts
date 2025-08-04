@@ -8,3 +8,12 @@ export class MissingAuthenticatedUserError extends AppError {
     );
   }
 }
+
+export class UnauthorizedPermissionError extends AppError {
+  constructor() {
+    super(
+      'Ops, parece que não conseguimos validar sua permissão para esta ação.',
+      { code: 'auth.unauthorized_permission' },
+    );
+  }
+}

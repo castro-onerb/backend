@@ -54,7 +54,7 @@ export class FetchSchedulingsController {
   })
   async fetchSchedulings(@CurrentUser() user: UserPayload | null) {
     if (!user?.sub) {
-      return mapDomainErrorToHttp(new MissingAuthenticatedUserError());
+      throw mapDomainErrorToHttp(new MissingAuthenticatedUserError());
     }
 
     const schedulings = await this.fetchSchedulingsUseCase.execute({

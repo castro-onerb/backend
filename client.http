@@ -1,5 +1,7 @@
 @authtoken = eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI1NTg1MSIsIm5hbWUiOiJTaGFybGVzIFJlaW5hbSIsInJvbGUiOiJtZWRpY2FsIiwiaWF0IjoxNzUzOTcwNTM5LCJleHAiOjE3NTQ1NzUzMzl9.qzmwIvTgHUGrlmH9xLsLF5TVU9ZYzdovJXyhSMU004xMqBJFNIhEhv6lRRCVHPiXLmGHuHOkjRd1HqfbGqgl4ZNCoso1t8n_N1Q2Z8P1mSVfcjKdVWF3UnnX_ATaxZ5b3jLRT5y3z9NXKPr-wDVfwshWFUgBMcI_70ALBROcN2FqR953EDbZ_cPMCIo7ncsn04T2wUrC3-ILGMM5zjcCYbklnv2v_l2DPS4Or1791TmrDN6DhV1JrAkuQJ0qxGLUSdj4HSZ4z6Ze_yn0T3JK6Iv2HhBU36l7IPLs3cyimU2vnAXpwY4NYuqaAj6DGg1G5vTH8ZrfEAlqjMzpm_pNmg
 
+###
+
 GET http://localhost:3333/medical/schedulings
 Authorization: Bearer {{authtoken}}
 
@@ -22,6 +24,7 @@ Content-Type: application/json
 {
   "email": "breno.castro@deovita.com.br"
 }
+
 ###
 
 POST http://localhost:3333/auth/reset-password
@@ -34,7 +37,6 @@ Content-Type: application/json
 }
 
 ###
-
 POST http://localhost:3333/auth/login
 Content-Type: application/json
 
@@ -73,3 +75,13 @@ Authorization: Bearer {{authtoken}}
 
 GET http://localhost:3333/medical/me/schedulings/daily?date=2025-07-09
 Authorization: Bearer {{authtoken}}
+
+###
+
+POST http://localhost:3333/attendance/start
+Content-Type: application/json
+Authorization: Bearer {{authtoken}}
+
+{
+  "attendance_id": 1085863
+}

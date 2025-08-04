@@ -8,7 +8,7 @@ export const mergeDateAndTime = (
 ): Date => {
   const localDate = normalizeDateInput(date);
   const base = dayjs(localDate).local().tz();
-  const timeObj = dayjs(time).utcOffset(-3);
+  const timeObj = dayjs(time).local().tz();
 
   const merged = base
     .hour(timeObj.hour())

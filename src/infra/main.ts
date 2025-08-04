@@ -10,10 +10,19 @@ import { PrismaInitExceptionFilter } from './database/prisma/clinicas/prisma-fil
 import cookieParser from 'cookie-parser';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { ThrottlerExceptionFilter } from './http/controllers/errors/app.error';
+import { ValidationPipe } from '@nestjs/common';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   app.use(cookieParser());
+
+  app.useGlobalPipes(
+    new ValidationPipe({
+      whitelist: true, // remove campos não definidos no DTO
+      forbidNonWhitelisted: true, // lança erro se campos extras forem enviados
+      transform: true, // transforma os tipos (ex: string → number)
+    }),
+  );
 
   const configSwagger = new DocumentBuilder()
     .setTitle('API Prontuário')

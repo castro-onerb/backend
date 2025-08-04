@@ -18,6 +18,7 @@ export interface RawMedicalSchedulingRow {
   ativo: boolean;
   confirmado: boolean;
   data_cancelamento: Date;
+  data_realizado: Date | null;
 }
 
 export interface RawMonthlySchedulingOverviewRow {

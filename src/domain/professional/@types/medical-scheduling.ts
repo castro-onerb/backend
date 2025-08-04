@@ -23,6 +23,7 @@ export interface IMedicalSchedulingProps extends SchedulingProps {
   confirmed: boolean;
   // arrival: Date;
   canceledAt: Date;
+  realizedAt: Date | null;
 }
 
 export interface IMonthlySchedulingOverview {

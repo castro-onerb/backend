@@ -3,9 +3,22 @@ import { MedicalSchedulerModule } from './controllers/medical-scheduler/medical-
 import { AuthenticateModule } from './controllers/auth/authenticate.module';
 import { ExamsModules } from './controllers/exams/exams.module';
 import { AssessmentModule } from './controllers/assessment/assessment.module';
+import { AttendanceModule } from './controllers/attendance/attendance.module';
 
 @Module({
-  imports: [MedicalSchedulerModule, AuthenticateModule, ExamsModules, AssessmentModule],
-  exports: [MedicalSchedulerModule, AuthenticateModule, ExamsModules, AssessmentModule],
+  imports: [
+    MedicalSchedulerModule,
+    AuthenticateModule,
+    ExamsModules,
+    AssessmentModule,
+    AttendanceModule,
+  ],
+  exports: [
+    MedicalSchedulerModule,
+    AuthenticateModule,
+    ExamsModules,
+    AssessmentModule,
+    AttendanceModule,
+  ],
 })
 export class HttpModule {}

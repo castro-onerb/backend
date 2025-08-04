@@ -35,6 +35,7 @@ export class MedicalSchedulerMapper {
       procedure: formatName(row.procedimento).name,
       start: mergeDateAndTime(row.data_atendimento, row.inicio),
       end: mergeDateAndTime(row.data_atendimento, row.fim),
+      realizedAt: row.data_realizado,
     };
   }
 }

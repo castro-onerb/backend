@@ -15,6 +15,8 @@ import { PatientExamRepository } from '@/app/repositories/patient-exam.repositor
 import { PrismaPatientExamsRepository } from './prisma/clinicas/repositories/patient-exams.repository';
 import { AssessmentRepository } from '@/app/repositories/assessment.repository';
 import { PrismaAssessmentRepository } from './prisma/clinicas/repositories/assessment.repository';
+import { AttendanceRepository } from '@/app/repositories/attendance.repository';
+import { PrismaAttendanceRepository } from './prisma/clinicas/repositories/attendance.repository';
 
 @Global()
 @Module({
@@ -49,6 +51,10 @@ import { PrismaAssessmentRepository } from './prisma/clinicas/repositories/asses
       provide: RecoveryPasswordRepository,
       useClass: PrismaRecoveryPasswordRepository,
     },
+    {
+      provide: AttendanceRepository,
+      useClass: PrismaAttendanceRepository,
+    },
   ],
   exports: [
     PrismaClinicasService,
@@ -80,6 +86,10 @@ import { PrismaAssessmentRepository } from './prisma/clinicas/repositories/asses
     {
       provide: RecoveryPasswordRepository,
       useClass: PrismaRecoveryPasswordRepository,
+    },
+    {
+      provide: AttendanceRepository,
+      useClass: PrismaAttendanceRepository,
     },
   ],
 })
