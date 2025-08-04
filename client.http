@@ -85,3 +85,8 @@ Authorization: Bearer {{authtoken}}
 {
   "attendance_id": 1085863
 }
+
+###
+
+GET http://localhost:3333/auth/requirements
+Authorization: Bearer {{authtoken}}

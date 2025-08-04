@@ -20,6 +20,8 @@ import { PatientAuthenticateUseCase } from '@/app/use-cases/auth/authenticate-pa
 import { Encrypter } from '@/core/cryptography/encrypter';
 import { AesEcbCryptographer } from '@/infra/cryptography/aes-ecb-cryptographer';
 import { AuthController } from './login/auth-login.controller';
+import { AuthRequirementsController } from './auth-requirements.controller';
+import { CheckRequirementsUseCase } from '@/app/use-cases/auth/check-requirements.use-case';
 
 @Module({
   imports: [AdaptersModule, DatabaseModule],
@@ -31,6 +33,7 @@ import { AuthController } from './login/auth-login.controller';
     InvalidateCodeRecoverController,
     AuthProfile,
     AuthController,
+    AuthRequirementsController,
   ],
   providers: [
     PrismaService,
@@ -49,6 +52,7 @@ import { AuthController } from './login/auth-login.controller';
     RecoverPasswordUseCase,
     ResetPasswordUseCase,
     InvalidateCodeRecoverUseCase,
+    CheckRequirementsUseCase,
   ],
 })
 export class AuthenticateModule {}
