@@ -22,7 +22,12 @@
           <i class="fa-solid fa-map-location-dot icon"></i>
           <div class="box-agroup-center">
             <p class="mini-title -light">Login em</p>
-            <h2 class="title">Iguatu/CE</h2>
+            {{#unless city}}
+              <h2 class="title">Local desconhecido</h2>
+            {{else}}
+              <h2 class="title">{{city}}</h2>
+            {{/unless}}
+            <p class="mini-title -light">{{date}}</p>
           </div>
           <div class="box-agroup-center">
             <a href="#" class="button -outline">Não reconheço</a>

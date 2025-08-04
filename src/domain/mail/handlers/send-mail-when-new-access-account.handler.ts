@@ -16,6 +16,7 @@ export class SendMailWhenNewAccessAccount
         ip: event.ip ?? undefined,
         date: event.ocurredAt.toLocaleString(),
         name: event.name,
+        city: event.city,
       },
     });
   }

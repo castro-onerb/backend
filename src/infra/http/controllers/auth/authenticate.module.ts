@@ -22,6 +22,7 @@ import { AesEcbCryptographer } from '@/infra/cryptography/aes-ecb-cryptographer'
 import { AuthController } from './login/auth-login.controller';
 import { AuthRequirementsController } from './auth-requirements.controller';
 import { CheckRequirementsUseCase } from '@/app/use-cases/auth/check-requirements.use-case';
+import { IpLocationService } from '@/core/services/ip-location.service';
 
 @Module({
   imports: [AdaptersModule, DatabaseModule],
@@ -41,6 +42,7 @@ import { CheckRequirementsUseCase } from '@/app/use-cases/auth/check-requirement
     MedicalAuthenticateUseCase,
     OperatorAuthenticateUseCase,
     PatientAuthenticateUseCase,
+    IpLocationService,
     {
       provide: Hasher,
       useClass: Md5Hasher,

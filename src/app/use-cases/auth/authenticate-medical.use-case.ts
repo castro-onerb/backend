@@ -17,10 +17,12 @@ import {
 } from './errors';
 import { DatabaseUnavailableError } from '@/core/errors/database-unavailable.error';
 import { DomainEvents } from '@/core/events/domain-events';
+import { IpLocationService } from '@/core/services/ip-location.service';
 
 export type MedicalAuthenticateUseCaseRequest = {
   crm: CRM;
   password: string;
+  ip?: string;
 };
 
 export type MedicalAuthenticateUseCaseResponse = Either<
@@ -40,11 +42,13 @@ export class MedicalAuthenticateUseCase {
   constructor(
     private medicalRepository: MedicalRepository,
     private readonly hasher: Hasher,
+    private readonly ipLocationService: IpLocationService,
   ) {}
 
   async execute({
     crm,
     password,
+    ip,
   }: MedicalAuthenticateUseCaseRequest): Promise<MedicalAuthenticateUseCaseResponse> {
     let listMedical: MedicalRaw[] | null;
 
@@ -101,7 +105,33 @@ export class MedicalAuthenticateUseCase {
     if (!isValid) {
       return left(new InvalidPasswordError());
     }
-    medical.recordAccess();
+
+    let location:
+      | { city?: string; region?: string; country?: string }
+      | undefined;
+
+    if (ip) {
+      try {
+        location = await this.ipLocationService.lookup(ip);
+      } catch (err) {
+        console.error(
+          '[IpLocationService] Failed to fetch location for IP:',
+          err,
+        );
+      }
+    }
+
+    medical.recordAccess(
+      ip,
+      location
+        ? {
+            city: location.city,
+            region: location.region,
+            country: location.country,
+          }
+        : undefined,
+    );
+
     DomainEvents.dispatchEventsForAggregate(medical.id);
 
     return right({
