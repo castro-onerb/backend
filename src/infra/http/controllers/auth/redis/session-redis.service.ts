@@ -1,18 +1,17 @@
 import { Injectable } from '@nestjs/common';
-import { InjectRedis } from '@nestjs-modules/ioredis';
-import type Redis from 'ioredis';
+import { RedisService } from '@/infra/redis/redis.service';
 
 @Injectable()
 export class SessionRedisService {
-  constructor(@InjectRedis() private readonly redis: Redis) {}
+  constructor(private readonly redis: RedisService) {}
 
   async activateSession(sessionId: string, ttlInSeconds: number) {
-    await this.redis.set(`session:${sessionId}`, 'active', 'EX', ttlInSeconds);
+    await this.redis.set(`session:${sessionId}`, 'active', ttlInSeconds);
   }
 
   async isSessionActive(sessionId: string): Promise<boolean> {
     const exists = await this.redis.exists(`session:${sessionId}`);
-    return exists === 1;
+    return typeof exists === 'number' && exists === 1;
   }
 
   async invalidateSession(sessionId: string) {

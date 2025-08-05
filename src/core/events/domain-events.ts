@@ -7,7 +7,6 @@ export class DomainEvents {
   private static handlersMap: Record<string, EventHandler[]> = {};
   private static markedAggregates: AggregateRoot<unknown>[] = [];
 
-  // ✅ REGISTRAR HANDLER PARA UM EVENTO
   public static register(eventName: string, handler: EventHandler): void {
     if (!this.handlersMap[eventName]) {
       this.handlersMap[eventName] = [];
@@ -16,7 +15,6 @@ export class DomainEvents {
     this.handlersMap[eventName].push(handler);
   }
 
-  // ✅ MARCAR ENTIDADE PARA DISPATCH
   public static markAggregateForDispatch(aggregate: AggregateRoot<unknown>) {
     const alreadyMarked = !!this.findMarkedAggregateByID(aggregate.id);
 
@@ -25,7 +23,6 @@ export class DomainEvents {
     }
   }
 
-  // ✅ DESPACHAR EVENTOS DE UMA ENTIDADE MARCADA
   public static dispatchEventsForAggregate(aggregateId: UniqueID) {
     const aggregate = this.findMarkedAggregateByID(aggregateId);
 

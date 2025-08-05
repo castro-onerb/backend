@@ -153,7 +153,6 @@ export class AuthController {
       role,
     });
 
-    // 🔀 Crie a sessão antes de gerar o access token
     const session = await this.activeSessionRepository.create({
       userId: user.id.toString(),
       token: refreshToken,
@@ -161,7 +160,6 @@ export class AuthController {
       device: req.headers['user-agent'],
     });
 
-    // ✅ Agora você tem o sessionId disponível
     const accessToken = this.tokenService.generateAccessToken({
       sub: user.id.toString(),
       name: formatName(user.name).name,
@@ -169,7 +167,6 @@ export class AuthController {
       sessionId: session.id,
     });
 
-    // Redis: ativa a sessão com TTL igual ao tempo do access token
     await this.sessionRedis.activateSession(session.id, 15 * 60);
 
     if (role === 'medical') {

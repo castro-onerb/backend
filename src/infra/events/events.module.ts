@@ -30,7 +30,7 @@ export class EventsModule implements OnModuleInit {
     );
     DomainEvents.register(
       'PasswordRecoveryRequested',
-      new SendMailWhenPasswordRecoveryRequested(this.mail),
+      new SendMailWhenPasswordRecoveryRequested(this.mail, this.config),
     );
     DomainEvents.register(
       'PasswordRecoveryAttemptFailed',
