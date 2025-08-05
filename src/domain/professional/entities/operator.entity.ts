@@ -55,13 +55,14 @@ export class Operator extends AggregateRoot<OperatorEntityType> {
     return right(operator);
   }
 
-  public recordAccess(ip?: string) {
+  public recordAccess(sessionId: string, ip?: string) {
     this.addDomainEvent(
       new NewAccessAccount({
         aggregateId: this.id,
         name: formatName(this.props.name).name,
         email: this.props.email,
         ip,
+        sessionId,
       }),
     );
   }

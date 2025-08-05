@@ -5,6 +5,7 @@ import { ConfigService } from '@nestjs/config';
 import { Env } from 'src/infra/env/env';
 import { JwtStrategy } from './jwt.strategy';
 import { TokenService } from './auth.service';
+import { SessionRedisService } from '../http/controllers/auth/redis/session-redis.service';
 
 @Module({
   imports: [
@@ -24,7 +25,7 @@ import { TokenService } from './auth.service';
       },
     }),
   ],
-  providers: [JwtStrategy, TokenService],
-  exports: [TokenService],
+  providers: [JwtStrategy, TokenService, SessionRedisService],
+  exports: [TokenService, SessionRedisService],
 })
 export class AuthModule {}

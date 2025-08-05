@@ -18,6 +18,7 @@ export const refreshTokenSchema = z.object({
   role: z.enum(['medical', 'operator', 'patient']),
   iat: z.number(),
   exp: z.number(),
+  sessionId: z.string(),
 });
 
 type JwtPayloadRefreshoken = z.infer<typeof refreshTokenSchema>;
@@ -29,8 +30,10 @@ export class TokenService {
     private readonly config: ConfigService<Env, true>,
   ) {}
 
-  generateAccessToken(payload: JwtPayloadAccessToken) {
-    const validPayload = accessTokenSchema.parse(payload);
+  generateAccessToken(payload: JwtPayloadAccessToken & { sessionId: string }) {
+    const validPayload = accessTokenSchema
+      .extend({ sessionId: z.string() })
+      .parse(payload);
     return this.jwtService.sign(validPayload, {
       expiresIn: '15m',
     });

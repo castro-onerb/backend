@@ -15,6 +15,8 @@ import { DatabaseModule } from './database/database.module';
 import { HttpModule } from './http/http.module';
 import { ConfigModule } from '@nestjs/config';
 import { envSchema } from './env/env';
+import { RedisModule } from '@nestjs-modules/ioredis';
+import { SessionRedisService } from './http/controllers/auth/redis/session-redis.service';
 
 @Module({
   imports: [
@@ -39,8 +41,13 @@ import { envSchema } from './env/env';
         ],
       }),
     }),
+    RedisModule.forRoot({
+      type: 'single',
+      url: 'redis://localhost:6379',
+    }),
   ],
   controllers: [AppController],
-  providers: [AppService, ThrottlerStorageService],
+  providers: [AppService, ThrottlerStorageService, SessionRedisService],
+  exports: [SessionRedisService],
 })
 export class AppModule {}

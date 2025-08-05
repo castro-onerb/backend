@@ -15,6 +15,7 @@ import { Request, Response } from 'express';
 import { TokenService } from '@/infra/auth/auth.service';
 import { formatName } from '@/core/utils/format-name';
 import { z } from 'zod';
+import { ActiveSessionRepository } from '@/app/repositories/active-session.repository';
 
 const cookieSchema = z.object({
   refresh_token: z.string(),
@@ -23,7 +24,10 @@ const cookieSchema = z.object({
 @ApiTags('Auth')
 @Controller('auth')
 export class TokenController {
-  constructor(private readonly tokenService: TokenService) {}
+  constructor(
+    private readonly tokenService: TokenService,
+    private readonly activeSessionRepository: ActiveSessionRepository,
+  ) {}
 
   @Post('me/refresh-token')
   @ApiOperation({
@@ -50,17 +54,30 @@ export class TokenController {
       },
     },
   })
-  refreshToken(@Req() req: Request, @Res({ passthrough: true }) res: Response) {
+  async refreshToken(
+    @Req() req: Request,
+    @Res({ passthrough: true }) res: Response,
+  ) {
     try {
       const cookies = cookieSchema.parse(req.cookies);
       const tokenFromCookie = cookies.refresh_token;
 
       const payload = this.tokenService.verifyRefreshToken(tokenFromCookie);
 
+      const session =
+        await this.activeSessionRepository.findByToken(tokenFromCookie);
+
+      if (!session || !session.isActive) {
+        throw new UnauthorizedException(
+          'Não conseguimos renovar o token de autenticação.',
+        );
+      }
+
       const newAccessToken = this.tokenService.generateAccessToken({
         sub: payload.sub,
         name: formatName(payload.name).name,
         role: payload.role,
+        sessionId: session.id,
       });
 
       const newRefreshToken = this.tokenService.generateRefreshToken({
@@ -68,6 +85,11 @@ export class TokenController {
         name: formatName(payload.name).name,
         role: payload.role,
       });
+
+      await this.activeSessionRepository.updateToken(
+        session.id,
+        newRefreshToken,
+      );
 
       res.cookie('refresh_token', newRefreshToken, {
         httpOnly: true,

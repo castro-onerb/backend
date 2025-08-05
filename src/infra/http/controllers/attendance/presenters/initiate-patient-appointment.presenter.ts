@@ -6,12 +6,12 @@ interface InitiatePatientAppointmentResponse {
   patient_id: string;
   medical_id: string;
   status:
-    | 'stand_by'
-    | 'in_progress'
+    | 'free'
+    | 'in_attendance'
+    | 'appoimented'
     | 'finished'
     | 'cancelled'
-    | 'blocked'
-    | 'missed';
+    | 'blocked';
   summary?: string;
   attachments?: string[];
   prescriptions_ids?: string[];

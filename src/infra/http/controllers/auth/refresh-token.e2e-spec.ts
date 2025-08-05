@@ -4,6 +4,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { INestApplication, ValidationPipe } from '@nestjs/common';
 import { AppModule } from '@/infra/app.module';
 import { TokenService } from '@/infra/auth/auth.service';
+import { ActiveSessionRepository } from '@/app/repositories/active-session.repository';
 import cookieParser from 'cookie-parser';
 
 describe('TokenController (E2E)', () => {
@@ -24,6 +25,16 @@ describe('TokenController (E2E)', () => {
         }),
         generateAccessToken: vi.fn().mockReturnValue('mocked-access-token'),
         generateRefreshToken: vi.fn().mockReturnValue('mocked-refresh-token'),
+      })
+      .overrideProvider(ActiveSessionRepository)
+      .useValue({
+        findByToken: vi.fn().mockResolvedValue({
+          id: 'session-1',
+          userId: mockSub,
+          token: 'valid-refresh-token',
+          isActive: true,
+        }),
+        updateToken: vi.fn(),
       })
       .compile();
 
@@ -81,6 +92,8 @@ describe('TokenController (E2E)', () => {
         generateAccessToken: vi.fn(),
         generateRefreshToken: vi.fn(),
       })
+      .overrideProvider(ActiveSessionRepository)
+      .useValue({ findByToken: vi.fn(), updateToken: vi.fn() })
       .compile();
 
     const localApp = moduleFixture.createNestApplication();

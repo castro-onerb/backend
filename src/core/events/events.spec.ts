@@ -33,6 +33,7 @@ describe('DomainEvents', () => {
       aggregateId: new UniqueID(),
       email: 'breno@example.com',
       name: 'Breno Castro',
+      sessionId: 'session-1',
     });
 
     DomainEvents.dispatch(event);

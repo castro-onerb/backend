@@ -1,3 +1,4 @@
+import { SessionRedisService } from './../redis/session-redis.service';
 import { TokenService } from '@/infra/auth/auth.service';
 import { mapDomainErrorToHttp } from '@/core/errors/map-domain-errors-http';
 import { CRM } from '@/core/object-values/crm';
@@ -22,6 +23,8 @@ import { Patient } from '@/domain/patient/entities/patient.entity';
 import { ApiBody, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { AuthLoginDto, UserType } from './types/login.dto';
 import { AuthLoginResponse } from './types/auth-login-response.dto';
+import { ActiveSessionRepository } from '@/app/repositories/active-session.repository';
+import { DomainEvents } from '@/core/events/domain-events';
 
 @ApiTags('Auth')
 @Controller('auth')
@@ -31,6 +34,8 @@ export class AuthController {
     private readonly operatorAuthUseCase: OperatorAuthenticateUseCase,
     private readonly patientAuthUseCase: PatientAuthenticateUseCase,
     private readonly tokenService: TokenService,
+    private readonly activeSessionRepository: ActiveSessionRepository,
+    private readonly sessionRedis: SessionRedisService,
   ) {}
 
   @Throttle({ login: { limit: 3, ttl: seconds(60) } })
@@ -104,7 +109,7 @@ export class AuthController {
       }
 
       const user = result.value.medical;
-      return this.handleLogin(user, 'medical', res);
+      return this.handleLogin(user, 'medical', req, res);
     }
 
     if (body.type === UserType.OPERATOR) {
@@ -118,8 +123,7 @@ export class AuthController {
       }
 
       const user = result.value.operator;
-
-      return this.handleLogin(user, 'operator', res);
+      return this.handleLogin(user, 'operator', req, res);
     }
 
     if (body.type === UserType.PATIENT) {
@@ -133,27 +137,50 @@ export class AuthController {
       }
 
       const user = result.value.patient;
-
-      return this.handleLogin(user, 'patient', res);
+      return this.handleLogin(user, 'patient', req, res);
     }
   }
 
-  private handleLogin(
+  private async handleLogin(
     user: Medical | Operator | Patient,
     role: 'medical' | 'operator' | 'patient',
+    req: Request,
     res: Response,
   ) {
-    const accessToken = this.tokenService.generateAccessToken({
-      sub: user.id.toString(),
-      name: formatName(user.name).name,
-      role,
-    });
-
     const refreshToken = this.tokenService.generateRefreshToken({
       sub: user.id.toString(),
       name: formatName(user.name).name,
       role,
     });
+
+    // 🔀 Crie a sessão antes de gerar o access token
+    const session = await this.activeSessionRepository.create({
+      userId: user.id.toString(),
+      token: refreshToken,
+      ip: req.ip,
+      device: req.headers['user-agent'],
+    });
+
+    // ✅ Agora você tem o sessionId disponível
+    const accessToken = this.tokenService.generateAccessToken({
+      sub: user.id.toString(),
+      name: formatName(user.name).name,
+      role,
+      sessionId: session.id,
+    });
+
+    // Redis: ativa a sessão com TTL igual ao tempo do access token
+    await this.sessionRedis.activateSession(session.id, 15 * 60);
+
+    if (role === 'medical') {
+      (user as Medical).recordAccess(session.id, req.ip);
+      DomainEvents.dispatchEventsForAggregate(user.id);
+    }
+
+    if (role === 'operator') {
+      (user as Operator).recordAccess(session.id, req.ip);
+      DomainEvents.dispatchEventsForAggregate(user.id);
+    }
 
     res.cookie('refresh_token', refreshToken, {
       httpOnly: true,

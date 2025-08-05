@@ -23,6 +23,8 @@ import { AuthController } from './login/auth-login.controller';
 import { AuthRequirementsController } from './auth-requirements.controller';
 import { CheckRequirementsUseCase } from '@/app/use-cases/auth/check-requirements.use-case';
 import { IpLocationService } from '@/core/services/ip-location.service';
+import { InvalidateSessionController } from './invalidate-session.controller';
+import { SessionRedisService } from './redis/session-redis.service';
 
 @Module({
   imports: [AdaptersModule, DatabaseModule],
@@ -35,7 +37,9 @@ import { IpLocationService } from '@/core/services/ip-location.service';
     AuthProfile,
     AuthController,
     AuthRequirementsController,
+    InvalidateSessionController,
   ],
+  exports: [SessionRedisService],
   providers: [
     PrismaService,
     TokenService,
@@ -55,6 +59,7 @@ import { IpLocationService } from '@/core/services/ip-location.service';
     ResetPasswordUseCase,
     InvalidateCodeRecoverUseCase,
     CheckRequirementsUseCase,
+    SessionRedisService,
   ],
 })
 export class AuthenticateModule {}

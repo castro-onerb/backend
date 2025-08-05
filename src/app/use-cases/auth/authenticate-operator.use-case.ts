@@ -5,7 +5,6 @@ import { UniqueID } from '@/core/object-values/unique-id';
 import { DatabaseUnavailableError } from '@/core/errors/database-unavailable.error';
 import { OperatorRepository } from '../../repositories/operator.repository';
 import { OperatorRaw } from '@/domain/professional/@types/raw.operator';
-import { DomainEvents } from '@/core/events/domain-events';
 import {
   MultipleOperatorsFoundError,
   OperatorEntityBuildError,
@@ -89,9 +88,6 @@ export class OperatorAuthenticateUseCase {
     if (!isValid) {
       return left(new InvalidPasswordError());
     }
-
-    operator.recordAccess();
-    DomainEvents.dispatchEventsForAggregate(operator.id);
 
     return right({
       operator,

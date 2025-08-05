@@ -20,43 +20,44 @@ export class PrismaAttendanceRepository implements AttendanceRepository {
                 ae.data_atualizacao as updated_at,
                 ae.data_realizacao as finished_at,
                 ae.data_realizacao as started_at,
-                WHEN ae.situacao = 'OK'
-                  AND (ae.data_realizacao IS NOT NULL)
-                  AND (ae.cancelada IS NULL OR ae.cancelada IS FALSE)
-                  AND (ae.faltou_manual IS NULL OR ae.faltou_manual IS FALSE)
-                  AND (al.situacao = 'FINALIZADO')
-                  AND (ex.situacao = 'FINALIZADO')
-                THEN 'finished'
-                WHEN (
-                  (ae.situacao = 'OK' AND (
-                    ae.cancelada IS TRUE
-                    OR ae.data_cancelamento IS NOT NULL
-                  ))
-                  OR ae.situacao = 'CANCELADO'
-                )
-                THEN 'cancelled'
-                WHEN ae.situacao = 'OK'
-                  AND (ae.faltou_manual IS TRUE
-                  OR (
-                    ex.exames_id IS NULL
-                    AND al.ambulatorio_laudo_id IS NULL
-                    AND ae.data < current_date
-                  ))
-                THEN 'missed'
-                WHEN ae.situacao = 'OK'
-                  AND (al.situacao = 'AGUARDANDO')
-                  AND (ex.situacao = 'EXECUTANDO')
-                THEN 'in_attendance'
-                WHEN ae.situacao = 'OK'
-                  AND ae.faturado IS FALSE
-                THEN 'blocked'
-                WHEN ae.situacao = 'OK'
-                  AND (al.situacao IS NULL OR al.situacao = '' OR al.situacao = 'AGUARDANDO')
-                  AND (ex.situacao IS NULL OR ex.situacao = '' OR ex.situacao = 'AGUARDANDO')
-                  AND (ae.cancelada IS NULL OR ae.cancelada IS FALSE)
-                THEN 'appoimented'
-                ELSE 'free'
-              END AS status,
+                CASE
+                  WHEN ae.situacao = 'OK'
+                    AND (ae.data_realizacao IS NOT NULL)
+                    AND (ae.cancelada IS NULL OR ae.cancelada IS FALSE)
+                    AND (ae.faltou_manual IS NULL OR ae.faltou_manual IS FALSE)
+                    AND (al.situacao = 'FINALIZADO')
+                    AND (ex.situacao = 'FINALIZADO')
+                  THEN 'finished'
+                  WHEN (
+                    (ae.situacao = 'OK' AND (
+                      ae.cancelada IS TRUE
+                      OR ae.data_cancelamento IS NOT NULL
+                    ))
+                    OR ae.situacao = 'CANCELADO'
+                  )
+                  THEN 'cancelled'
+                  WHEN ae.situacao = 'OK'
+                    AND (ae.faltou_manual IS TRUE
+                    OR (
+                      ex.exames_id IS NULL
+                      AND al.ambulatorio_laudo_id IS NULL
+                      AND ae.data < current_date
+                    ))
+                  THEN 'missed'
+                  WHEN ae.situacao = 'OK'
+                    AND (al.situacao = 'AGUARDANDO')
+                    AND (ex.situacao = 'EXECUTANDO')
+                  THEN 'in_attendance'
+                  WHEN ae.situacao = 'OK'
+                    AND ae.faturado IS FALSE
+                  THEN 'blocked'
+                  WHEN ae.situacao = 'OK'
+                    AND (al.situacao IS NULL OR al.situacao = '' OR al.situacao = 'AGUARDANDO')
+                    AND (ex.situacao IS NULL OR ex.situacao = '' OR ex.situacao = 'AGUARDANDO')
+                    AND (ae.cancelada IS NULL OR ae.cancelada IS FALSE)
+                  THEN 'appoimented'
+                  ELSE 'free'
+                END AS status,
                 CASE
                   WHEN (ae.forma_atendimento LIKE 'presencial%')
                     THEN 'in_person'

@@ -14,8 +14,7 @@ import {
   MedicalPasswordNotSetError,
   MultipleDoctorsFoundError,
 } from './errors';
-import { DomainEvents } from '@/core/events/domain-events';
-import { NewAccessAccount } from '@/domain/professional/events/new-access-account.event';
+import { IpLocation } from '@/core/object-values/ip-location';
 
 describe('Authenticate Medical Use Case', () => {
   let useCase: MedicalAuthenticateUseCase;
@@ -185,44 +184,6 @@ describe('Authenticate Medical Use Case', () => {
     if (result.isRight()) {
       expect(result.value.medical.crm.value).toBe('123456-CE');
     }
-  });
-
-  it('should dispatch NewAccessAccount event when medical login is successful', async () => {
-    const crm = CRM.create('123456-CE');
-    const password = '123456';
-
-    if (crm.isLeft()) throw new Error('CRM inválido');
-
-    medicalRepository.save({
-      id: 'med-01',
-      fullname: 'Dr. House',
-      cpf: '98765432100',
-      crm: crm.value.value,
-      username: 'dr.house',
-      email: 'house@example.com',
-      password: 'e10adc3949ba59abbe56e057f20f883e',
-      active: true,
-    });
-
-    hasher.compare.mockResolvedValue(true);
-
-    const dispatchSpy = vi.spyOn(DomainEvents, 'dispatch');
-
-    const result = await useCase.execute({
-      crm: crm.value,
-      password,
-    });
-
-    expect(result.isRight()).toBe(true);
-    expect(dispatchSpy).toHaveBeenCalledWith(expect.any(NewAccessAccount));
-
-    const dispatched = dispatchSpy.mock.calls.find(
-      ([event]) => event instanceof NewAccessAccount,
-    )?.[0];
-
-    expect(dispatched).toBeDefined();
-    expect(dispatched).toBeInstanceOf(NewAccessAccount);
-    expect(dispatched?.aggregateId.toString()).toBe('med-01');
   });
 
   it('should not authenticate a medical with valid CRM and icorrect password', async () => {

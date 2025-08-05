@@ -63,20 +63,14 @@ export class Medical extends AggregateRoot<MedicalEntityType> {
     return right(medical);
   }
 
-  public recordAccess(
-    ip?: string,
-    location?: { city?: string; region?: string; country?: string },
-  ) {
-    console.log(this.props.email);
+  public recordAccess(sessionId: string, ip?: string) {
     this.addDomainEvent(
       new NewAccessAccount({
         aggregateId: this.id,
         name: formatName(this.props.name).name,
         email: this.props.email,
         ip,
-        city: location?.city,
-        region: location?.region,
-        country: location?.country,
+        sessionId,
       }),
     );
   }
