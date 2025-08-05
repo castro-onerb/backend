@@ -1,4 +1,5 @@
 import { AttendanceRepository } from '@/app/repositories/attendance.repository';
+import { DomainEvents } from '@/core/events/domain-events';
 import { UniqueID } from '@/core/object-values/unique-id';
 import { Injectable } from '@nestjs/common';
 
@@ -12,10 +13,10 @@ export class InitiatePatientAppointmentUseCase {
 
   async execute({ id }: IInitiatePatientAppointmentRequest) {
     const result = await this.repo.findByAttendanceId(id.toString());
-    if (result) {
-      result.start();
-    }
-    console.log('USE CASE:: ', result);
+    if (!result) return null;
+
+    result.start();
+    DomainEvents.dispatchEventsForAggregate(result.id);
     return result;
   }
 }

@@ -3,6 +3,9 @@ import { UniqueID } from '@/core/object-values/unique-id';
 export type AttendanceEntityProps = {
   patientId: UniqueID;
   medicalId: UniqueID;
+  businessId: UniqueID;
+  guideTicket: UniqueID;
+  procedureTussId: UniqueID;
   startedAt?: Date;
   finishedAt?: Date;
   status:

@@ -17,6 +17,8 @@ export class PrismaAttendanceRepository implements AttendanceRepository {
             ae.agenda_exames_id as id,
             ae.paciente_id as patient_id,
             ae.medico_agenda as medical_id,
+            ae.empresa_id as business_id,
+            ae.guia_id as guide_id,
             ae.data_cadastro as created_at,
             ae.data_atualizacao as updated_at,
             ae.data_realizacao as finished_at,

@@ -6,6 +6,7 @@ import {
   AttendanceInvalidFinishError,
   AttendanceInvalidStartError,
 } from '@/domain/errors';
+import { AttendanceStarted } from '../events/attendance-started.event';
 
 export class Attendance extends AggregateRoot<AttendanceEntityProps> {
   private constructor(props: AttendanceEntityProps, id?: UniqueID) {
@@ -38,6 +39,18 @@ export class Attendance extends AggregateRoot<AttendanceEntityProps> {
     return this.props.status;
   }
 
+  get businessId() {
+    return this.props.businessId;
+  }
+
+  get guideTicket() {
+    return this.props.guideTicket;
+  }
+
+  get procedureTussId() {
+    return this.props.procedureTussId;
+  }
+
   get modality() {
     return this.props.modality;
   }
@@ -64,6 +77,18 @@ export class Attendance extends AggregateRoot<AttendanceEntityProps> {
     this.props.startedAt = new Date();
     this.props.status = 'in_attendance';
     this.touch();
+
+    this.addDomainEvent(
+      new AttendanceStarted({
+        aggregateId: this.id,
+        businessId: this.businessId,
+        patientId: this.patientId,
+        medicalId: this.medicalId,
+        guideTicket: this.guideTicket,
+        type: 'CONSULTA',
+        procedureTussId: this.procedureTussId,
+      }),
+    );
   }
 
   finish() {

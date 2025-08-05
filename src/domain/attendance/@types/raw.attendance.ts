@@ -2,6 +2,9 @@ export type AttendanceRaw = {
   id: string;
   patient_id: string;
   medical_id: string;
+  business_id: string;
+  guide_ticket: string;
+  procedure_tuss_id: string;
   started_at?: string;
   finished_at?: string;
   status:
