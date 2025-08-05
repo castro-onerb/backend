@@ -14,8 +14,8 @@ export class SendMailWhenPasswordRecoveryRequested
 
   async handle(event: PasswordRecoveryRequested) {
     const frontendUrl = this.config.get('FRONTEND_URL', { infer: true });
-    const invalidateUrl = `${frontendUrl}/recover?email=${event.email}&code=${event.code}`;
-    console.log(invalidateUrl);
+    const autofill = `${frontendUrl}/recover?email=${event.email}&code=${event.code}`;
+    const invalidate = `${frontendUrl}/recover/invalidate?email=${event.email}`;
     await this.mail.send({
       to: event.email,
       subject: 'Deovita - Recuperação de senha',
@@ -23,7 +23,8 @@ export class SendMailWhenPasswordRecoveryRequested
       context: {
         name: event.name,
         code: event.code,
-        invalidate: invalidateUrl,
+        autofill,
+        invalidate,
       },
     });
   }
