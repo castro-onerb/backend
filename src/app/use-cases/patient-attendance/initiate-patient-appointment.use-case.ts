@@ -16,6 +16,8 @@ export class InitiatePatientAppointmentUseCase {
     if (!result) return null;
 
     result.start();
+
+    await this.repo.update(result);
     DomainEvents.dispatchEventsForAggregate(result.id);
     return result;
   }

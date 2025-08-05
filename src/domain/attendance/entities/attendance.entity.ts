@@ -1,3 +1,4 @@
+import dayjs from '@/core/config/dayjs.config';
 import { AggregateRoot } from '@/core/entities/aggregate-root';
 import { AttendanceEntityProps } from '../@types/attendance';
 import { UniqueID } from '@/core/object-values/unique-id';
@@ -74,8 +75,18 @@ export class Attendance extends AggregateRoot<AttendanceEntityProps> {
       throw new AttendanceInvalidStartError();
     }
 
-    this.props.startedAt = new Date();
+    const now = dayjs().toDate();
+
+    this.props.startedAt = now;
     this.props.status = 'in_attendance';
+
+    this.props.realized = true;
+    this.props.operatorAttendance = this.props.medicalId;
+    this.props.dateRealized = now;
+
+    this.props.attendance = true;
+    this.props.operatorAttendance = this.props.medicalId;
+    this.props.dateAttendance = now;
     this.touch();
 
     this.addDomainEvent(
