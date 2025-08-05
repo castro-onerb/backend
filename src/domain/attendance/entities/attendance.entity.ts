@@ -3,11 +3,8 @@ import { AttendanceEntityProps } from '../@types/attendance';
 import { UniqueID } from '@/core/object-values/unique-id';
 import {
   AttendanceAlreadyFinishedError,
-  AttendanceCannotAttachReportError,
   AttendanceInvalidFinishError,
   AttendanceInvalidStartError,
-  AttendanceReportAlreadyAttachedError,
-  AttendanceSummaryNotAllowedError,
 } from '@/domain/errors';
 
 export class Attendance extends AggregateRoot<AttendanceEntityProps> {
@@ -41,24 +38,12 @@ export class Attendance extends AggregateRoot<AttendanceEntityProps> {
     return this.props.status;
   }
 
-  get summary() {
-    return this.props.summary;
-  }
-
-  get attachments() {
-    return this.props.attachments ?? [];
-  }
-
-  get prescriptionsIds() {
-    return this.props.prescriptionsIds ?? [];
-  }
-
-  get reportId() {
-    return this.props.reportId;
-  }
-
   get modality() {
     return this.props.modality;
+  }
+
+  get observations() {
+    return this.props.observations;
   }
 
   get createdAt() {
@@ -97,46 +82,6 @@ export class Attendance extends AggregateRoot<AttendanceEntityProps> {
     }
 
     this.props.status = 'cancelled';
-    this.touch();
-  }
-
-  setSummary(summary: string) {
-    if (this.props.status !== 'finished') {
-      throw new AttendanceSummaryNotAllowedError();
-    }
-
-    this.props.summary = summary;
-    this.touch();
-  }
-
-  addAttachment(fileId: string) {
-    this.props.attachments = this.props.attachments ?? [];
-
-    if (this.props.attachments.includes(fileId)) return;
-
-    this.props.attachments.push(fileId);
-    this.touch();
-  }
-
-  addPrescription(prescriptionId: string) {
-    this.props.prescriptionsIds = this.props.prescriptionsIds ?? [];
-
-    if (this.props.prescriptionsIds.includes(prescriptionId)) return;
-
-    this.props.prescriptionsIds.push(prescriptionId);
-    this.touch();
-  }
-
-  attachReport(reportId: UniqueID) {
-    if (this.props.status !== 'finished') {
-      throw new AttendanceCannotAttachReportError();
-    }
-
-    if (this.props.reportId) {
-      throw new AttendanceReportAlreadyAttachedError();
-    }
-
-    this.props.reportId = reportId;
     this.touch();
   }
 

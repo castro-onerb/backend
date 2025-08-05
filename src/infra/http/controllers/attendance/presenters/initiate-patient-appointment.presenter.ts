@@ -12,11 +12,8 @@ interface InitiatePatientAppointmentResponse {
     | 'finished'
     | 'cancelled'
     | 'blocked';
-  summary?: string;
-  attachments?: string[];
-  prescriptions_ids?: string[];
-  report_id?: string;
   modality: 'telemedicine' | 'in_person' | 'unknown';
+  observations?: string;
   started_at?: string;
   finished_at?: string;
   created_at: string;
@@ -27,7 +24,6 @@ export class InitiatePatientAppointmentPresenter {
     return {
       id: appointment.id.toString(),
       status: appointment.status,
-      summary: appointment.summary,
       started_at: dayjs(appointment.startedAt).isValid()
         ? dayjs(appointment.startedAt).format('YYYY-MM-DD')
         : undefined,
@@ -35,12 +31,10 @@ export class InitiatePatientAppointmentPresenter {
       medical_id: appointment.medicalId.toString(),
       modality: appointment.modality,
       patient_id: appointment.patientId.toString(),
-      report_id: appointment.reportId?.toString(),
-      attachments: appointment.attachments,
       finished_at: dayjs(appointment.finishedAt).isValid()
         ? dayjs(appointment.finishedAt).format('YYYY-MM-DD')
         : undefined,
-      prescriptions_ids: appointment.prescriptionsIds,
+      observations: appointment.observations,
     };
   }
 }

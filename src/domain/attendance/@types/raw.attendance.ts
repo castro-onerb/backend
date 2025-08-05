@@ -12,10 +12,8 @@ export type AttendanceRaw = {
     | 'cancelled'
     | 'blocked';
   modality: 'in_person' | 'telemedicine' | 'unknown';
+  observations?: string;
   created_at: string;
   updated_at: string;
   summary?: string;
-  attachments?: string[];
-  prescriptions_ids?: string[];
-  report_id?: string;
 };

@@ -12,10 +12,7 @@ export type AttendanceEntityProps = {
     | 'finished'
     | 'cancelled'
     | 'blocked';
-  summary?: string;
-  attachments?: string[];
-  prescriptionsIds?: string[];
-  reportId?: UniqueID;
+  observations?: string;
   modality: 'telemedicine' | 'in_person' | 'unknown';
   createdAt: Date;
   updatedAt?: Date;
