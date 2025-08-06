@@ -11,6 +11,7 @@ import {
   UnauthorizedPermissionError,
 } from '../errors';
 import { InitiatePatientAppointmentDto } from './types/initiate-patient-appointment.dto';
+import { InitiatePatientAppointmentPresenter } from './presenters/initiate-patient-appointment.presenter';
 
 @ApiTags('Attendance')
 @Controller('attendance')
@@ -38,8 +39,12 @@ export class InitiatePatientAppointmentController {
       id: new UniqueID(attendance_id),
     });
 
-    return {
-      attendance: result,
-    };
+    const attendance = InitiatePatientAppointmentPresenter.toHTTP(result);
+
+    if (attendance.isLeft()) {
+      throw mapDomainErrorToHttp(attendance.value);
+    }
+
+    return attendance.value;
   }
 }

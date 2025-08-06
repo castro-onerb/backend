@@ -13,6 +13,7 @@ export function mapDomainErrorToHttp(error: AppError) {
     case 'operator.not_found':
     case 'patient.not_found':
     case 'medical.not_found':
+    case 'attendance.not_found':
     case 'recovery_password.email_not_found':
     case 'recovery_password.user_not_found':
     case 'recovery_password.code_not_found':

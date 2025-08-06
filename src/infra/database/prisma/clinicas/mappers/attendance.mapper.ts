@@ -2,6 +2,7 @@ import dayjs from '@/core/config/dayjs.config';
 import { UniqueID } from '@/core/object-values/unique-id';
 import { AttendanceRaw } from '@/domain/attendance/@types/raw.attendance';
 import { Attendance } from '@/domain/attendance/entities/attendance.entity';
+import { AttendanceStatusType } from '@/domain/attendance/@types/attendance-status';
 
 export class AttendanceMapper {
   static toDomain(row: AttendanceRaw): Attendance {
@@ -9,7 +10,7 @@ export class AttendanceMapper {
       {
         patientId: new UniqueID(row.patient_id),
         medicalId: new UniqueID(row.medical_id),
-        status: row.status,
+        status: row.status as AttendanceStatusType,
         modality: row.modality,
         observations: row.observations,
         createdAt: dayjs(row.created_at).toDate(),
@@ -28,5 +29,24 @@ export class AttendanceMapper {
       },
       new UniqueID(row.id),
     );
+  }
+
+  static toPrisma(attendance: Attendance) {
+    const props = attendance['props'];
+
+    return {
+      agenda_exames_id: Number(attendance.id.toString()),
+      data_realizacao: props.startedAt ?? null,
+      data_atualizacao: props.updatedAt ?? new Date(),
+      status: props.status,
+      observacoes: props.observations ?? null,
+      medico_agenda: props.medicalId?.toString() ?? null,
+      forma_atendimento: props.modality ?? null,
+      operador_realizacao: props.operatorRealized?.toString() ?? null,
+      operador_atendimento: props.operatorAttendance?.toString() ?? null,
+      data_atendimento: props.dateAttendance ?? null,
+      realizada: props.realized ?? null,
+      atendimento: props.attendance ?? null,
+    };
   }
 }

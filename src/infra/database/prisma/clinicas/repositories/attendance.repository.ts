@@ -52,23 +52,23 @@ export class PrismaAttendanceRepository implements AttendanceRepository {
   }
 
   async update(attendance: Attendance): Promise<void> {
-    const props = attendance['props'];
+    const row = AttendanceMapper.toPrisma(attendance);
 
     const sql = Prisma.sql`
       UPDATE ponto.tb_agenda_exames
       SET
-        data_realizacao = ${props.startedAt ?? null},
-        data_atualizacao = ${props.updatedAt},
-        status = ${props.status},
-        observacoes = ${props.observations ?? null},
-        medico_agenda = ${props.medicalId?.toString() ?? null},
-        forma_atendimento = ${props.modality ?? null},
-        operador_realizacao = ${props.operatorRealized?.toString() ?? null},
-        operador_atendimento = ${props.operatorAttendance?.toString() ?? null},
-        data_atendimento = ${props.dateAttendance ?? null},
-        realizada = ${props.realized ?? null},
-        atendimento = ${props.attendance ?? null}
-      WHERE agenda_exames_id = ${Number(attendance.id.toString())}
+        data_realizacao = ${row.data_realizacao},
+        data_atualizacao = ${row.data_atualizacao},
+        status = ${row.status},
+        observacoes = ${row.observacoes},
+        medico_agenda = ${row.medico_agenda},
+        forma_atendimento = ${row.forma_atendimento},
+        operador_realizacao = ${row.operador_realizacao},
+        operador_atendimento = ${row.operador_atendimento},
+        data_atendimento = ${row.data_atendimento},
+        realizada = ${row.realizada},
+        atendimento = ${row.atendimento}
+      WHERE agenda_exames_id = ${row.agenda_exames_id}
     `;
 
     await this.db.$executeRawUnsafe(sql.sql, ...sql.values);
