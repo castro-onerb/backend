@@ -12,11 +12,15 @@ import {
 } from '../errors';
 import { InitiatePatientAppointmentDto } from './types/initiate-patient-appointment.dto';
 import { InitiatePatientAppointmentPresenter } from './presenters/initiate-patient-appointment.presenter';
+import { AttendanceFlowService } from './services/attendance-flow.service';
 
 @ApiTags('Attendance')
 @Controller('attendance')
 export class InitiatePatientAppointmentController {
-  constructor(private readonly useCase: InitiatePatientAppointmentUseCase) {}
+  constructor(
+    private readonly useCase: InitiatePatientAppointmentUseCase,
+    private readonly attendanceFlowService: AttendanceFlowService,
+  ) {}
 
   @UseGuards(JwtAuthGuard)
   @ApiBody({ type: InitiatePatientAppointmentDto })
@@ -45,6 +49,13 @@ export class InitiatePatientAppointmentController {
       throw mapDomainErrorToHttp(attendance.value);
     }
 
-    return attendance.value;
+    await this.attendanceFlowService.startAttendance({
+      medicalId: Number(attendance.value.attendance.medical_id),
+      attendanceId: Number(attendance.value.attendance.id),
+    });
+
+    return {
+      data: attendance.value,
+    };
   }
 }

@@ -2,7 +2,7 @@ import { AppError } from '@/core/errors/app-error';
 
 export class AttendanceInvalidStartError extends AppError {
   constructor() {
-    super('Este atendimento não pode ser iniciado no status atual.', {
+    super('No momento este atendimento não pode ser iniciado.', {
       code: 'attendance.invalid_start',
     });
   }

@@ -15,6 +15,7 @@ export class SendMailWhenNewAccessAccount
   async handle(event: NewAccessAccount) {
     const frontendUrl = this.config.get('FRONTEND_URL', { infer: true });
     const invalidateUrl = `${frontendUrl}/auth/sessions/${event.sessionId}/invalidate`;
+    const redirect_url = `${frontendUrl}`;
     await this.mail.send({
       to: event.email,
       subject: 'Deovita - Novo acesso detectado',
@@ -24,6 +25,7 @@ export class SendMailWhenNewAccessAccount
         date: event.ocurredAt.toLocaleString(),
         name: event.name,
         invalidateUrl,
+        redirect_url,
       },
     });
   }

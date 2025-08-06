@@ -10,6 +10,7 @@ export type AttendanceEntityProps = {
   startedAt?: Date;
   finishedAt?: Date;
   status: AttendanceStatusType;
+  paid: boolean;
 
   attendance?: boolean;
   operatorAttendance?: UniqueID;

@@ -8,6 +8,7 @@ const accessTokenSchema = z.object({
   sub: z.string(),
   name: z.string(),
   role: z.enum(['medical', 'operator', 'patient']),
+  sessionId: z.string(),
 });
 
 type JwtPayloadAccessToken = z.infer<typeof accessTokenSchema>;
@@ -18,7 +19,6 @@ export const refreshTokenSchema = z.object({
   role: z.enum(['medical', 'operator', 'patient']),
   iat: z.number(),
   exp: z.number(),
-  sessionId: z.string(),
 });
 
 type JwtPayloadRefreshoken = z.infer<typeof refreshTokenSchema>;

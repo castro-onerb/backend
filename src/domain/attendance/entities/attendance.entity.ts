@@ -71,7 +71,7 @@ export class Attendance extends AggregateRoot<AttendanceEntityProps> {
   // ========== Métodos de Domínio ==========
 
   start() {
-    if (this.props.status !== 'free') {
+    if (this.props.status === 'appointment' && this.props.paid) {
       throw new AttendanceInvalidStartError();
     }
 

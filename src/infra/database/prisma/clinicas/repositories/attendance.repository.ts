@@ -25,6 +25,7 @@ export class PrismaAttendanceRepository implements AttendanceRepository {
             ae.data_realizacao as finished_at,
             ae.data_realizacao as started_at,
             ae.observacoes as observations,
+            ae.faturado as paid,
             ae.status,
             CASE
               WHEN (ae.forma_atendimento LIKE 'presencial%')

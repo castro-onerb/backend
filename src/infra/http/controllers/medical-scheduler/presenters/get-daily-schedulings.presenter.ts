@@ -33,7 +33,8 @@ export class GetDailySchedulingsPresenter {
       const deadline = dayjs(scheduling.start).add(10, 'hour');
 
       const can_call = MarkCanCallRole({
-        canceled: !dayjs(scheduling.canceledAt).isValid(),
+        cancelled: !dayjs(scheduling.canceledAt).isValid(),
+        paid: scheduling.paid,
         realized: !dayjs(scheduling.realizedAt).isValid(),
         within_carency: now.isBefore(deadline),
       });

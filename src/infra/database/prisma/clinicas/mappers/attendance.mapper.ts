@@ -26,6 +26,7 @@ export class AttendanceMapper {
         businessId: new UniqueID(row.business_id),
         guideTicket: new UniqueID(row.guide_ticket),
         procedureTussId: new UniqueID(row.procedure_tuss_id),
+        paid: row.paid ?? false,
       },
       new UniqueID(row.id),
     );

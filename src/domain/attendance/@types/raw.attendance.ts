@@ -6,6 +6,7 @@ export type AttendanceRaw = {
   guide_ticket: string;
   procedure_tuss_id: string;
   started_at?: string;
+  paid: boolean | null;
   finished_at?: string;
   status:
     | 'free'

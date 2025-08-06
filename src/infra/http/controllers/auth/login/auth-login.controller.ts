@@ -35,7 +35,7 @@ export class AuthController {
     private readonly patientAuthUseCase: PatientAuthenticateUseCase,
     private readonly tokenService: TokenService,
     private readonly activeSessionRepository: ActiveSessionRepository,
-    private readonly sessionRedis: SessionRedisService,
+    private readonly redis: SessionRedisService,
   ) {}
 
   @Throttle({ login: { limit: 3, ttl: seconds(60) } })
@@ -167,7 +167,7 @@ export class AuthController {
       sessionId: session.id,
     });
 
-    await this.sessionRedis.activateSession(session.id, 15 * 60);
+    await this.redis.activateSession(session.id, 15 * 60);
 
     if (role === 'medical') {
       (user as Medical).recordAccess(session.id, req.ip);

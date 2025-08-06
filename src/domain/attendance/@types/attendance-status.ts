@@ -3,6 +3,7 @@ export const AttendanceStatus = {
   finished: 'finished',
   cancelled: 'cancelled',
   free: 'free',
+  appointment: 'appointment',
   blocked: 'blocked',
   missed: 'missed',
 } as const;
