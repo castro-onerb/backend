@@ -8,6 +8,7 @@ import { Env } from '@/infra/env/env';
 import { SendMailWhenPasswordRecoveryRequested } from '@/domain/mail/handlers/send-mail-when-solicited-recover-password.handler';
 import { SendMailWhenPasswordRecoveryAttemptFailed } from '@/domain/mail/handlers/send-mail-when-password-recovery-attempt-failed.handler';
 import { SendMailWhenPasswordSuccessfullyReset } from '@/domain/mail/handlers/send-mail-when-password-successfully-reset.handler';
+import { CreateExamOnAttendanceStarted } from '@/domain/attendance/handlers/create-exam-on-attendance-started.handler';
 
 @Module({
   providers: [
@@ -15,12 +16,14 @@ import { SendMailWhenPasswordSuccessfullyReset } from '@/domain/mail/handlers/se
       provide: 'MailEntity',
       useClass: NodemailerService,
     },
+    CreateExamOnAttendanceStarted,
   ],
 })
 export class EventsModule implements OnModuleInit {
   constructor(
     @Inject('MailEntity') private readonly mail: MailEntity,
     private readonly config: ConfigService<Env, true>,
+    private readonly createExamOnAttendanceStarted: CreateExamOnAttendanceStarted,
   ) {}
 
   onModuleInit() {
@@ -39,6 +42,10 @@ export class EventsModule implements OnModuleInit {
     DomainEvents.register(
       'PasswordSuccessfullyReset',
       new SendMailWhenPasswordSuccessfullyReset(this.mail),
+    );
+    DomainEvents.register(
+      'AttendanceStarted',
+      this.createExamOnAttendanceStarted,
     );
   }
 }

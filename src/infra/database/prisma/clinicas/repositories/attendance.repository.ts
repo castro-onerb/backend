@@ -19,7 +19,7 @@ export class PrismaAttendanceRepository implements AttendanceRepository {
             ae.paciente_id as patient_id,
             ae.medico_agenda as medical_id,
             ae.empresa_id as business_id,
-            ae.guia_id as guide_id,
+            ae.guia_id as guide_ticket,
             ae.data_cadastro as created_at,
             ae.data_atualizacao as updated_at,
             ae.data_realizacao as finished_at,
@@ -71,6 +71,6 @@ export class PrismaAttendanceRepository implements AttendanceRepository {
       WHERE agenda_exames_id = ${row.agenda_exames_id}
     `;
 
-    await this.db.$executeRawUnsafe(sql.sql, ...sql.values);
+    await this.db.$executeRaw(sql);
   }
 }

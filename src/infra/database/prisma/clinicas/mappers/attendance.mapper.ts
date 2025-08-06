@@ -40,10 +40,16 @@ export class AttendanceMapper {
       data_atualizacao: props.updatedAt ?? new Date(),
       status: props.status,
       observacoes: props.observations ?? null,
-      medico_agenda: props.medicalId?.toString() ?? null,
+      medico_agenda: props.medicalId
+        ? Number(props.medicalId.toString())
+        : null,
       forma_atendimento: props.modality ?? null,
-      operador_realizacao: props.operatorRealized?.toString() ?? null,
-      operador_atendimento: props.operatorAttendance?.toString() ?? null,
+      operador_realizacao: props.operatorRealized
+        ? Number(props.operatorRealized.toString())
+        : null,
+      operador_atendimento: props.operatorAttendance
+        ? Number(props.operatorAttendance.toString())
+        : null,
       data_atendimento: props.dateAttendance ?? null,
       realizada: props.realized ?? null,
       atendimento: props.attendance ?? null,
